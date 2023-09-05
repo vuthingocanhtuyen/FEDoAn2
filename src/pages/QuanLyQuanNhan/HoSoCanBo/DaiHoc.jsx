@@ -176,7 +176,7 @@ const DaiHoc = ({ quannhanId }) => {
     const queryDaiHoc = useQuery({ queryKey: ['daihocs'], queryFn: getAllDaiHocs })
     const daihocDetails = useQuery(['hosoquannhandaihoc', quannhanId], fetchGetDaiHoc, { enabled: !!quannhanId })
     console.log("dauhoc:", daihocDetails.data)
-    
+
     const { isLoading: isLoadingDaiHoc, data: daihocs } = queryDaiHoc
     const renderAction = () => {
         return (

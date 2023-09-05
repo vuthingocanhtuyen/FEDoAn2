@@ -34,27 +34,27 @@ const CapNhatHSCB = () => {
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
     const user = useSelector((state) => state?.user);
     console.log('ctqn123 capnhatcb:', user);
-    const fetchGetObjectId = async () => {
-        try {
-            console.log('User _id capnhatcb:', user.id);
-            const resQuanNhan = await QuanNhanService.getObjectIdByQuanNhanId(user.id, user.access_token);
+    // const fetchGetObjectId = async () => {
+    //         try {
+    //             console.log('User _id capnhatcb:', user.id);
+    //             const resQuanNhan = await QuanNhanService.getObjectIdByQuanNhanId(user.id, user.access_token);
 
-            console.log('ctqn capnhatcb:', resQuanNhan.data);
-            setQuannhanObjectId(resQuanNhan.data);
-        } catch (error) {
-            console.log('Error while fetching quan nhan details:', error);
-            setIsLoadingUpdate(false);
-        }
-    };
-    useEffect(() => {
-        console.log("Quan nhan _id capnhatcb:", quannhanObjectId);
-    }, [quannhanObjectId]);
-    useEffect(() => {
-        if (user && user.QuanNhanId) {
-            setIsLoadingUpdate(true);
-            fetchGetObjectId();
-        }
-    }, [user]);
+    //             console.log('ctqn capnhatcb:', resQuanNhan.data);
+    //             setQuannhanObjectId(resQuanNhan.data);
+    //         } catch (error) {
+    //             console.log('Error while fetching quan nhan details:', error);
+    //             setIsLoadingUpdate(false);
+    //         }
+    //     };
+    //     useEffect(() => {
+    //         console.log("Quan nhan _id capnhatcb:", quannhanObjectId);
+    //     }, [quannhanObjectId]);
+    //     useEffect(() => {
+    //         if (user && user.QuanNhanId) {
+    //             setIsLoadingUpdate(true);
+    //             fetchGetObjectId();
+    //         }
+    //     }, [user]);
 
 
     const [id, setId] = useState('')
@@ -67,7 +67,7 @@ const CapNhatHSCB = () => {
     const [Email, setEmail] = useState('')
     const [HoatDong, setHoatDong] = useState('')
     const [LoaiQN, setLoaiqn] = useState('')
-    const [donvi, setDonvi] = useState('')
+    const [DonVi, setDonvi] = useState('')
     const mutation = useMutationHooks(
         (data) => {
             const { id, access_token, ...rests } = data
@@ -154,14 +154,14 @@ const CapNhatHSCB = () => {
         console.log("idquannhan capnhatcb:", id)
         if (id) {
             const res = await QuanNhanService.getQuanNhanByQuanNhanId(id)
-            console.log("qn capnhatcb:", res.data)
+            console.log("qn capnhatcb:", res.data, id)
             return res.data
         }
 
     }
 
 
-    const { isLoading, data: quannhanDetails } = useQuery(['hosoquannhan', user.QuanNhanId], fetchGetDetailsQuanNhan, { enabled: !!user.QuanNhanId })
+    const { isLoading, data: quannhanDetails } = useQuery(['chitiethosoquannhan', user.QuanNhanId], fetchGetDetailsQuanNhan, { enabled: !!user.QuanNhanId })
     console.log("chi tiet quan nhan capnhatcb nv:", quannhanDetails, quannhanDetails?.QuanNhanId)
 
     const handleChangeCheckGioiTinh = (e) => {
@@ -278,7 +278,7 @@ const CapNhatHSCB = () => {
 
                             <WrapperInput>
                                 <WrapperLabel htmlFor="DonVi">Đơn vị</WrapperLabel>
-                                <InputForm style={{ width: '500px' }} id="DonVi" value={donvi} onChange={handleOnchangeDonVi} />
+                                <InputForm style={{ width: '500px' }} id="DonVi" value={DonVi} onChange={handleOnchangeDonVi} />
                                 <ButtonComponent
                                     onClick={handleUpdate}
                                     size={40}
