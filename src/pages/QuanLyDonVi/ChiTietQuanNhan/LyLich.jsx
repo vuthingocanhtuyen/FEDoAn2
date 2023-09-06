@@ -22,6 +22,8 @@ import CheckboxComponent from '../../../components/CheckBox/CheckBox'
 
 const LyLich = ({ idQuanNhan }) => {
     //update chưa đc
+    console.log("ly lich"+idQuanNhan)
+    const [quannhann, setQuannhan] = useState([]);
     const user = useSelector((state) => state.user)
     const [id, setId] = useState('')
     const [HoTen, setHoten] = useState('')
@@ -42,10 +44,12 @@ const LyLich = ({ idQuanNhan }) => {
         }
     )
     const dispatch = useDispatch()
-    const { data, isLoading, isSuccess, isError } = mutation
+    const { data,  isSuccess, isError } = mutation
 
 
     useEffect(() => {
+       
+        console.log(quannhann);
         console.log("bat dau");
         setId(quannhanDetails?.QuanNhanId)
         setHoten(quannhanDetails?.HoTen)
@@ -58,7 +62,8 @@ const LyLich = ({ idQuanNhan }) => {
         setHoatDong(quannhanDetails?.HoatDong)
         setLoaiqn(quannhanDetails?.LoaiQN)
         setDonvi(quannhanDetails?.DonVi)
-    }, [user])
+    
+    }, [quannhann])
 
 
     useEffect(() => {
@@ -114,17 +119,18 @@ const LyLich = ({ idQuanNhan }) => {
 
     const fetchGetDetailsQuanNhan = async (context) => {
         const id = context?.queryKey && context?.queryKey[1]
-        console.log("idquannhan:", id)
         if (id) {
             const res = await QuanNhanService.getDetailsQuanNhan(id)
-            console.log("qn lylich:", res.data)
+            setQuannhan(res); 
+            console.log("bat dau 3");
             return res.data
         }
 
 
     }
 
-    const { isLoading: isLoadingquannhan, data: quannhanDetails } = useQuery(['hosoquannhan', idQuanNhan], fetchGetDetailsQuanNhan, { enabled: !!idQuanNhan })
+    // const { isLoading: isLoadingquannhan, data: quannhanDetails } = useQuery(['hosoquannhan', idQuanNhan], fetchGetDetailsQuanNhan, { enabled: !!idQuanNhan })
+    const { isLoading, data: quannhanDetails } = useQuery(['hsquannhan', idQuanNhan], fetchGetDetailsQuanNhan, { enabled : !!idQuanNhan})
 
 
 
