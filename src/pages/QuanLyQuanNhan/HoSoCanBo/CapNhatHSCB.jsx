@@ -27,6 +27,7 @@ import QTNgoaiNgu from './QTNgoaiNgu'
 import DaiHoc from './DaiHoc'
 import SauDaiHoc from './SauDaiHoc'
 import TinhTrangCT from './TinhTrangCT'
+import QuaTrinhHocHam from './QuaTrinhHocHam'
 
 const CapNhatHSCB = () => {
     // const [quannhanObjectId, setQuannhanObjectId] = useState([]);
@@ -239,7 +240,10 @@ const CapNhatHSCB = () => {
                             </WrapperInput>
                             <WrapperInput>
                                 <WrapperLabel htmlFor="GioiTinh">Giới tính</WrapperLabel>
-                                <CheckboxComponent style={{ width: '25px' }} id="GioiTinh" value={GioiTinh} checked={GioiTinh === 'Nu'} onChange={handleChangeCheckGioiTinh} />
+                                <CheckboxComponent style={{ width: '25px' }}
+                                    id="GioiTinh" value={GioiTinh}
+                                    checked={GioiTinh === 'Nu'}
+                                    onChange={handleChangeCheckGioiTinh} />
                                 <ButtonComponent
                                     onClick={handleUpdate}
                                     size={40}
@@ -370,27 +374,31 @@ const CapNhatHSCB = () => {
             </div>
             <br />
 
-            <div style={{ width: '1270px', margin: '0 auto', height: '400px', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
+            <div style={{ width: '1270px', margin: '0 auto', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
                 <QTCongTac />
 
             </div><br />
-            <div style={{ width: '1270px', margin: '0 auto', height: '400px', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
+            <div style={{ width: '1270px', margin: '0 auto', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
                 <TinhTrangCT />
             </div>
             <br />
-            <div style={{ width: '1270px', margin: '0 auto', height: '400px', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
+            <div style={{ width: '1270px', margin: '0 auto', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
                 <QTDang />
             </div>
             <br />
-            <div style={{ width: '1270px', margin: '0 auto', height: '400px', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
+            <div style={{ width: '1270px', margin: '0 auto', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
                 <QTQuanHam />
             </div>
             <br />
-            <div style={{ width: '1270px', margin: '0 auto', height: '400px', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
+            <div style={{ width: '1270px', margin: '0 auto', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
+                <QuaTrinhHocHam />
+            </div>
+            <br />
+            <div style={{ width: '1270px', margin: '0 auto', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
                 <QTCDCMKT />
             </div>
             <br />
-            <div style={{ width: '1270px', margin: '0 auto', height: '400px', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
+            <div style={{ width: '1270px', margin: '0 auto', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
                 <QTHocTapKhac />
             </div>
             <br />
