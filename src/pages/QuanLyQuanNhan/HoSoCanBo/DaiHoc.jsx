@@ -10,7 +10,8 @@ import { useMutationHooks } from '../../../hooks/useMutationHook'
 import * as DaiHocService from '../../../services/DaiHocService';
 import { WrapperHeader } from './style'
 import { useQuery } from '@tanstack/react-query'
-import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, SearchOutlined, CheckOutlined, WarningOutlined } from '@ant-design/icons'
+
 import ModalComponent from '../../../components/ModalComponent/ModalComponent'
 import DrawerComponent from '../../../components/DrawerComponent/DrawerComponent'
 import TableComponent from '../../../components/TableComponent/TableComponent';
@@ -21,6 +22,10 @@ const DaiHoc = () => {
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
     const [isModalOpenDelete, setIsModalOpenDelete] = useState(false)
+
+    const [isModalOpenPheDuyet, setIsModalOpenPheDuyet] = useState(false)
+    const [isModalOpenNhapLai, setIsModalOpenNhapLai] = useState(false)
+
 
     const user = useSelector((state) => state?.user)
     const searchInput = useRef(null);
@@ -80,7 +85,29 @@ const DaiHoc = () => {
         },
 
     )
+    const mutationUpdateTrangThai = useMutationHooks(
+        (data) => {
+            console.log("data update:", data);
+            const { id, token, ...rests } = data;
+            const updatedData = { ...rests, TrangThai: 1 }; // Update the TrangThai attribute to 1
+            const res = DaiHocService.updateDaiHoc(id, token, updatedData);
+            return res;
 
+        },
+
+    )
+
+    const mutationUpdateNhapLai = useMutationHooks(
+        (data) => {
+            console.log("data update:", data);
+            const { id, token, ...rests } = data;
+            const updatedData = { ...rests, TrangThai: 2 }; // Update the TrangThai attribute to 1
+            const res = DaiHocService.updateDaiHoc(id, token, updatedData);
+            return res;
+
+        },
+
+    )
     const mutationDeleted = useMutationHooks(
         (data) => {
             const { id,
@@ -172,6 +199,8 @@ const DaiHoc = () => {
     const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDelected, isError: isErrorDeleted } = mutationDeleted
     const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDelectedMany, isError: isErrorDeletedMany } = mutationDeletedMany
 
+    const { data: dataUpdatedTT, isLoading: isLoadingUpdatedTT, isSuccess: isSuccessUpdatedTT, isError: isErrorUpdatedTT } = mutationUpdateTrangThai
+    const { data: dataUpdatedNhapLai, isLoading: isLoadingUpdatedNhapLai, isSuccess: isSuccessUpdatedNhapLai, isError: isErrorUpdatedNhapLai } = mutationUpdateNhapLai
 
     const queryDaiHoc = useQuery({ queryKey: ['daihocs'], queryFn: getAllDaiHocs })
     const daihocDetails = useQuery(['hosoquannhandaihoc', quannhanId], fetchGetDaiHoc, { enabled: !!quannhanId })
@@ -183,6 +212,8 @@ const DaiHoc = () => {
             <div>
                 <DeleteOutlined style={{ color: 'red', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
                 <EditOutlined style={{ color: 'orange', fontSize: '30px', cursor: 'pointer' }} onClick={handleDetailsDaiHoc} />
+                <CheckOutlined style={{ color: 'green', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenPheDuyet(true)} />
+                <WarningOutlined style={{ color: 'blue', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenNhapLai(true)} />
             </div>
         )
     }
@@ -420,6 +451,25 @@ const DaiHoc = () => {
             }
         })
     }
+    useEffect(() => {
+        if (isSuccessUpdatedNhapLai && dataUpdatedNhapLai?.status === 'OK') {
+            message.success()
+            handleCancelNhapLai()
+        } else if (isErrorUpdatedNhapLai) {
+            message.error()
+        }
+    }, [isSuccessUpdatedNhapLai])
+
+
+    useEffect(() => {
+        if (isSuccessUpdatedTT && dataUpdatedTT?.status === 'OK') {
+            message.success()
+            handleCancelPheDuyet()
+        } else if (isErrorUpdatedTT) {
+            message.error()
+        }
+    }, [isSuccessUpdatedTT])
+
 
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -434,6 +484,12 @@ const DaiHoc = () => {
         })
         form.resetFields()
     };
+    const handleCancelPheDuyet = () => {
+        setIsModalOpenPheDuyet(false)
+    }
+    const handleCancelNhapLai = () => {
+        setIsModalOpenNhapLai(false)
+    }
 
 
     const onFinish = () => {
@@ -481,6 +537,23 @@ const DaiHoc = () => {
             }
         })
     }
+
+    const onUpdateNgoaiNguTrangThai = () => {
+        mutationUpdateTrangThai.mutate({ id: rowSelected, token: user?.access_token, ...stateDaiHocDetails }, {
+            onSettled: () => {
+                daihocDetails.refetch()
+            }
+        })
+    }
+
+    const onUpdateNgoaiNguNhapLai = () => {
+        mutationUpdateNhapLai.mutate({ id: rowSelected, token: user?.access_token, ...stateDaiHocDetails }, {
+            onSettled: () => {
+                daihocDetails.refetch()
+            }
+        })
+    }
+
     function getTrangThaiText(statusValue) {
         switch (statusValue) {
             case 0:
@@ -488,7 +561,7 @@ const DaiHoc = () => {
             case 1:
                 return 'Đã phê duyệt';
             case 2:
-                return 'Đã từ chối';
+                return 'Đã từ chối - Nhập lại';
             default:
                 return 'Trạng thái không hợp lệ';
         }
@@ -617,19 +690,7 @@ const DaiHoc = () => {
                             />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Trạng thái"
-                            name="TrangThai"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
-                        >
-                            <InputComponent
-                                style={{ width: '100%' }}
 
-                                value={stateDaiHoc['TrangThai']}
-                                onChange={handleOnchange}
-                                name="TrangThai"
-                            />
-                        </Form.Item>
                         <Form.Item
                             label="Ghi chú"
                             name="GhiChu"
@@ -704,13 +765,6 @@ const DaiHoc = () => {
                             <InputComponent value={stateDaiHocDetails['NamNhan']} onChange={handleOnchangeDetails} name="NamNhan" />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Trạng thái"
-                            name="TrangThai"
-                        // rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
-                        >
-                            <InputComponent value={stateDaiHocDetails['TrangThai']} onChange={handleOnchangeDetails} name="TrangThai" />
-                        </Form.Item>
 
                         <Form.Item
                             label="Ghi chú"
@@ -734,6 +788,17 @@ const DaiHoc = () => {
             <ModalComponent title="Xóa quá trình đại học" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteDaiHoc}>
                 <Loading isLoading={isLoadingDeleted}>
                     <div>Bạn có chắc xóa quá trình đại học này không?</div>
+                </Loading>
+            </ModalComponent>
+            <ModalComponent title="Phê quyệt quá trình đại học" open={isModalOpenPheDuyet} onCancel={handleCancelPheDuyet} onOk={onUpdateNgoaiNguTrangThai}>
+                <Loading isLoading={isLoadingUpdatedTT}>
+                    <div>Bạn có chắc phê duyệt quá trình đại học này không?</div>
+                </Loading>
+            </ModalComponent>
+
+            <ModalComponent title="Yêu cầu nhập lại thông tin quá trình đại học" open={isModalOpenNhapLai} onCancel={handleCancelNhapLai} onOk={onUpdateNgoaiNguNhapLai}>
+                <Loading isLoading={isLoadingUpdatedNhapLai}>
+                    <div>Bạn có chắc yêu cầu nhập lại  quá trình đại học này không?</div>
                 </Loading>
             </ModalComponent>
 

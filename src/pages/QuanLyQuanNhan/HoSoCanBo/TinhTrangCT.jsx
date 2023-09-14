@@ -10,7 +10,8 @@ import { useMutationHooks } from '../../../hooks/useMutationHook'
 import * as TinhTrangCongTacService from '../../../services/TinhTrangCongTacService';
 import { WrapperHeader } from './style'
 import { useQuery } from '@tanstack/react-query'
-import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, SearchOutlined, CheckOutlined, WarningOutlined } from '@ant-design/icons'
+
 import ModalComponent from '../../../components/ModalComponent/ModalComponent'
 import DrawerComponent from '../../../components/DrawerComponent/DrawerComponent'
 import TableComponent from '../../../components/TableComponent/TableComponent';
@@ -22,6 +23,10 @@ const TinhTrangCT = ({ }) => {
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
     const [isModalOpenDelete, setIsModalOpenDelete] = useState(false)
+
+    const [isModalOpenPheDuyet, setIsModalOpenPheDuyet] = useState(false)
+    const [isModalOpenNhapLai, setIsModalOpenNhapLai] = useState(false)
+
 
     const user = useSelector((state) => state?.user)
     const searchInput = useRef(null);
@@ -82,7 +87,37 @@ const TinhTrangCT = ({ }) => {
         },
 
     )
+    const mutationUpdateTrangThai = useMutationHooks(
+        (data) => {
+            console.log("data update:", data);
+            const { id, token, ...rests } = data;
+            const updatedData = { ...rests, TrangThai: 1 }; // Update the TrangThai attribute to 1
+            const res = TinhTrangCongTacService.updateTinhTrangCongTac(id, token, updatedData);
+            return res;
 
+        },
+
+    )
+
+
+    const handleCancelPheDuyet = () => {
+        setIsModalOpenPheDuyet(false)
+    }
+    const handleCancelNhapLai = () => {
+        setIsModalOpenNhapLai(false)
+    }
+
+    const mutationUpdateNhapLai = useMutationHooks(
+        (data) => {
+            console.log("data update:", data);
+            const { id, token, ...rests } = data;
+            const updatedData = { ...rests, TrangThai: 2 }; // Update the TrangThai attribute to 1
+            const res = TinhTrangCongTacService.updateTinhTrangCongTac(id, token, updatedData);
+            return res;
+
+        },
+
+    )
     const mutationDeleted = useMutationHooks(
         (data) => {
             const { id,
@@ -172,6 +207,9 @@ const TinhTrangCT = ({ }) => {
     const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
     const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDelected, isError: isErrorDeleted } = mutationDeleted
     const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDelectedMany, isError: isErrorDeletedMany } = mutationDeletedMany
+    const { data: dataUpdatedTT, isLoading: isLoadingUpdatedTT, isSuccess: isSuccessUpdatedTT, isError: isErrorUpdatedTT } = mutationUpdateTrangThai
+    const { data: dataUpdatedNhapLai, isLoading: isLoadingUpdatedNhapLai, isSuccess: isSuccessUpdatedNhapLai, isError: isErrorUpdatedNhapLai } = mutationUpdateNhapLai
+
 
 
     const queryTinhTrangCongTac = useQuery({ queryKey: ['tinhtrangcongtacs'], queryFn: getAllTinhTrangCongTacs })
@@ -183,6 +221,8 @@ const TinhTrangCT = ({ }) => {
             <div>
                 <DeleteOutlined style={{ color: 'red', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
                 <EditOutlined style={{ color: 'orange', fontSize: '30px', cursor: 'pointer' }} onClick={handleDetailsTinhTrangCongTac} />
+                <CheckOutlined style={{ color: 'green', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenPheDuyet(true)} />
+                <WarningOutlined style={{ color: 'blue', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenNhapLai(true)} />
             </div>
         )
     }
@@ -465,6 +505,21 @@ const TinhTrangCT = ({ }) => {
         })
     }
 
+    const onUpdateNgoaiNguTrangThai = () => {
+        mutationUpdateTrangThai.mutate({ id: rowSelected, token: user?.access_token, ...stateTinhTrangCongTacDetails }, {
+            onSettled: () => {
+                tinhtrangcongtacDetails.refetch()
+            }
+        })
+    }
+
+    const onUpdateNgoaiNguNhapLai = () => {
+        mutationUpdateNhapLai.mutate({ id: rowSelected, token: user?.access_token, ...stateTinhTrangCongTacDetails }, {
+            onSettled: () => {
+                tinhtrangcongtacDetails.refetch()
+            }
+        })
+    }
     function convertDateToString(date) {
         // Sử dụng Moment.js để chuyển đổi đối tượng Date thành chuỗi theo định dạng mong muốn
         return moment(date).format('DD/MM/YYYY');
@@ -477,7 +532,7 @@ const TinhTrangCT = ({ }) => {
             case 1:
                 return 'Đã phê duyệt';
             case 2:
-                return 'Đã từ chối';
+                return 'Đã từ chối - Nhập lại';
             default:
                 return 'Trạng thái không hợp lệ';
         }
@@ -499,6 +554,24 @@ const TinhTrangCT = ({ }) => {
             message.error()
         }
     }, [isSuccess])
+    useEffect(() => {
+        if (isSuccessUpdatedNhapLai && dataUpdatedNhapLai?.status === 'OK') {
+            message.success()
+            handleCancelNhapLai()
+        } else if (isErrorUpdatedNhapLai) {
+            message.error()
+        }
+    }, [isSuccessUpdatedNhapLai])
+
+
+    useEffect(() => {
+        if (isSuccessUpdatedTT && dataUpdatedTT?.status === 'OK') {
+            message.success()
+            handleCancelPheDuyet()
+        } else if (isErrorUpdatedTT) {
+            message.error()
+        }
+    }, [isSuccessUpdatedTT])
 
     return (
         <div>
@@ -595,20 +668,6 @@ const TinhTrangCT = ({ }) => {
                         </Form.Item>
 
 
-                        <Form.Item
-                            label="Trạng thái"
-                            name="TrangThai"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
-                        >
-                            <InputComponent
-                                style={{ width: '100%' }}
-
-                                value={stateTinhTrangCongTac['TrangThai']}
-                                onChange={handleOnchange}
-                                name="TrangThai"
-                            />
-                        </Form.Item>
-
                         <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
                             <Button type="primary" htmlType="submit">
                                 Thêm
@@ -666,13 +725,7 @@ const TinhTrangCT = ({ }) => {
 
 
 
-                        <Form.Item
-                            label="Trạng thái"
-                            name="TrangThai"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
-                        >
-                            <InputComponent value={stateTinhTrangCongTacDetails['TrangThai']} onChange={handleOnchangeDetails} name="TrangThai" />
-                        </Form.Item>
+
 
                         <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
                             <Button type="primary" htmlType="submit">
@@ -683,9 +736,22 @@ const TinhTrangCT = ({ }) => {
                 </Loading>
             </DrawerComponent>
 
-            <ModalComponent title="Xóa trạng thái công tác" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteTinhTrangCongTac}>
+            <ModalComponent title="Xóa tình trạng công tác" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteTinhTrangCongTac}>
                 <Loading isLoading={isLoadingDeleted}>
-                    <div>Bạn có chắc xóa trạng thái công tác này không?</div>
+                    <div>Bạn có chắc xóa tình trạng công tác này không?</div>
+                </Loading>
+            </ModalComponent>
+
+
+            <ModalComponent title="Phê quyệt tình trạng công tác" open={isModalOpenPheDuyet} onCancel={handleCancelPheDuyet} onOk={onUpdateNgoaiNguTrangThai}>
+                <Loading isLoading={isLoadingUpdatedTT}>
+                    <div>Bạn có chắc phê duyệt tình trạng công tác này không?</div>
+                </Loading>
+            </ModalComponent>
+
+            <ModalComponent title="Yêu cầu nhập lại thông tin tình trạng công tác" open={isModalOpenNhapLai} onCancel={handleCancelNhapLai} onOk={onUpdateNgoaiNguNhapLai}>
+                <Loading isLoading={isLoadingUpdatedTT}>
+                    <div>Bạn có chắc yêu cầu nhập lại  tình trạng công tác này không?</div>
                 </Loading>
             </ModalComponent>
 
