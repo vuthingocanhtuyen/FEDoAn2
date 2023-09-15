@@ -19,11 +19,13 @@ const DoiMatKhau = () => {
     const [name, setName] = useState('')
     const [phone, setPhone] = useState('')
     const [address, setAddress] = useState('')
-    const [avatar, setAvatar] = useState('')
+    const [oldPassword, setoldPassword] = useState('')
+    const [newPassword, setnewPassword] = useState('')
+    const [confirmPassword, setconfirmPassword] = useState('')
     const mutation = useMutationHooks(
         (data) => {
             const { id, access_token, ...rests } = data
-            UserService.updateUser(id, rests, access_token)
+            UserService.updatePassword(id, rests, access_token)
         }
     )
 
@@ -35,15 +37,15 @@ const DoiMatKhau = () => {
         setName(user?.name)
         setPhone(user?.phone)
         setAddress(user?.address)
-        setAvatar(user?.avatar)
+        
     }, [user])
 
     useEffect(() => {
         if (isSuccess) {
-            message.success()
+            // message.success()
             handleGetDetailsUser(user?.id, user?.access_token)
         } else if (isError) {
-            message.error()
+            // message.error()
         }
     }, [isSuccess, isError])
 
@@ -58,24 +60,20 @@ const DoiMatKhau = () => {
     const handleOnchangeName = (value) => {
         setName(value)
     }
-    const handleOnchangePhone = (value) => {
-        setPhone(value)
+    const handleOnchangeoldPassword = (value) => {
+        setoldPassword(value)
     }
-    const handleOnchangeAddress = (value) => {
-        setAddress(value)
+    const handleOnchangenewPassword= (value) => {
+        setnewPassword(value)
     }
-
-    const handleOnchangeAvatar = async ({ fileList }) => {
-        const file = fileList[0]
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
-        }
-        setAvatar(file.preview)
+    const handleOnchangeconfirmPassword= (value) => {
+        setconfirmPassword(value)
     }
+    
+   
 
     const handleUpdate = () => {
-        mutation.mutate({ id: user?.id, email, name, phone, address, avatar, access_token: user?.access_token })
-
+        mutation.mutate({ id: user?.id, oldPassword,newPassword,confirmPassword, access_token: user?.access_token });
     }
     return (
         <div style={{ width: '1270px', margin: '0 auto', height: '500px' }}>
@@ -85,72 +83,24 @@ const DoiMatKhau = () => {
                     <WrapperInput>
                         <WrapperLabel htmlFor="name">Name</WrapperLabel>
                         <InputForm style={{ width: '300px' }} id="name" value={name} onChange={handleOnchangeName} />
-                        {/* <ButtonComponent
-                            onClick={handleUpdate}
-                            size={40}
-                            styleButton={{
-                                height: '30px',
-                                width: 'fit-content',
-                                borderRadius: '4px',
-                                padding: '2px 6px 6px'
-                            }}
-                            textbutton={'Cập nhật'}
-                            styleTextButton={{ color: 'rgb(26, 148, 255)', fontSize: '15px', fontWeight: '700' }}
-                        ></ButtonComponent> */}
                     </WrapperInput>
                     <WrapperInput>
                         <WrapperLabel htmlFor="email">Email</WrapperLabel>
                         <InputForm style={{ width: '300px' }} id="email" value={email} onChange={handleOnchangeEmail} />
-                        {/* <ButtonComponent
-                            onClick={handleUpdate}
-                            size={40}
-                            styleButton={{
-                                height: '30px',
-                                width: 'fit-content',
-                                borderRadius: '4px',
-                                padding: '2px 6px 6px'
-                            }}
-                            textbutton={'Cập nhật'}
-                            styleTextButton={{ color: 'rgb(26, 148, 255)', fontSize: '15px', fontWeight: '700' }}
-                        ></ButtonComponent> */}
                     </WrapperInput>
                     <WrapperInput>
-                        <WrapperLabel htmlFor="phone">Mật khẩu cũ</WrapperLabel>
-                        <InputForm style={{ width: '300px' }} id="email" value={""} onChange={handleOnchangePhone} />
-                        {/* <ButtonComponent
-                            onClick={handleUpdate}
-                            size={40}
-                            styleButton={{
-                                height: '30px',
-                                width: 'fit-content',
-                                borderRadius: '4px',
-                                padding: '2px 6px 6px'
-                            }}
-                            textbutton={'Cập nhật'}
-                            styleTextButton={{ color: 'rgb(26, 148, 255)', fontSize: '15px', fontWeight: '700' }}
-                        ></ButtonComponent> */}
+                        <WrapperLabel htmlFor="oldPassword">Mật khẩu cũ</WrapperLabel>
+                        <InputForm style={{ width: '300px' }} id="oldPassword" type="password" value={oldPassword} onChange={handleOnchangeoldPassword} />
                     </WrapperInput>
 
                     <WrapperInput>
-                        <WrapperLabel htmlFor="address">Mật khẩu mới</WrapperLabel>
-                        <InputForm style={{ width: '300px' }} id="address" value={address} onChange={handleOnchangeAddress} />
-                        <ButtonComponent
-                            onClick={handleUpdate}
-                            size={40}
-                            styleButton={{
-                                height: '30px',
-                                width: 'fit-content',
-                                borderRadius: '4px',
-                                padding: '2px 6px 6px'
-                            }}
-                            textbutton={'Cập nhật'}
-                            styleTextButton={{ color: 'rgb(26, 148, 255)', fontSize: '15px', fontWeight: '700' }}
-                        ></ButtonComponent>
+                        <WrapperLabel htmlFor="newPassword">Mật khẩu mới</WrapperLabel>
+                        <InputForm style={{ width: '300px' }} id="newPassword" type="password" value={newPassword} onChange={handleOnchangenewPassword} />
                     </WrapperInput>
 
                     <WrapperInput>
-                        <WrapperLabel htmlFor="address">Nhập lại mật khẩu mới</WrapperLabel>
-                        <InputForm style={{ width: '300px' }} id="address" value={address} onChange={handleOnchangeAddress} />
+                        <WrapperLabel htmlFor="confirmPassword">Nhập lại mật khẩu mới</WrapperLabel>
+                        <InputForm style={{ width: '300px' }} id="confirmPassword" type="password" value={confirmPassword} onChange={handleOnchangeconfirmPassword} />
                         <ButtonComponent
                             onClick={handleUpdate}
                             size={40}

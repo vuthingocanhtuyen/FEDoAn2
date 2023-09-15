@@ -1,4 +1,5 @@
 import { Button, Form, Select, Space } from 'antd'
+import { Checkbox } from 'antd';
 import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 import React, { useRef } from 'react'
 import { WrapperHeader, WrapperUploadFile } from './style'
@@ -282,19 +283,19 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
         {
             title: 'addn',
             dataIndex: 'addn',
-            // sorter: (a, b) => a.addn.length - b.addn.length,
+            render: (text, record) => <Checkbox disabled checked={record.addn} />,
             ...getColumnSearchProps('addn')
         },
         {
             title: 'edit',
             dataIndex: 'edit',
-            // sorter: (a, b) => a.edit.length - b.edit.length,
+            render: (text, record) => <Checkbox disabled checked={record.edit} />,
             ...getColumnSearchProps('edit')
         },
         {
             title: 'dele',
             dataIndex: 'dele',
-            // sorter: (a, b) => a.dele.length - b.dele.length,
+            render: (text, record) => <Checkbox disabled checked={record.dele} />,
             ...getColumnSearchProps('dele')
         },
         {

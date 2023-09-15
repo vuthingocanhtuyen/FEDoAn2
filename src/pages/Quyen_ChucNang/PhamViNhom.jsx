@@ -75,14 +75,23 @@ const PhamViNhom = ({selectedRowId,handleselectedrow}) => {
     const mutationDeleted = useMutationHooks(
         (data) => {
             const { id,
+                index,
                 token,
             } = data
-            const res = AdminGroupService.deleteAdminGroup(
+            const res = AdminGroupService.delete2ListsAdminGroup(
                 id,
+                index,
                 token)
             return res
         },
     )
+    const handleDelete2Lists= (index) => {
+        mutationDeleted.mutate({ id: rowSelected,index: index, token: user?.access_token }, {
+            onSettled: () => {
+                queryAdminGroup.refetch()
+            }
+        })
+    }
 
     const mutationDeletedMany = useMutationHooks(
         (data) => {
@@ -246,36 +255,47 @@ const PhamViNhom = ({selectedRowId,handleselectedrow}) => {
         },
     });
 
-
     const columns = [
         {
-            title: 'code',
-            dataIndex: 'code',
-            sorter: (a, b) => a.code.length - b.code.length,
-            ...getColumnSearchProps('code')
+          title: 'Chức vụ và Đơn vị',
+          dataIndex: 'combinedInfo',
         },
         {
-            title: 'leveltitlelist',
-            dataIndex: 'leveltitlelist',
-            // sorter: (a, b) => a.leveltitlelist.length - b.name.length,
-            // ...getColumnSearchProps('name')
+          title: 'Action',
+          dataIndex: 'action',
+          render: (text, record) => (
+            <button onClick={() => handleOnchange2(record.index)}>
+              Xóa
+            </button>
+          ),
         },
-        {
-            title: 'departmentlist',
-            dataIndex: 'departmentlist',
-            // sorter: (a, b) => a.leveltitlelist.length - b.name.length,
-            // ...getColumnSearchProps('name')
-        },
-        {
-            title: 'Action',
-            dataIndex: 'action',
-            render: renderAction
-        },
-    ];
-    let dataTable = [];
-    if (admingroups && admingroups.data) { dataTable = admingroups ? [admingroups.data] : [];}
-    // console.log(admingroups.data);
-    // console.log(dataTable);
+      ];
+//       const dataTable = admingroups && admingroups.data
+//   ? [{
+//       ...admingroups.data,
+//       combinedInfo: admingroups.data.leveltitlelist.map((item, index) =>
+//         `${item} - ${admingroups.data.departmentlist[index]}`
+//       ).join(' | '), 
+//     }]
+//   : [];
+const dataTable = admingroups && admingroups.data
+  ? admingroups.data.leveltitlelist.map((item, index) => ({
+      ...admingroups.data, // Copy all properties from admingroups.data
+      combinedInfo: `${item} - ${admingroups.data.departmentlist[index]}`,
+      action: (
+        <Button onClick={() => handleOnchange2(index)}>
+          Edit
+        </Button>
+      ),
+      index: index
+    }))
+  : [];
+
+  const handleOnchange2 = (index) => {
+    handleDelete2Lists(index);
+    console.log("hello");
+    console.log(index);
+}
     useEffect(() => {
         if (isSuccess && data?.status === 'OK') {
             message.success()
@@ -368,31 +388,53 @@ const PhamViNhom = ({selectedRowId,handleselectedrow}) => {
         form.resetFields()
     };
 
-    const onFinish = () => {
-        const params = {
-            code: stateAdminGroup.code,
-        codeview: stateAdminGroup.codeview,
-        name: stateAdminGroup.name,
-        note: stateAdminGroup.note,
-        edituser: stateAdminGroup.edituser,
-        edittime: stateAdminGroup.edittime,
-        lock: stateAdminGroup.lock,
-        lockdate: stateAdminGroup.lockdate,
-        whois: stateAdminGroup.whois,
-        unitcode: stateAdminGroup.unitcode,
-        departmentlist: stateAdminGroup.departmentlist,
-        leveltitlelist: stateAdminGroup.leveltitlelist,
-        allunit: stateAdminGroup.allunit,
-        admin: stateAdminGroup.admin,
-        staff: stateAdminGroup.staff,
-        }
-        mutation.mutate(params, {
-            onSettled: () => {
-                queryAdminGroup.refetch()
+    // const onFinish = () => {
+    //     console.log("hello");
+    //     const params = {
+    //         code: stateAdminGroup.code,
+    //     codeview: stateAdminGroup.codeview,
+    //     name: stateAdminGroup.name,
+    //     note: stateAdminGroup.note,
+    //     edituser: stateAdminGroup.edituser,
+    //     edittime: stateAdminGroup.edittime,
+    //     lock: stateAdminGroup.lock,
+    //     lockdate: stateAdminGroup.lockdate,
+    //     whois: stateAdminGroup.whois,
+    //     unitcode: stateAdminGroup.unitcode,
+    //     departmentlist: stateAdminGroup.departmentlist,
+    //     leveltitlelist: stateAdminGroup.leveltitlelist,
+    //     allunit: stateAdminGroup.allunit,
+    //     admin: stateAdminGroup.admin,
+    //     staff: stateAdminGroup.staff,
+    //     }
+    //     mutation.mutate(params, {
+    //         onSettled: () => {
+    //             queryAdminGroup.refetch()
+    //         }
+    //     })
+    // }
+    const onFinish = async () => { // Add 'async' keyword here
+        const data = {
+            departmentlist: stateAdminGroup['departmentlist'],
+            leveltitlelist: stateAdminGroup['leveltitlelist'],
+          };
+        
+        try {
+            const result = await AdminGroupService.updateAdminGroupLists(selectedRowId, data, user?.access_token);
+            console.log(result);
+            if (result.status === 'OK') {
+                message.success(result.message);
+                handleCancel();
+                queryAdminGroup.refetch();
+            } else {
+                message.error(result.message);
             }
-        })
-    }
-
+        } catch (error) {
+            console.error(error);
+            message.error('An error occurred');
+        }
+    };
+    
     const handleOnchange = (e) => {
         setStateAdminGroup({
             ...stateAdminGroup,
@@ -443,7 +485,7 @@ const PhamViNhom = ({selectedRowId,handleselectedrow}) => {
                     };
                 }} />
             </div>
-            <ModalComponent forceRender title="Thêm thông tin nhóm quản trị" open={isModalOpen} onCancel={handleCancel} footer={null}>
+            <ModalComponent forceRender title="Thêm thông tin phạm vi nhóm" open={isModalOpen} onCancel={handleCancel} footer={null}>
                 <Loading isLoading={isLoading}>
 
                     <Form
@@ -455,18 +497,18 @@ const PhamViNhom = ({selectedRowId,handleselectedrow}) => {
                         form={form}
                     >
                         <Form.Item
-                            label="Mã"
-                            name="code"
-                            rules={[{ required: true, message: 'Please input your code!' }]}
+                            label="Đơn vị"
+                            name="departmentlist"
+                            rules={[{ required: true, message: 'Please input your department!' }]}
                         >
-                            <InputComponent value={stateAdminGroup['code']} onChange={handleOnchange} name="code" />
+                            <InputComponent value={stateAdminGroup['departmentlist']} onChange={handleOnchange} name="departmentlist" />
                         </Form.Item>
                         <Form.Item
-                            label="Tên"
-                            name="name"
-                            rules={[{ required: true, message: 'Please input your name!' }]}
+                            label="Chức vụ"
+                            name="leveltitlelist"
+                            rules={[{ required: true, message: 'Please input your leveltitle!' }]}
                         >
-                            <InputComponent value={stateAdminGroup['name']} onChange={handleOnchange} name="name" />
+                            <InputComponent value={stateAdminGroup['leveltitlelist']} onChange={handleOnchange} name="leveltitlelist" />
                         </Form.Item>
                         
                         <Form.Item wrapperCol={{ offset: 20, span: 16 }}>

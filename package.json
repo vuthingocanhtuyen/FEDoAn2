@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@antv/data-set": "^0.11.8",
     "@mui/material": "^5.14.2",
     "@reduxjs/toolkit": "^1.8.6",
     "@tanstack/react-query": "^4.17.1",
@@ -13,6 +14,7 @@
     "antd": "^4.23.6",
     "antd-table-saveas-excel": "^2.2.1",
     "axios": "^1.4.0",
+    "bizcharts": "^4.1.22",
     "dotenv": "^16.3.1",
     "jwt-decode": "^3.1.2",
     "react": "^18.2.0",

@@ -56,7 +56,7 @@ import TabThanhNhanTaiSan from '../QuanLyQuanNhan/HoSoCanBo/TabThanNhanTaiSan';
 import ThongKeBaoCao from '../ChiHuyDieuHanh/ThongKeNhanLuc/ThongKeBaoCao';
 import ThongKeTai from '../ChiHuyDieuHanh/ThongKeTai/ThongKeTai';
 import HocVi from '../QuanLyDanhMuc/ToChucNhanSu/HocVi';
-
+import BaoCaoNhanhBienCheTong from '../BaoCaoThongKe/BaoCaoNhanhBienCheTong'
 
 
 const AdminPage = () => {
@@ -204,22 +204,34 @@ const AdminPage = () => {
       key: 'donvis',
       icon: <AppstoreOutlined />,
       children: [
-        getItem('Danh mục đơn vị', 'donvi', <LogoutOutlined />),
-        getItem('Hồ sơ cán bộ', 'hscb', <LockOutlined />),
+        getItem('Danh mục đơn vị', 'donvi', <AppstoreAddOutlined />),
+        getItem('Hồ sơ cán bộ', 'hscb', <AppstoreAddOutlined />),
         //   getItem('Chi tiết hồ sơ cán bộ', 'cthscb', <LockOutlined />),
-        getItem('Quản lý nhu cầu/biên chế', 'quanlynhucaubc', <UserOutlined />),
-        getItem('Điểu chuyển cán bộ', 'dieuchuyen', <UserOutlined />),
+        getItem('Quản lý nhu cầu/biên chế', 'quanlynhucaubc', <AppstoreAddOutlined />),
+        getItem('Điểu chuyển cán bộ', 'dieuchuyen', <AppstoreAddOutlined />),
       ],
     },
     {
 
       label: 'Chỉ huy/ Điều hành',
       key: 'chihuydieuhanh',
-      icon: <LogoutOutlined />,
+      icon: <AppstoreOutlined />,
       children: [
-        getItem('Thống kê nhân lực', 'thongkenhanluc', <UserOutlined />),
-        getItem('Thông kê tải', 'thongketai', <LockOutlined />),
+        getItem('Thống kê nhân lực', 'thongkenhanluc', <AppstoreAddOutlined />),
+        getItem('Thông kê tải', 'thongketai', <AppstoreAddOutlined />),
 
+      ],
+    },
+    {
+
+      label: 'Báo cáo/ Thống kê',
+      key: 'baocaothongke',
+      icon: <AppstoreOutlined />,
+      children: [
+        getItem('Báo cáo nhanh biên chế', 'baocaobienche', <AppstoreAddOutlined />),
+        getItem('Báo cáo nhanh cấp bậc', 'baocaocapbac', <AppstoreAddOutlined />),
+        getItem('Báo cáo nhanh CDKH', 'baocaocdkh', <AppstoreAddOutlined />),
+        getItem('Báo cáo nhanh độ tuổi', 'baocaotuoi', <AppstoreAddOutlined />),
       ],
     },
 
@@ -464,7 +476,11 @@ const AdminPage = () => {
 
           <ThongKeTai />
         )
+      case 'baocaobienche':
+        return (
 
+          <BaoCaoNhanhBienCheTong />
+        )
       default:
         return <></>
     }

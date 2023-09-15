@@ -53,10 +53,10 @@ const TableComponent = (props) => {
       )} */}
       <button onClick={exportExcel}>Export Excel</button>
       <Table
-        rowSelection={{
-          type: selectionType,
-          ...rowSelection,
-        }}
+        // rowSelection={{
+        //   type: selectionType,
+        //   ...rowSelection,
+        // }}
         columns={columns}
         dataSource={dataSource}
         {...props}

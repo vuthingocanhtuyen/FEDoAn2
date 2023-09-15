@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const axiosJWT = axios.create();
+import { axiosJWT } from "./UserService"
 
 export const createAdminGroup = async (data) => {
   const res = await axios.post(
@@ -68,5 +68,39 @@ export const deleteManyAdminGroup = async (data, access_token) => {
 
 export const getAllType = async () => {
   const res = await axios.get(`${process.env.REACT_APP_API_URL}/admingroup/get-all-type`);
+  return res.data;
+};
+export const update2ListsAdminGroup = async (id,index, access_token) => {
+  const res = await axiosJWT.put(
+    `${process.env.REACT_APP_API_URL}/admingroup/editdata/${id}/${index}`,
+    {
+      headers: {
+        token: `Bearer ${access_token}`,
+      },
+    }
+  );
+  return res.data;
+};
+export const updateAdminGroupLists = async (id,data,access_token) => {
+  const res = await axiosJWT.post(
+    `${process.env.REACT_APP_API_URL}/admingroup/pushdata/${id}`,
+    data,
+    {
+      headers: {
+        token: `Bearer ${access_token}`,
+      },
+    }
+  );
+  return res.data;
+};
+export const delete2ListsAdminGroup = async (id,index, access_token) => {
+  const res = await axiosJWT.delete(
+    `${process.env.REACT_APP_API_URL}/admingroup/deletedata/${id}/${index}`,
+    {
+      headers: {
+        token: `Bearer ${access_token}`,
+      },
+    }
+  );
   return res.data;
 };

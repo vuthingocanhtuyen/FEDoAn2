@@ -135,7 +135,18 @@ export const getDonViCon = async (id, access_token) => {
       }
     );
     return res.data;
-  };  
+  };
+  export const getSoLuongfromcode = async (id, access_token) => {
+    const res = await axiosJWT.get(
+      `${process.env.REACT_APP_API_URL}/donvi/getsoluong/${id}`,
+      {
+        headers: {
+          token: `Bearer ${access_token}`,
+        },
+      }
+    );
+    return res.data;
+  };    
   export const getDonVifromObjectId = async (id, access_token) => {
     const res = await axiosJWT.get(
       `${process.env.REACT_APP_API_URL}/donvi/getdonvi/${id}`,
