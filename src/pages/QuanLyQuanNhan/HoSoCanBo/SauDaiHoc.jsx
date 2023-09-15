@@ -54,7 +54,7 @@ const SauDaiHoc = () => {
                 LinhVuc,
                 TenLuanVan,
                 Truong, QuocGia, NamNhan,
-                TrangThai,
+                TrangThai = 0,
                 GhiChu } = data
             const res = SauDaiHocService.createSauDaiHoc({
                 QuanNhanId,
@@ -514,7 +514,7 @@ const SauDaiHoc = () => {
             Truong: stateSauDaiHoc.Truong,
             QuocGia: stateSauDaiHoc.QuocGia,
             NamNhan: stateSauDaiHoc.NamNhan,
-            TrangThai: stateSauDaiHoc.TrangThai,
+            //     TrangThai: stateSauDaiHoc.TrangThai,
             GhiChu: stateSauDaiHoc.GhiChu,
         }
         console.log("Finsh", stateSauDaiHoc)

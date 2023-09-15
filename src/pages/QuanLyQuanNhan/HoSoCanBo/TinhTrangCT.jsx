@@ -55,7 +55,7 @@ const TinhTrangCT = ({ }) => {
                 NgayQuyetDinh,
                 TrangThaiCongTac,
                 KetThuc,
-                TrangThai,
+                TrangThai = 0,
             } = data
             const res = TinhTrangCongTacService.createTinhTrangCongTac({
                 QuanNhanId,
@@ -467,7 +467,7 @@ const TinhTrangCT = ({ }) => {
             NgayQuyetDinh: stateTinhTrangCongTac.NgayQuyetDinh,
             TrangThaiCongTac: stateTinhTrangCongTac.TrangThaiCongTac,
             KetThuc: stateTinhTrangCongTac.KetThuc,
-            TrangThai: stateTinhTrangCongTac.TrangThai,
+            //  TrangThai: stateTinhTrangCongTac.TrangThai,
         }
         console.log("Finsh", stateTinhTrangCongTac)
         mutation.mutate(params, {

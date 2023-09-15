@@ -54,7 +54,7 @@ const NgoaiNgu = () => {
                 CapDo,
                 TuongDuong,
                 HinhThucBang,
-                TrangThai,
+                TrangThai = 0,
                 GhiChu } = data
             const res = NgoaiNguService.createNgoaiNgu({
                 QuanNhanId,
@@ -453,7 +453,7 @@ const NgoaiNgu = () => {
             CapDo: '',
             TuongDuong: '',
             HinhThucBang: '',
-            TrangThai: '',
+            //   TrangThai: '',
             GhiChu: '',
         })
         form.resetFields()
@@ -498,7 +498,7 @@ const NgoaiNgu = () => {
             CapDo: '',
             TuongDuong: '',
             HinhThucBang: '',
-            TrangThai: '',
+            //   TrangThai: '',
             GhiChu: '',
         })
         form.resetFields()
@@ -514,7 +514,7 @@ const NgoaiNgu = () => {
             CapDo: stateNgoaiNgu.CapDo,
             TuongDuong: stateNgoaiNgu.TuongDuong,
             HinhThucBang: stateNgoaiNgu.HinhThucBang,
-            TrangThai: stateNgoaiNgu.TrangThai,
+            //     TrangThai: stateNgoaiNgu.TrangThai,
             GhiChu: stateNgoaiNgu.GhiChu,
         }
         console.log("Finsh", stateNgoaiNgu)

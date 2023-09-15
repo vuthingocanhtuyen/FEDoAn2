@@ -50,7 +50,7 @@ const QTDang = ({ }) => {
             const { QuanNhanId = quannhanId, code = 123
                 , QuyetDinh,
                 NgayQuyetDinh, ChucVu, DonVi, KetThuc,
-                TrangThai,
+                TrangThai = 0,
                 GhiChu } = data
             const res = QTCTDangService.createQTCTDang({
                 QuanNhanId, code, QuyetDinh,
@@ -473,7 +473,7 @@ const QTDang = ({ }) => {
             ChucVu: stateQTCTDang.ChucVu,
             DonVi: stateQTCTDang.DonVi,
             KetThuc: stateQTCTDang.KetThuc,
-            TrangThai: stateQTCTDang.TrangThai,
+            //   TrangThai: stateQTCTDang.TrangThai,
             GhiChu: stateQTCTDang.GhiChu,
         }
         console.log("Finsh", stateQTCTDang)
