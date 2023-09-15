@@ -50,7 +50,7 @@ const QTCongTac = ({ }) => {
       const { QuanNhanId = quannhanId
         , SoQuyetDinh,
         NgayQuyetDinh, ChucVu, DonVi, KetThuc, DonViSinhHoatHocThuat,
-        TrangThai,
+        TrangThai = 0,
         GhiChu } = data
       const res = QuaTrinhCongTacService.createQuaTrinhCongTac({
         QuanNhanId, SoQuyetDinh,
@@ -493,7 +493,7 @@ const QTCongTac = ({ }) => {
       DonVi: stateQuaTrinhCongTac.DonVi,
       KetThuc: stateQuaTrinhCongTac.KetThuc,
       DonViSinhHoatHocThuat: stateQuaTrinhCongTac.DonViSinhHoatHocThuat,
-      TrangThai: stateQuaTrinhCongTac.TrangThai,
+      //   TrangThai: stateQuaTrinhCongTac.TrangThai,
       GhiChu: stateQuaTrinhCongTac.GhiChu,
     }
     console.log("Finsh", stateQuaTrinhCongTac)

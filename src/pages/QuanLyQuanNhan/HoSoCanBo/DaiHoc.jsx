@@ -53,7 +53,7 @@ const DaiHoc = () => {
                 Nganh,
                 Truong,
                 QuocGia, NamNhan,
-                TrangThai,
+                TrangThai = 0,
                 GhiChu } = data
             const res = DaiHocService.createDaiHoc({
                 QuanNhanId,
@@ -499,7 +499,7 @@ const DaiHoc = () => {
             Truong: stateDaiHoc.Truong,
             QuocGia: stateDaiHoc.QuocGia,
             NamNhan: stateDaiHoc.NamNhan,
-            TrangThai: stateDaiHoc.TrangThai,
+            //     TrangThai: stateDaiHoc.TrangThai,
             GhiChu: stateDaiHoc.GhiChu,
         }
         console.log("Finsh", stateDaiHoc)
