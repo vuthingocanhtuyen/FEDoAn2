@@ -1,26 +1,26 @@
 import { Button, Form, Space } from 'antd'
 import React from 'react'
-import InputComponent from '../../components/InputComponent/InputComponent'
-import { convertPrice } from '../../utils'
-import * as OrderService from '../../services/OrderService'
+import InputComponent from '../../../components/InputComponent/InputComponent'
+import { convertPrice } from '../../../utils'
+import * as OrderService from '../../../services/OrderService'
 import { useQuery } from '@tanstack/react-query'
 import { SearchOutlined } from '@ant-design/icons'
 import { useSelector } from 'react-redux'
-import ComboBoxComponent from '../../components/ComboBoxComponent/ComboBoxComponent'
-import { orderContant } from '../../contant'
+import ComboBoxComponent from '../../../components/ComboBoxComponent/ComboBoxComponent'
+import { orderContant } from '../../../contant'
 import { useState } from 'react'
-import FreeDonVi from '../QuanLyDonVi/DanhMucDonVi/FreeDonVi'
-import BaoCaoNhanhBienChe from './BaoCaoNhanhBienChe'
+import FreeDonVi from '../../QuanLyDonVi/DanhMucDonVi/FreeDonVi'
+import BaoCaoNhanhQuanHam from './BaoCaoNhanhQuanHam'
 
-import { WrapperContentProfileFree } from './style'
-import DemoChartComponent from './DemoChartComponent/DemoChartComponent'
-
-
+import { WrapperContentProfileFree } from '../style'
+import DemoChartComponent from '../DemoChartComponent/DemoChartComponent'
 
 
 
 
-const BaoCaoNhanhBienCheTong = () => {
+
+
+const BaoCaoNhanhQuanHamTong = () => {
     const user = useSelector((state) => state?.user)
 
 
@@ -45,31 +45,18 @@ const BaoCaoNhanhBienCheTong = () => {
         setTreeNodeClickedId(item); // Cập nhật ID node từ FreeDonVi
     }
     return (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'left' }}>
             <div>
             <div style={{ flex: 1, maxWidth: '200px', background: '#fff', padding: '5px' }}>
                 <WrapperContentProfileFree>
                     <FreeDonVi handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId}/>
                 </WrapperContentProfileFree>
             </div>
-                <div style={{ flex: 2, maxWidth: '1200px', background: 'back', padding: '5px', textAlign: 'left' }}>
-
-                
-                <Form
-                    name="basic"
-                    labelCol={{ span: 6 }}
-                    wrapperCol={{ span: 18 }}
-                    autoComplete="on"
-                >
-
+                <div style={{ flex: 2, maxWidth: '1800px', background: 'back', padding: '5px', textAlign: 'left' }}>
                     <h2>Biên chế</h2>
-                    <BaoCaoNhanhBienChe handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId}/>
-                    
-                </Form>
+                    <BaoCaoNhanhQuanHam handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId}/>
             </div>
-            <div style={{ flex: 1, maxWidth: '1200px', background: '#fff', padding: '5px' }}>
-            <DemoChartComponent handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId}/>
-        </div>
+            
         </div>
         
     </div>
@@ -77,4 +64,4 @@ const BaoCaoNhanhBienCheTong = () => {
     )
 }
 
-export default BaoCaoNhanhBienCheTong
+export default BaoCaoNhanhQuanHamTong

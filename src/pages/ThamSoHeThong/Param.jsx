@@ -356,9 +356,9 @@ const Param = () => {
 
     return (
         <div>
-            <WrapperHeader>Quản lý tham số hệ thống</WrapperHeader>
+            <WrapperHeader>Quản lý tài khoản NSD</WrapperHeader>
             <div style={{ marginTop: '20px' }}>
-                <TableComponent handleDelteMany={handleDelteManyUsers} columns={columns} isLoading={isFetchingUser} data={dataTable} onRow={(record, rowIndex) => {
+                <TableComponent handleDelteMany={handleDelteManyUsers} columns={columns}  data={dataTable} onRow={(record, rowIndex) => {
                     return {
                         onClick: event => {
                             setRowSelected(record._id)

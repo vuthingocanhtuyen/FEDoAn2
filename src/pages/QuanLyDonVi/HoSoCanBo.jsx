@@ -2,7 +2,8 @@ import { Button, Form, Select, Space } from 'antd'
 import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 import React, { useRef } from 'react'
 import { WrapperHeader, WrapperUploadFile } from './style'
-
+import { DatePicker } from 'antd';
+import 'antd/dist/antd.css';
 import TableComponent from '../../components/TableComponent/TableComponent'
 import { useState } from 'react'
 import InputComponent from '../../components/InputComponent/InputComponent'
@@ -518,6 +519,13 @@ const HoSoCanBo = () => {
       ...stateQuanNhan,
       [e.target.name]: e.target.value
     })
+    console.log(stateQuanNhan);
+  }
+  const handleOnchange2 = (date, dateString) => {
+    setStateQuanNhan({
+      ...stateQuanNhan,
+      NgaySinh: dateString
+    })
   }
 
   const handleOnchangeDetails = (e) => {
@@ -644,49 +652,60 @@ const handleChangeSelect3 = (value) => {
             form={form}
           >
             <Form.Item
-              label="QuanNhanId"
+              label="Mã quân nhân"
               name="QuanNhanId"
               rules={[{ required: true, message: 'Please input your QuanNhanId!' }]}
             >
               <InputComponent value={stateQuanNhan['QuanNhanId']} onChange={handleOnchange} name="QuanNhanId" />
             </Form.Item>
             <Form.Item
-              label="HoTen"
+              label="Họ tên"
               name="HoTen"
               rules={[{ required: true, message: 'Please input your HoTen!' }]}
             >
               <InputComponent value={stateQuanNhan['HoTen']} onChange={handleOnchange} name="HoTen" />
             </Form.Item>
-            <Form.Item
-              label="NgaySinh"
+            {/* <Form.Item
+              label="Ngày sinh"
               name="NgaySinh"
               rules={[{ required: true, message: 'Please input your NgaySinh!' }]}
             >
               <InputComponent value={stateQuanNhan['NgaySinh']} onChange={handleOnchange} name="NgaySinh" />
+            </Form.Item> */}
+            <Form.Item
+            label="Ngày sinh"
+            name="NgaySinh"
+            rules={[{ required: true, message: 'Please input your NgaySinh!' }]}
+            >
+            <DatePicker 
+             value={stateQuanNhan['NgaySinh']}
+             onChange={handleOnchange2} name="NgaySinh"
+             format="YYYY-MM-DD" 
+              />
             </Form.Item>
             <Form.Item
-              label="GioiTinh"
+              label="Giới tính"
               name="GioiTinh"
               rules={[{ required: true, message: 'Please input your GioiTinh!' }]}
             >
               <InputComponent value={stateQuanNhan['GioiTinh']} onChange={handleOnchange} name="GioiTinh" />
             </Form.Item>
             <Form.Item
-              label="QueQuan"
+              label="Quê quán"
               name="QueQuan"
               rules={[{ required: true, message: 'Please input your QueQuan!' }]}
             >
               <InputComponent value={stateQuanNhan['QueQuan']} onChange={handleOnchange} name="QueQuan" />
             </Form.Item>
             <Form.Item
-              label="DiaChi"
+              label="Địa chỉ"
               name="DiaChi"
               rules={[{ required: true, message: 'Please input your DiaChi!' }]}
             >
               <InputComponent value={stateQuanNhan['DiaChi']} onChange={handleOnchange} name="DiaChi" />
             </Form.Item>
             <Form.Item
-              label="SoDienThoai"
+              label="Số điện thoại"
               name="SoDienThoai"
               rules={[{ required: true, message: 'Please input your SoDienThoai!' }]}
             >
@@ -700,7 +719,7 @@ const handleChangeSelect3 = (value) => {
               <InputComponent value={stateQuanNhan['Email']} onChange={handleOnchange} name="Email" />
             </Form.Item>
             <Form.Item
-              label="QuanHam"
+              label="Quân hàm"
               name="QuanHam"
               rules={[{ required: true, message: 'Please input your QuanHam!' }]}
             >
@@ -714,7 +733,7 @@ const handleChangeSelect3 = (value) => {
                 />
             </Form.Item>    
             <Form.Item
-              label="LoaiQN"
+              label="Loại quân nhân"
               name="LoaiQN"
               rules={[{ required: true, message: 'Please input your LoaiQN!' }]}
             >
@@ -728,7 +747,7 @@ const handleChangeSelect3 = (value) => {
                 />
             </Form.Item>   
             <Form.Item
-              label="DonVi"
+              label="Đơn vị"
               name="DonVi"
               rules={[{ required: true, message: 'Please input your DonVi!' }]}
             >
@@ -742,7 +761,7 @@ const handleChangeSelect3 = (value) => {
                 />
             </Form.Item>
             <Form.Item
-              label="ChucVu"
+              label="Chức vụ"
               name="HoatDong"
               rules={[{ required: true, message: 'Please input your ChucVu!' }]}
             >

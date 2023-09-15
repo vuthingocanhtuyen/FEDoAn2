@@ -77,9 +77,11 @@ const DoiMatKhau = () => {
     }
     return (
         <div style={{ width: '1270px', margin: '0 auto', height: '500px' }}>
-            <WrapperHeader>Đổi mật khẩu</WrapperHeader>
+            <br />
+            <WrapperHeader style={{ marginLeft: '385px'}}>Đổi mật khẩu</WrapperHeader>
+    
             <Loading isLoading={isLoading}>
-                <WrapperContentProfile>
+            <WrapperContentProfile style={{  width: '500px',display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <WrapperInput>
                         <WrapperLabel htmlFor="name">Name</WrapperLabel>
                         <InputForm style={{ width: '300px' }} id="name" value={name} onChange={handleOnchangeName} />
@@ -101,19 +103,21 @@ const DoiMatKhau = () => {
                     <WrapperInput>
                         <WrapperLabel htmlFor="confirmPassword">Nhập lại mật khẩu mới</WrapperLabel>
                         <InputForm style={{ width: '300px' }} id="confirmPassword" type="password" value={confirmPassword} onChange={handleOnchangeconfirmPassword} />
-                        <ButtonComponent
+                      
+                    </WrapperInput>
+                    <ButtonComponent
                             onClick={handleUpdate}
                             size={40}
                             styleButton={{
                                 height: '30px',
                                 width: 'fit-content',
                                 borderRadius: '4px',
-                                padding: '2px 6px 6px'
+                                padding: '2px 6px 6px',
+                                marginLeft: '50px', 
                             }}
                             textbutton={'Cập nhật'}
                             styleTextButton={{ color: 'rgb(26, 148, 255)', fontSize: '15px', fontWeight: '700' }}
                         ></ButtonComponent>
-                    </WrapperInput>
                 </WrapperContentProfile>
             </Loading>
         </div>

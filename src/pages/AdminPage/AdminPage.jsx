@@ -57,6 +57,7 @@ import ThongKeBaoCao from '../ChiHuyDieuHanh/ThongKeNhanLuc/ThongKeBaoCao';
 import ThongKeTai from '../ChiHuyDieuHanh/ThongKeTai/ThongKeTai';
 import HocVi from '../QuanLyDanhMuc/ToChucNhanSu/HocVi';
 import BaoCaoNhanhBienCheTong from '../BaoCaoThongKe/BaoCaoNhanhBienCheTong'
+import BaoCaoNhanhQuanHamTong from '../BaoCaoThongKe/BaoCaoNhanhQuanHam/BaoCaoNhanhQuanHamTong';
 
 
 const AdminPage = () => {
@@ -91,7 +92,7 @@ const AdminPage = () => {
   console.log('combinedData:', combinedData);
   const managementChildren = [
     getItem('Đổi mật khẩu', 'changepassword', <LockOutlined />),
-    getItem('Tham số hệ thống', 'systemparams', <AppstoreAddOutlined />),
+    getItem('Quản lý tài khoản', 'systemparams', <AppstoreAddOutlined />),
   ];
   const managementChildren2 = [];
   if (combinedData.includes("EVERYONE")) {
@@ -481,6 +482,11 @@ const AdminPage = () => {
 
           <BaoCaoNhanhBienCheTong />
         )
+      case 'baocaocapbac':
+          return (
+  
+            <BaoCaoNhanhQuanHamTong />
+          )  
       default:
         return <></>
     }
