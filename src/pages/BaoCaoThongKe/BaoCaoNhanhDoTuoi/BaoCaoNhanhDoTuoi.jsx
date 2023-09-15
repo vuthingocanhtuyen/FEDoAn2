@@ -16,11 +16,12 @@ import * as DonViService from '../../../services/DonViService'
 import { useIsFetching, useQuery, useQueryClient } from '@tanstack/react-query'
 import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 
-const ThongKeQuanHam = ({handleTreeNodeClick,treeNodeClickedId }) => {
+const BaoCaoNhanhDoTuoi = ({handleTreeNodeClick,treeNodeClickedId }) => {
     const [currentUserDonVi, setCurrentUserDonVi] = useState(null);
     const [data, setData] = useState([]);
+    const [showTotal, setShowTotal] = useState(false);
     const [isLoading, setIsLoading] = useState(false)
-    const [quanHamData, setHocViData] = useState([]);
+    const [doTuoiData, setHocViData] = useState([]);
     const user = useSelector((state) => state?.user)
     const searchInput = useRef(null);
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -92,13 +93,11 @@ const ThongKeQuanHam = ({handleTreeNodeClick,treeNodeClickedId }) => {
         },
     });
     useEffect(() => {
-      
       fetchDonViData(); // Gọi hàm fetchDonViData khi treeNodeClickedId thay đổi
-      
-      }, [treeNodeClickedId]);
+    }, [treeNodeClickedId]);
     useEffect(() => {
-    fetchQuanHamData(); // Gọi hàm fetchDonViData khi treeNodeClickedId thay đổi
-    }, [currentUserDonVi]);
+    fetchDoTuoiData(); // Gọi hàm fetchDonViData khi treeNodeClickedId thay đổi
+}, [currentUserDonVi]);
     const fetchDonViData = async () => {
       
       if (!treeNodeClickedId) {
@@ -115,31 +114,26 @@ const ThongKeQuanHam = ({handleTreeNodeClick,treeNodeClickedId }) => {
         return [];
       }
     };
-    const fetchQuanHamData = async () => {
+    const fetchDoTuoiData = async () => {
         if (!currentUserDonVi) {
             return []; // Trả về một mảng trống nếu treeNodeClickedId không có giá trị
           }
         try {
-          console.log("fetchQuanHamData"+currentUserDonVi);
+          console.log("fetchDoTuoiData"+currentUserDonVi);
           setIsLoading(true);
-          const quanHamData = await DonViService.getQuanHamfromcode(currentUserDonVi);
+          const doTuoiData = await DonViService.getDoTuoifromcode(currentUserDonVi);
           setIsLoading(false);
-          console.log(quanHamData);
-          const processedData = quanHamData.data.map((item, index) => ({
+          console.log(doTuoiData);
+          const processedData = doTuoiData.data.map((item, index) => ({
             key: index,
             TenDonVi: item.donViCon.name,
-            ThieuUy: item.quanHamCounts[0].SoLuong,
-            TrungUy: item.quanHamCounts[1].SoLuong,
-            ThuongUy: item.quanHamCounts[2].SoLuong,
-            DaiUy: item.quanHamCounts[3].SoLuong,
-            ThieuTa: item.quanHamCounts[4].SoLuong,
-            TrungTa: item.quanHamCounts[5].SoLuong,
-            ThuongTa: item.quanHamCounts[6].SoLuong,
-            DaiTa: item.quanHamCounts[7].SoLuong,
-            ThieuTuong: item.quanHamCounts[8].SoLuong,
-            TrungTuong: item.quanHamCounts[9].SoLuong,
-            ThuongTuong: item.quanHamCounts[10].SoLuong,
-            DaiTuong: item.quanHamCounts[11].SoLuong,
+            dotuoi2029: item.quanHamCounts.dotuoi2029,
+            dotuoi3039: item.quanHamCounts.dotuoi3039,
+            dotuoi4044: item.quanHamCounts.dotuoi4044,
+            dotuoi4549: item.quanHamCounts.dotuoi4549,
+            dotuoi5054: item.quanHamCounts.dotuoi5054,
+            dotuoi5560: item.quanHamCounts.dotuoi5560,
+            dotuoi60: item.quanHamCounts.dotuoi60,
           }));
     
           setData(processedData);
@@ -149,112 +143,77 @@ const ThongKeQuanHam = ({handleTreeNodeClick,treeNodeClickedId }) => {
           return [];
         }
       };
-      const [showTotal, setShowTotal] = useState(false);
-
-    useEffect(() => {
-    if (data.length > 0 && !showTotal) {
-        let sumThieuUy = data.reduce((acc, item) => acc + item.ThieuUy, 0);
-        let sumTrungUy = data.reduce((acc, item) => acc + item.TrungUy, 0);
-        let sumThuongUy = data.reduce((acc, item) => acc + item.ThuongUy, 0);
-        let sumDaiUy = data.reduce((acc, item) => acc + item.DaiUy, 0);
-        let sumThieuTa = data.reduce((acc, item) => acc + item.ThieuTa, 0);
-        let sumTrungTa = data.reduce((acc, item) => acc + item.TrungTa, 0);
-        let sumThuongTa = data.reduce((acc, item) => acc + item.ThuongTa, 0);
-        let sumDaiTa = data.reduce((acc, item) => acc + item.DaiTa, 0);
-        let sumThieuTuong = data.reduce((acc, item) => acc + item.ThieuTuong, 0);
-        let sumTrungTuong = data.reduce((acc, item) => acc + item.TrungTuong, 0);
-        let sumThuongTuong = data.reduce((acc, item) => acc + item.ThuongTuong, 0);
-        let sumDaiTuong = data.reduce((acc, item) => acc + item.DaiTuong, 0);
-
-        const totalRow = {
-            key: 'total',
-            TenDonVi: 'Tổng',
-            ThieuUy: sumThieuUy,
-            TrungUy: sumTrungUy,
-            ThuongUy: sumThuongUy,
-            DaiUy: sumDaiUy,
-            ThieuTa: sumThieuTa,
-            TrungTa: sumTrungTa,
-            ThuongTa: sumThuongTa,
-            DaiTa: sumDaiTa,
-            ThieuTuong: sumThieuTuong,
-            TrungTuong: sumTrungTuong,
-            ThuongTuong: sumThuongTuong,
-            DaiTuong: sumDaiTuong,
-        };
-
-        setData([...data, totalRow]);
-        setShowTotal(true);
-    }
+      useEffect(() => {
+        if (data.length > 0 && !showTotal) {
+            let sumDotuoi2029 = data.reduce((acc, item) => acc + item.dotuoi2029, 0);
+            let sumDotuoi3039 = data.reduce((acc, item) => acc + item.dotuoi3039, 0);
+            let sumDotuoi4044 = data.reduce((acc, item) => acc + item.dotuoi4044, 0);
+            let sumDotuoi4549 = data.reduce((acc, item) => acc + item.dotuoi4549, 0);
+            let sumDotuoi5054 = data.reduce((acc, item) => acc + item.dotuoi5054, 0);
+            let sumDotuoi5560 = data.reduce((acc, item) => acc + item.dotuoi5560, 0);
+            let sumDotuoi60 = data.reduce((acc, item) => acc + item.dotuoi60, 0);
+    
+            const totalRow = {
+                key: 'total',
+                TenDonVi: 'Tổng',
+                dotuoi2029: sumDotuoi2029,
+                dotuoi3039: sumDotuoi3039,
+                dotuoi4044: sumDotuoi4044,
+                dotuoi4549: sumDotuoi4549,
+                dotuoi5054: sumDotuoi5054,
+                dotuoi5560: sumDotuoi5560,
+                dotuoi60: sumDotuoi60,
+            };
+    
+            setData([...data, totalRow]);
+            setShowTotal(true);
+        }
     }, [data, showTotal]);
-      const columns = [
+    
+    const columns = [
         {
-          title: 'Tên Đơn Vị',
-          dataIndex: 'TenDonVi',
-          key: 'TenDonVi',
-          ...getColumnSearchProps('TenDonVi')
+            title: 'Tên Đơn Vị',
+            dataIndex: 'TenDonVi',
+            key: 'TenDonVi',
+            ...getColumnSearchProps('TenDonVi')
         },
         {
-          title: 'Thiếu úy',
-          dataIndex: 'ThieuUy',
-          key: 'ThieuUy',
+            title: 'Độ tuổi dưới 29',
+            dataIndex: 'dotuoi2029',
+            key: 'dotuoi2029',
         },
         {
-          title: 'Trung úy',
-          dataIndex: 'TrungUy',
-          key: 'TrungUy',
+            title: 'Độ tuổi 30-39',
+            dataIndex: 'dotuoi3039',
+            key: 'dotuoi3039',
         },
         {
-          title: 'Thượng úy',
-          dataIndex: 'ThuongUy',
-          key: 'ThuongUy',
+            title: 'Độ tuổi 40-44',
+            dataIndex: 'dotuoi4044',
+            key: 'dotuoi4044',
         },
         {
-          title: 'Đại úy',
-          dataIndex: 'DaiUy',
-          key: 'DaiUy',
+            title: 'Độ tuổi 45-49',
+            dataIndex: 'dotuoi4549',
+            key: 'dotuoi4549',
         },
         {
-          title: 'Thiếu tá',
-          dataIndex: 'ThieuTa',
-          key: 'ThieuTa',
+            title: 'Độ tuổi 50-54',
+            dataIndex: 'dotuoi5054',
+            key: 'dotuoi5054',
         },
         {
-          title: 'Trung tá',
-          dataIndex: 'TrungTa',
-          key: 'TrungTa',
+            title: 'Độ tuổi 55-60',
+            dataIndex: 'dotuoi5560',
+            key: 'dotuoi5560',
         },
         {
-          title: 'Thượng tá',
-          dataIndex: 'ThuongTa',
-          key: 'ThuongTa',
+            title: 'Độ tuổi trên 60',
+            dataIndex: 'dotuoi60',
+            key: 'dotuoi60',
         },
-        {
-          title: 'Đại tá',
-          dataIndex: 'DaiTa',
-          key: 'DaiTa',
-        },
-        {
-          title: 'Thiếu tướng',
-          dataIndex: 'ThieuTuong',
-          key: 'ThieuTuong',
-        },
-        {
-          title: 'Trung tướng',
-          dataIndex: 'TrungTuong',
-          key: 'TrungTuong',
-        },
-        {
-          title: 'Thượng tướng',
-          dataIndex: 'ThuongTuong',
-          key: 'ThuongTuong',
-        },
-        {
-          title: 'Đại tướng',
-          dataIndex: 'DaiTuong',
-          key: 'DaiTuong',
-        },
-      ];
+    ];
+    
       return (
         <div>
             <TableComponent data={data} columns={columns} />
@@ -262,4 +221,4 @@ const ThongKeQuanHam = ({handleTreeNodeClick,treeNodeClickedId }) => {
     );
     };
     
-    export default ThongKeQuanHam;
+    export default BaoCaoNhanhDoTuoi;

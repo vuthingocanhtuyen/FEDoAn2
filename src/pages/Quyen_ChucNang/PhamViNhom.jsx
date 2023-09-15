@@ -506,7 +506,7 @@ const dataTable = admingroups && admingroups.data
                         <Form.Item
                             label="Chức vụ"
                             name="leveltitlelist"
-                            rules={[{ required: true, message: 'Please input your leveltitle!' }]}
+                            // rules={[{ required: true, message: 'Please input your leveltitle!' }]}
                         >
                             <InputComponent value={stateAdminGroup['leveltitlelist']} onChange={handleOnchange} name="leveltitlelist" />
                         </Form.Item>

@@ -1,27 +1,27 @@
 import { Button, Form, Space, Select } from 'antd'
 import React from 'react'
 
-import TableComponent from '../../components/TableComponent/TableComponent'
-import InputComponent from '../../components/InputComponent/InputComponent'
+import TableComponent from '../../../components/TableComponent/TableComponent'
+import InputComponent from '../../../components/InputComponent/InputComponent'
 import { Table } from 'antd';
 
-import { getBase64, renderOptions } from '../../utils'
+import { getBase64, renderOptions } from '../../../utils'
 import { useEffect } from 'react'
-import * as message from '../../components/Message/Message'
+import * as message from '../../../components/Message/Message'
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useRef } from 'react'
-import { useMutationHooks } from '../../hooks/useMutationHook'
-import * as DonViService from '../../services/DonViService'
+import { useMutationHooks } from '../../../hooks/useMutationHook'
+import * as DonViService from '../../../services/DonViService'
 import { useIsFetching, useQuery, useQueryClient } from '@tanstack/react-query'
 import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 
-const ThongKeHocVi = ({handleTreeNodeClick,treeNodeClickedId }) => {
+const BaoCaoNhanhCDKH = ({handleTreeNodeClick,treeNodeClickedId }) => {
     const [currentUserDonVi, setCurrentUserDonVi] = useState(null);
     const [data, setData] = useState([]);
+    const [showTotal, setShowTotal] = useState(false);
     const [isLoading, setIsLoading] = useState(false)
     const [hocViData, setHocViData] = useState([]);
-    const [showTotal, setShowTotal] = useState(false);
     const user = useSelector((state) => state?.user)
     const searchInput = useRef(null);
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -94,10 +94,10 @@ const ThongKeHocVi = ({handleTreeNodeClick,treeNodeClickedId }) => {
     });
     useEffect(() => {
       fetchDonViData(); // Gọi hàm fetchDonViData khi treeNodeClickedId thay đổi
-    }, [treeNodeClickedId]);
-    useEffect(() => {
-      fetchSoLuongData(); // Gọi hàm fetchDonViData khi treeNodeClickedId thay đổi
-    }, [currentUserDonVi]);
+  }, [treeNodeClickedId]);
+  useEffect(() => {
+    fetchHocViData(); // Gọi hàm fetchDonViData khi treeNodeClickedId thay đổi
+}, [currentUserDonVi]);
     const fetchDonViData = async () => {
       
       if (!treeNodeClickedId) {
@@ -108,70 +108,102 @@ const ThongKeHocVi = ({handleTreeNodeClick,treeNodeClickedId }) => {
         
         const donviCode = await DonViService.getDonVifromObjectId(treeNodeClickedId);
         setCurrentUserDonVi(donviCode);
-        console.log(donviCode);
+       
       } catch (error) {
         console.error(error);
         return [];
       }
     };
-    const fetchSoLuongData = async () => {
-      if (!currentUserDonVi) {
-        return []; 
-      }
+    const fetchHocViData = async () => {
+        if (!currentUserDonVi) {
+            return []; // Trả về một mảng trống nếu treeNodeClickedId không có giá trị
+          }
+        try {
+          
+          setIsLoading(true);
+          const hocViData = await DonViService.getHocVifromcode(currentUserDonVi);
+          setIsLoading(false);
+          
+          const processedData = hocViData.data.map((item, index) => ({
+            key: index,
+            TenDonVi: item.donViCon.name,
+            TienSyKhoaHoc: item.hocViCounts[0].SoLuong,
+            TienSy: item.hocViCounts[1].SoLuong,
+            ThacSy: item.hocViCounts[2].SoLuong,
+            KySu: item.hocViCounts[3].SoLuong,
+            CuNhan: item.hocViCounts[4].SoLuong,
+            Khac: item.hocViCounts[5].SoLuong,
+          }));
     
-      try {
-        setIsLoading(true);
-        const soLuongData = await DonViService.getSoLuongfromcode(currentUserDonVi);
-        setIsLoading(false);
+          setData(processedData);
+          
+        } catch (error) {
+          console.error(error);
+          return [];
+        }
+      };
+      useEffect(() => {
+        if (data.length > 0 && !showTotal) {
+            let sumTienSyKhoaHoc = data.reduce((acc, item) => acc + item.TienSyKhoaHoc, 0);
+            let sumTienSy = data.reduce((acc, item) => acc + item.TienSy, 0);
+            let sumThacSy = data.reduce((acc, item) => acc + item.ThacSy, 0);
+            let sumKySu = data.reduce((acc, item) => acc + item.KySu, 0);
+            let sumCuNhan = data.reduce((acc, item) => acc + item.CuNhan, 0);
+            let sumKhac = data.reduce((acc, item) => acc + item.Khac, 0);
     
-        const processedData = soLuongData.data.map((item, index) => ({
-          key: index,
-          TenDonVi: item.donViCon.name,
-          SoLuongQuanNhan: item.soLuongCounts.soLuongQuanNhan,
-          BienChe: item.soLuongCounts.bienche,
-        }));
+            const totalRow = {
+                key: 'total',
+                TenDonVi: 'Tổng',
+                TienSyKhoaHoc: sumTienSyKhoaHoc,
+                TienSy: sumTienSy,
+                ThacSy: sumThacSy,
+                KySu: sumKySu,
+                CuNhan: sumCuNhan,
+                Khac: sumKhac,
+            };
     
-        setData(processedData);
-      } catch (error) {
-        console.error(error);
-        return [];
-      }
-    };
-    useEffect(() => {
-      if (data.length > 0 && !showTotal) {
-          let sumSoLuongQuanNhan = data.reduce((acc, item) => acc + item.SoLuongQuanNhan, 0);
-          let sumBienChe = data.reduce((acc, item) => acc + item.BienChe, 0);
-  
-          const totalRow = {
-              key: 'total',
-              TenDonVi: 'Tổng',
-              SoLuongQuanNhan: sumSoLuongQuanNhan,
-              BienChe: sumBienChe,
-          };
-  
-          setData([...data, totalRow]);
-          setShowTotal(true);
-      }
-  }, [data, showTotal]);
-    const columns = [
-      {
-        title: 'Tên Đơn Vị',
-        dataIndex: 'TenDonVi',
-        key: 'TenDonVi',
-        ...getColumnSearchProps('TenDonVi')
-      },
-      {
-        title: 'Số lượng Quân Nhân',
-        dataIndex: 'SoLuongQuanNhan',
-        key: 'SoLuongQuanNhan',
-      },
-      {
-        title: 'Biên Chế',
-        dataIndex: 'BienChe',
-        key: 'BienChe',
-      },
-    ];
-    
+            setData([...data, totalRow]);
+            setShowTotal(true);
+        }
+    }, [data, showTotal]);
+      const columns = [
+        {
+          title: 'Tên Đơn Vị',
+          dataIndex: 'TenDonVi',
+          key: 'TenDonVi',
+          ...getColumnSearchProps('TenDonVi')
+        },
+        {
+          title: 'Tiến sỹ khoa học',
+          dataIndex: 'TienSyKhoaHoc',
+          key: 'TienSyKhoaHoc',
+        },
+        {
+          title: 'Tiến sỹ',
+          dataIndex: 'TienSy',
+          key: 'TienSy',
+        },
+        {
+          title: 'Thạc sỹ',
+          dataIndex: 'ThacSy',
+          key: 'ThacSy',
+        },
+        {
+          title: 'Kỹ sư',
+          dataIndex: 'KySu',
+          key: 'KySu',
+        },
+        {
+          title: 'Cử nhân',
+          dataIndex: 'CuNhan',
+          key: 'CuNhan',
+        },
+        {
+          title: 'Khác',
+          dataIndex: 'Khac',
+          key: 'Khac',
+        },
+      ];
       return (
         <div>
             <TableComponent data={data} columns={columns} />
@@ -179,4 +211,4 @@ const ThongKeHocVi = ({handleTreeNodeClick,treeNodeClickedId }) => {
     );
     };
     
-    export default ThongKeHocVi;
+    export default BaoCaoNhanhCDKH;

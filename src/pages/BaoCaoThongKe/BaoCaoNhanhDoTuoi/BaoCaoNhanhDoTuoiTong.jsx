@@ -10,17 +10,17 @@ import ComboBoxComponent from '../../../components/ComboBoxComponent/ComboBoxCom
 import { orderContant } from '../../../contant'
 import { useState } from 'react'
 import FreeDonVi from '../../QuanLyDonVi/DanhMucDonVi/FreeDonVi'
-import BaoCaoNhanhQuanHam from './BaoCaoNhanhQuanHam'
+import BaoCaoNhanhDoTuoi from './BaoCaoNhanhDoTuoi'
 
 import { WrapperContentProfileFree } from '../style'
-import DemoChartComponent from '../DemoChartComponent/DemoChartComponent'
+import ChartDoTuoi from './ChartDoTuoi'
 
 
 
 
 
 
-const BaoCaoNhanhQuanHamTong = () => {
+const BaoCaoNhanhDoTuoiTong = () => {
     const user = useSelector((state) => state?.user)
 
 
@@ -52,10 +52,13 @@ const BaoCaoNhanhQuanHamTong = () => {
                     <FreeDonVi handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId}/>
                 </WrapperContentProfileFree>
             </div>
-                <div style={{ flex: 2, maxWidth: '1800px', background: 'back', padding: '5px', textAlign: 'left' }}>
-                    <h2>Cấp bậc quân hàm</h2>
-                    <BaoCaoNhanhQuanHam handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId}/>
+            <div style={{ flex: 2, maxWidth: '1800px', background: 'back', padding: '5px', textAlign: 'left' }}>
+                    <h2>Độ tuổi</h2>
+                    <BaoCaoNhanhDoTuoi handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId}/>
             </div>
+            <div style={{ flex: 1, maxWidth: '1200px', background: '#fff', padding: '5px' }}>
+            <ChartDoTuoi handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId}/>
+        </div>
             
         </div>
         
@@ -64,4 +67,4 @@ const BaoCaoNhanhQuanHamTong = () => {
     )
 }
 
-export default BaoCaoNhanhQuanHamTong
+export default BaoCaoNhanhDoTuoiTong

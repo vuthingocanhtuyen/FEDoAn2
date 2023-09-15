@@ -58,6 +58,8 @@ import ThongKeTai from '../ChiHuyDieuHanh/ThongKeTai/ThongKeTai';
 import HocVi from '../QuanLyDanhMuc/ToChucNhanSu/HocVi';
 import BaoCaoNhanhBienCheTong from '../BaoCaoThongKe/BaoCaoNhanhBienCheTong'
 import BaoCaoNhanhQuanHamTong from '../BaoCaoThongKe/BaoCaoNhanhQuanHam/BaoCaoNhanhQuanHamTong';
+import BaoCaoNhanhCDKHTong from '../BaoCaoThongKe/BaoCaoNhanhCDKH/BaoCaoNhanhCDKHTong';
+import BaoCaoNhanhDoTuoiTong from '../BaoCaoThongKe/BaoCaoNhanhDoTuoi/BaoCaoNhanhDoTuoiTong';
 
 
 const AdminPage = () => {
@@ -486,7 +488,18 @@ const AdminPage = () => {
           return (
   
             <BaoCaoNhanhQuanHamTong />
-          )  
+          )
+      case 'baocaocdkh':
+          return (
+    
+            <BaoCaoNhanhCDKHTong />
+          )
+      case 'baocaotuoi':
+          return (
+      
+            <BaoCaoNhanhDoTuoiTong />
+          )          
+            
       default:
         return <></>
     }

@@ -171,7 +171,7 @@ const LyLich = ({ idQuanNhan }) => {
                     </WrapperInput>
 
                     <WrapperInput>
-                        <WrapperLabel htmlFor="HoatDong">Trạng thái</WrapperLabel>
+                        <WrapperLabel htmlFor="HoatDong">Chức vụ</WrapperLabel>
                         <InputForm style={{ width: '500px' }} id="HoatDong" value={HoatDong} readOnly />
                         
                     </WrapperInput>
