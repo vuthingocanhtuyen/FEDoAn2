@@ -35,7 +35,7 @@ const LyLich = ({ idQuanNhan }) => {
     const [Email, setEmail] = useState('')
     const [HoatDong, setHoatDong] = useState('')
     const [LoaiQN, setLoaiqn] = useState('')
-    const [donvi, setDonvi] = useState('')
+    const [DonVi, setDonvi] = useState('')
 
     const mutation = useMutationHooks(
         (data) => {
@@ -69,7 +69,8 @@ const LyLich = ({ idQuanNhan }) => {
     useEffect(() => {
         if (isSuccess) {
             message.success()
-            handleGetDetailsUser(user?.id, user?.access_token)
+            handleUpdate()
+            //  handleGetDetailsUser(user?.id, user?.access_token)
         } else if (isError) {
             message.error()
         }
@@ -146,11 +147,12 @@ const LyLich = ({ idQuanNhan }) => {
         console.log(id)
     }, [id])
     const handleUpdate = () => {
-        mutation.mutate({ id: quannhanDetails?._id, Email, HoTen, NgaySinh, HoatDong, LoaiQN, SoDienThoai, GioiTinh, DiaChi, QueQuan, access_token: user?.access_token }, {
+        mutation.mutate({ id: quannhanDetails?._id, Email, HoTen, NgaySinh, HoatDong, LoaiQN, SoDienThoai, GioiTinh, DiaChi, QueQuan, DonVi, access_token: user?.access_token }, {
             onSettled: () => {
                 quannhanDetails.refetch()
             }
-        })
+        }
+        )
 
 
     }
@@ -249,7 +251,7 @@ const LyLich = ({ idQuanNhan }) => {
 
                     <WrapperInput>
                         <WrapperLabel htmlFor="DonVi">Đơn vị</WrapperLabel>
-                        <InputForm style={{ width: '500px' }} id="DonVi" value={donvi} onChange={handleOnchangeDonVi} />
+                        <InputForm style={{ width: '500px' }} id="DonVi" value={DonVi} onChange={handleOnchangeDonVi} />
                         <ButtonComponent
                             onClick={handleUpdate}
                             size={40}
@@ -312,6 +314,9 @@ const LyLich = ({ idQuanNhan }) => {
                             styleTextButton={{ color: 'rgb(26, 148, 255)', fontSize: '15px', fontWeight: '700' }}
                         ></ButtonComponent>
                     </WrapperInput>
+
+
+
                     <WrapperInput>
                         <WrapperLabel htmlFor="Email">Email</WrapperLabel>
                         <InputForm style={{ width: '500px' }} id="Email" value={Email} onChange={handleOnchangeEmail} />

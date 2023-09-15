@@ -1,19 +1,22 @@
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Form, Table, Button, Space } from 'antd';
+import { Form, Select, Button, Space } from 'antd';
 import { useSelector } from 'react-redux';
 import * as message from '../../../components/Message/Message'
-import { getBase64 } from '../../../utils'
+import { renderOptions } from '../../../utils'
 import Loading from '../../../components/LoadingComponent/Loading'
 import InputComponent from '../../../components/InputComponent/InputComponent'
 import { useMutationHooks } from '../../../hooks/useMutationHook'
 import * as QTCDCMKTService from '../../../services/QTCDCMKTService';
+import * as DanhMucCDCMKTService from '../../../services/DanhMucCDCMKTService';
 import { WrapperHeader } from './style'
+import CheckboxComponent from '../../../components/CheckBox/CheckBox'
 import { useQuery } from '@tanstack/react-query'
 import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 import ModalComponent from '../../../components/ModalComponent/ModalComponent'
 import DrawerComponent from '../../../components/DrawerComponent/DrawerComponent'
 import TableComponent from '../../../components/TableComponent/TableComponent';
+import moment from 'moment';
 const QTCDCMKT = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,16 +47,16 @@ const QTCDCMKT = () => {
                 code = 123,
                 QuyetDinh,
                 NgayQuyetDinh,
-                CDCMKT,
-                CaoNhat,
+                CDCMKT, CaoNhat,
+
                 GhiChu } = data
             const res = QTCDCMKTService.createQTCDCMKT({
                 QuanNhanId,
                 code,
                 QuyetDinh,
                 NgayQuyetDinh,
-                CDCMKT,
-                CaoNhat,
+                CDCMKT, CaoNhat,
+
                 GhiChu
             })
             console.log("data create qtct:", res.data)
@@ -295,7 +298,43 @@ const QTCDCMKT = () => {
     console.log("idquannhancongtac:", quannhanId)
 
 
+    const CheckboxAction = () => {
+        return (
+            <div>
+                <CheckboxComponent style={{ width: '25px' }} checked={stateQTCDCMKTDetails.CaoNhat === '1'} onChange={handleChangeCheckCaoNhat}
+                />
+            </div>
+        );
+    }
 
+    function getCaoNhatCheckBox(statusValue) {
+        switch (statusValue) {
+            case 0:
+                return (
+                    <div>
+                        <CheckboxComponent style={{ width: '25px' }} />
+                    </div>
+                );
+
+            case 1:
+                return (
+                    <div>
+                        <CheckboxComponent style={{ width: '25px' }}
+                            checked={true}
+                            onChange={handleChangeCheckCaoNhat}
+                        />
+
+                    </div>
+                );
+
+            default:
+                return (
+                    <div>
+                        <CheckboxComponent style={{ width: '25px' }} />
+                    </div>
+                );
+        }
+    }
     const columns = [
         {
             title: 'STT',
@@ -322,7 +361,7 @@ const QTCDCMKT = () => {
         {
             title: 'Cao nhất',
             dataIndex: 'CaoNhat',
-            key: 'CaoNhat',
+            render: (text, record) => getCaoNhatCheckBox(record.CaoNhat)
         },
 
         {
@@ -454,9 +493,16 @@ const QTCDCMKT = () => {
             }
         })
     }
-
+    function convertDateToString(date) {
+        // Sử dụng Moment.js để chuyển đổi đối tượng Date thành chuỗi theo định dạng mong muốn
+        return moment(date).format('DD/MM/YYYY');
+    }
     const dataTable = qtcdcmktDetails?.data?.length && qtcdcmktDetails?.data?.map((qtcdcmktDetails) => {
-        return { ...qtcdcmktDetails, key: qtcdcmktDetails._id }
+        return {
+            ...qtcdcmktDetails,
+            key: qtcdcmktDetails._id,
+            NgayQuyetDinh: convertDateToString(qtcdcmktDetails.NgayQuyetDinh)
+        }
     })
     useEffect(() => {
         if (isSuccess && data?.status === 'OK') {
@@ -466,6 +512,46 @@ const QTCDCMKT = () => {
             message.error()
         }
     }, [isSuccess])
+
+
+    const fetchAllCDCMKT = async () => {
+        const res = await DanhMucCDCMKTService.getAllType()
+        return res
+    }
+
+    const allCDCMKT = useQuery({ queryKey: ['all-cdcmkt'], queryFn: fetchAllCDCMKT })
+    const handleChangeSelect1 = (value) => {
+        setStateQTCDCMKT({
+            ...stateQTCDCMKT,
+            CDCMKT: value
+        })
+        // console.log(stateQuanNhan)
+    }
+    const handleChangeSelectDetails = (value) => {
+        setStateQTCDCMKTDetails({
+            ...stateQTCDCMKTDetails,
+            CDCMKT: value
+        })
+        // console.log(stateQuanNhan)
+    }
+    const handleChangeCheckCaoNhat = (e) => {
+        const checkedValue = e.target.checked ? 1 : 0;
+        console.log("e: ", e.target.name, e.target.value)
+        setStateQTCDCMKT({
+            ...stateQTCDCMKT,
+            CaoNhat: checkedValue,
+            [e.target.name]: e.target.value
+        });
+    };
+
+
+    const handleChangeCheckCaoNhatDetail = (e) => {
+        const checkedValue = e.target.checked ? 1 : 0;
+        setStateQTCDCMKTDetails({
+            ...stateQTCDCMKTDetails,
+            CaoNhat: checkedValue,
+        });
+    };
 
     return (
         <div>
@@ -512,7 +598,7 @@ const QTCDCMKT = () => {
                                 style={{ width: '100%' }}
 
                                 value={stateQTCDCMKT['QuyetDinh']}
-                                onChange={handleOnchange}
+                                onChange={handleChangeCheckCaoNhat}
                                 name="QuyetDinh"
                             />
                         </Form.Item>
@@ -526,7 +612,7 @@ const QTCDCMKT = () => {
                                 style={{ width: '100%' }}
 
                                 value={stateQTCDCMKT['NgayQuyetDinh']}
-                                onChange={handleOnchange}
+                                onChange={handleChangeCheckCaoNhat}
                                 name="NgayQuyetDinh"
                             />
                         </Form.Item>
@@ -536,29 +622,43 @@ const QTCDCMKT = () => {
                             name="CDCMKT"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                            <InputComponent
+                            {/* <InputComponent
                                 style={{ width: '100%' }}
 
                                 value={stateQTCDCMKT['CDCMKT']}
                                 onChange={handleOnchange}
                                 name="CDCMKT"
+                            /> */}
+                            <Select
+                                name="CDCMKT"
+                                //value={stateTaiHuongDan['HinhThucHuongDan']}
+
+                                onChange={handleChangeSelect1}
+                                options={renderOptions(allCDCMKT?.data?.data)}
                             />
                         </Form.Item>
+
 
                         <Form.Item
                             label="Cao nhất"
                             name="CaoNhat"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
+                        //   rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                            <InputComponent
+                            {/* <InputComponent
                                 style={{ width: '100%' }}
 
                                 value={stateQTCDCMKT['CaoNhat']}
                                 onChange={handleOnchange}
                                 name="CaoNhat"
+                            /> */}
+                            <CheckboxComponent
+                                style={{ width: '25px' }}
+                                value={stateQTCDCMKT['CaoNhat']}
+                                checked={stateQTCDCMKT['CaoNhat'] === 1}
+                                onChange={handleChangeCheckCaoNhat}
+
                             />
                         </Form.Item>
-
                         <Form.Item
                             label="Ghi chú"
                             name="GhiChu"
@@ -568,7 +668,7 @@ const QTCDCMKT = () => {
                                 style={{ width: '100%' }}
 
                                 value={stateQTCDCMKT['GhiChu']}
-                                onChange={handleOnchange}
+                                onChange={handleChangeCheckCaoNhat}
                                 name="GhiChu"
                             />
                         </Form.Item>
@@ -614,15 +714,35 @@ const QTCDCMKT = () => {
                             name="CDCMKT"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                            <InputComponent value={stateQTCDCMKTDetails['CDCMKT']} onChange={handleOnchangeDetails} name="CDCMKT" />
+                            {/* <InputComponent value={stateQTCDCMKTDetails['CDCMKT']} onChange={handleOnchangeDetails} name="CDCMKT" /> */}
+                            <Select
+                                name="CDCMKT"
+                                //value={stateTaiHuongDan['HinhThucHuongDan']}
+
+                                onChange={handleChangeSelectDetails}
+                                options={renderOptions(allCDCMKT?.data?.data)}
+                            />
+
                         </Form.Item>
 
                         <Form.Item
                             label="Cao nhất"
                             name="CaoNhat"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
+                        //   rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                            <InputComponent value={stateQTCDCMKTDetails['CaoNhat']} onChange={handleOnchangeDetails} name="CaoNhat" />
+                            {/* <InputComponent
+                                style={{ width: '100%' }}
+
+                                value={stateQTCDCMKTDetails['CaoNhat']}
+                                onChange={handleOnchangeDetails}
+                                name="CaoNhat"
+                            /> */}
+                            <CheckboxComponent
+                                style={{ width: '25px' }}
+                                value={stateQTCDCMKTDetails['CaoNhat']}
+                                checked={stateQTCDCMKTDetails['CaoNhat'] === 1}
+                                onChange={handleChangeCheckCaoNhatDetail}
+                            />
                         </Form.Item>
 
 

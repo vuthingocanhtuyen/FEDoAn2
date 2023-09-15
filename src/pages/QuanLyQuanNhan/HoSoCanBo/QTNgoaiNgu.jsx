@@ -10,17 +10,20 @@ import { useMutationHooks } from '../../../hooks/useMutationHook'
 import * as NgoaiNguService from '../../../services/NgoaiNguService';
 import { WrapperHeader } from './style'
 import { useQuery } from '@tanstack/react-query'
-import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, SearchOutlined, CheckOutlined, WarningOutlined } from '@ant-design/icons'
 import ModalComponent from '../../../components/ModalComponent/ModalComponent'
 import DrawerComponent from '../../../components/DrawerComponent/DrawerComponent'
 import TableComponent from '../../../components/TableComponent/TableComponent';
 const NgoaiNgu = () => {
-    
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [rowSelected, setRowSelected] = useState('')
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
     const [isModalOpenDelete, setIsModalOpenDelete] = useState(false)
+
+    const [isModalOpenPheDuyet, setIsModalOpenPheDuyet] = useState(false)
+    const [isModalOpenNhapLai, setIsModalOpenNhapLai] = useState(false)
 
     const user = useSelector((state) => state?.user)
     const searchInput = useRef(null);
@@ -51,7 +54,7 @@ const NgoaiNgu = () => {
                 CapDo,
                 TuongDuong,
                 HinhThucBang,
-                TrangThai,
+                TrangThai = 0,
                 GhiChu } = data
             const res = NgoaiNguService.createNgoaiNgu({
                 QuanNhanId,
@@ -82,6 +85,29 @@ const NgoaiNgu = () => {
                 token,
                 { ...rests })
             return res
+        },
+
+    )
+    const mutationUpdateTrangThai = useMutationHooks(
+        (data) => {
+            console.log("data update:", data);
+            const { id, token, ...rests } = data;
+            const updatedData = { ...rests, TrangThai: 1 }; // Update the TrangThai attribute to 1
+            const res = NgoaiNguService.updateNgoaiNgu(id, token, updatedData);
+            return res;
+
+        },
+
+    )
+
+    const mutationUpdateNhapLai = useMutationHooks(
+        (data) => {
+            console.log("data update:", data);
+            const { id, token, ...rests } = data;
+            const updatedData = { ...rests, TrangThai: 2 }; // Update the TrangThai attribute to 1
+            const res = NgoaiNguService.updateNgoaiNgu(id, token, updatedData);
+            return res;
+
         },
 
     )
@@ -167,7 +193,7 @@ const NgoaiNgu = () => {
     const handleDelteManyNgoaiNgus = (ids) => {
         mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
             onSettled: () => {
-                qtcongtacDetails.refetch()
+                qtngonnguDetails.refetch()
             }
         })
     }
@@ -175,12 +201,14 @@ const NgoaiNgu = () => {
 
     const { data, isLoading, isSuccess, isError } = mutation
     const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
+    const { data: dataUpdatedTT, isLoading: isLoadingUpdatedTT, isSuccess: isSuccessUpdatedTT, isError: isErrorUpdatedTT } = mutationUpdateTrangThai
+    const { data: dataUpdatedNhapLai, isLoading: isLoadingUpdatedNhapLai, isSuccess: isSuccessUpdatedNhapLai, isError: isErrorUpdatedNhapLai } = mutationUpdateNhapLai
     const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDelected, isError: isErrorDeleted } = mutationDeleted
     const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDelectedMany, isError: isErrorDeletedMany } = mutationDeletedMany
 
 
     const queryNgoaiNgu = useQuery({ queryKey: ['ngoaingus'], queryFn: getAllNgoaiNgus })
-    const qtcongtacDetails = useQuery(['hosoquannhanngoaingu', quannhanId], fetchGetNgoaiNgu, { enabled: !!quannhanId })
+    const qtngonnguDetails = useQuery(['hosoquannhanngoaingu', quannhanId], fetchGetNgoaiNgu, { enabled: !!quannhanId })
 
     const { isLoading: isLoadingNgoaiNgu, data: ngoaingus } = queryNgoaiNgu
     const renderAction = () => {
@@ -188,6 +216,8 @@ const NgoaiNgu = () => {
             <div>
                 <DeleteOutlined style={{ color: 'red', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
                 <EditOutlined style={{ color: 'orange', fontSize: '30px', cursor: 'pointer' }} onClick={handleDetailsNgoaiNgu} />
+                <CheckOutlined style={{ color: 'green', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenPheDuyet(true)} />
+                <WarningOutlined style={{ color: 'blue', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenNhapLai(true)} />
             </div>
         )
     }
@@ -305,8 +335,8 @@ const NgoaiNgu = () => {
 
     //Show dữ liệu
 
-    //const { data: qtcongtacDetails } = useQuery(['hosoquannhan', quannhanId], fetchGetNgoaiNgu, { enabled: !!quannhanId })
-    //console.log("qtrinhcongtac:", qtcongtacDetails)
+    //const { data: qtngonnguDetails } = useQuery(['hosoquannhan', quannhanId], fetchGetNgoaiNgu, { enabled: !!quannhanId })
+    //console.log("qtrinhcongtac:", qtngonnguDetails)
     console.log("idquannhancongtac:", quannhanId)
 
 
@@ -377,6 +407,27 @@ const NgoaiNgu = () => {
     }, [isSuccessDelected])
 
     useEffect(() => {
+        if (isSuccessUpdatedNhapLai && dataUpdatedNhapLai?.status === 'OK') {
+            message.success()
+            handleCancelNhapLai()
+        } else if (isErrorUpdatedNhapLai) {
+            message.error()
+        }
+    }, [isSuccessUpdatedNhapLai])
+
+
+    useEffect(() => {
+        if (isSuccessUpdatedTT && dataUpdatedTT?.status === 'OK') {
+            message.success()
+            handleCancelPheDuyet()
+        } else if (isErrorUpdatedTT) {
+            message.error()
+        }
+    }, [isSuccessUpdatedTT])
+
+
+
+    useEffect(() => {
         if (isSuccessDelectedMany && dataDeletedMany?.status === 'OK') {
             message.success()
         } else if (isErrorDeletedMany) {
@@ -402,7 +453,7 @@ const NgoaiNgu = () => {
             CapDo: '',
             TuongDuong: '',
             HinhThucBang: '',
-            TrangThai: '',
+            //   TrangThai: '',
             GhiChu: '',
         })
         form.resetFields()
@@ -420,15 +471,23 @@ const NgoaiNgu = () => {
     const handleCancelDelete = () => {
         setIsModalOpenDelete(false)
     }
-
+    const handleCancelPheDuyet = () => {
+        setIsModalOpenPheDuyet(false)
+    }
+    const handleCancelNhapLai = () => {
+        setIsModalOpenNhapLai(false)
+    }
 
     const handleDeleteNgoaiNgu = () => {
         mutationDeleted.mutate({ id: rowSelected, token: user?.access_token }, {
             onSettled: () => {
-                qtcongtacDetails.refetch()
+                qtngonnguDetails.refetch()
             }
         })
     }
+
+
+
 
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -439,7 +498,7 @@ const NgoaiNgu = () => {
             CapDo: '',
             TuongDuong: '',
             HinhThucBang: '',
-            TrangThai: '',
+            //   TrangThai: '',
             GhiChu: '',
         })
         form.resetFields()
@@ -455,13 +514,13 @@ const NgoaiNgu = () => {
             CapDo: stateNgoaiNgu.CapDo,
             TuongDuong: stateNgoaiNgu.TuongDuong,
             HinhThucBang: stateNgoaiNgu.HinhThucBang,
-            TrangThai: stateNgoaiNgu.TrangThai,
+            //     TrangThai: stateNgoaiNgu.TrangThai,
             GhiChu: stateNgoaiNgu.GhiChu,
         }
         console.log("Finsh", stateNgoaiNgu)
         mutation.mutate(params, {
             onSettled: () => {
-                qtcongtacDetails.refetch()
+                qtngonnguDetails.refetch()
             }
         })
     }
@@ -489,13 +548,46 @@ const NgoaiNgu = () => {
     const onUpdateNgoaiNgu = () => {
         mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateNgoaiNguDetails }, {
             onSettled: () => {
-                qtcongtacDetails.refetch()
+                qtngonnguDetails.refetch()
             }
         })
     }
 
-    const dataTable = qtcongtacDetails?.data?.length && qtcongtacDetails?.data?.map((qtcongtacDetails) => {
-        return { ...qtcongtacDetails, key: qtcongtacDetails._id }
+    const onUpdateNgoaiNguTrangThai = () => {
+        mutationUpdateTrangThai.mutate({ id: rowSelected, token: user?.access_token, ...stateNgoaiNguDetails }, {
+            onSettled: () => {
+                qtngonnguDetails.refetch()
+            }
+        })
+    }
+
+    const onUpdateNgoaiNguNhapLai = () => {
+        mutationUpdateNhapLai.mutate({ id: rowSelected, token: user?.access_token, ...stateNgoaiNguDetails }, {
+            onSettled: () => {
+                qtngonnguDetails.refetch()
+            }
+        })
+    }
+
+    function getTrangThaiText(statusValue) {
+        switch (statusValue) {
+            case 0:
+                return 'Đang chờ phê duyệt';
+            case 1:
+                return 'Đã phê duyệt';
+            case 2:
+                return 'Đã từ chối - Nhập lại';
+            default:
+                return 'Trạng thái không hợp lệ';
+        }
+    }
+
+    const dataTable = qtngonnguDetails?.data?.length && qtngonnguDetails?.data?.map((qtngonnguDetails) => {
+        return {
+            ...qtngonnguDetails,
+            key: qtngonnguDetails._id,
+            TrangThai: getTrangThaiText(qtngonnguDetails.TrangThai)
+        }
     })
     useEffect(() => {
         if (isSuccess && data?.status === 'OK') {
@@ -516,7 +608,7 @@ const NgoaiNgu = () => {
                 {isLoading ? ( // Hiển thị thông báo đang tải
                     <div>Loading...</div>
                 ) : (
-                    // <Table dataSource={qtcongtacDetails} columns={columns} />
+                    // <Table dataSource={qtngonnguDetails} columns={columns} />
                     <TableComponent columns={columns} isLoading={isLoadingNgoaiNgu} data={dataTable} onRow={(record, rowSelected) => {
                         return {
                             onClick: event => {
@@ -625,19 +717,7 @@ const NgoaiNgu = () => {
                                 name="HinhThucBang"
                             />
                         </Form.Item>
-                        <Form.Item
-                            label="Trạng thái"
-                            name="TrangThai"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
-                        >
-                            <InputComponent
-                                style={{ width: '100%' }}
 
-                                value={stateNgoaiNgu['TrangThai']}
-                                onChange={handleOnchange}
-                                name="TrangThai"
-                            />
-                        </Form.Item>
                         <Form.Item
                             label="Ghi chú"
                             name="GhiChu"
@@ -720,20 +800,7 @@ const NgoaiNgu = () => {
                             <InputComponent value={stateNgoaiNguDetails['HinhThucBang']} onChange={handleOnchangeDetails} name="HinhThucBang" />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Trạng thái"
-                            name="TrangThai"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
-                        >
-                            <InputComponent value={stateNgoaiNguDetails['TrangThai']} onChange={handleOnchangeDetails} name="TrangThai" />
-                        </Form.Item>
-                        <Form.Item
-                            label="Ghi chú"
-                            name="GhiChu"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
-                        >
-                            <InputComponent value={stateNgoaiNguDetails['GhiChu']} onChange={handleOnchangeDetails} name="GhiChu" />
-                        </Form.Item>
+
 
                         <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
                             <Button type="primary" htmlType="submit">
@@ -744,9 +811,22 @@ const NgoaiNgu = () => {
                 </Loading>
             </DrawerComponent>
 
-            <ModalComponent title="Xóa quá trình công tác" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteNgoaiNgu}>
+            <ModalComponent title="Xóa ngôn ngữ" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteNgoaiNgu}>
                 <Loading isLoading={isLoadingDeleted}>
-                    <div>Bạn có chắc xóa quá trình công tác này không?</div>
+                    <div>Bạn có chắc xóa ngôn ngữ này không?</div>
+                </Loading>
+            </ModalComponent>
+
+
+            <ModalComponent title="Phê quyệt ngôn ngữ" open={isModalOpenPheDuyet} onCancel={handleCancelPheDuyet} onOk={onUpdateNgoaiNguTrangThai}>
+                <Loading isLoading={isLoadingUpdatedTT}>
+                    <div>Bạn có chắc phê duyệt ngôn ngữ này không?</div>
+                </Loading>
+            </ModalComponent>
+
+            <ModalComponent title="Yêu cầu nhập lại thông tin ngôn ngữ" open={isModalOpenNhapLai} onCancel={handleCancelNhapLai} onOk={onUpdateNgoaiNguNhapLai}>
+                <Loading isLoading={isLoadingUpdatedNhapLai}>
+                    <div>Bạn có chắc yêu cầu nhập lại  ngôn ngữ này không?</div>
                 </Loading>
             </ModalComponent>
 
