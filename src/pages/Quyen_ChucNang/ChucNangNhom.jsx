@@ -419,14 +419,15 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
     const handleOnchange = (e) => {
         setStatePriority({
             ...statePriority,
-            [e.target.code]: e.target.value
-        })
+            [e.target.name]: e.target.value
+        });
+        console.log(statePriority);
     }
 
     const handleOnchangeDetails = (e) => {
         setStatePriorityDetails({
             ...statePriorityDetails,
-            [e.target.code]: e.target.value
+            [e.target.name]: e.target.value
         })
     }
 

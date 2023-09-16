@@ -190,7 +190,7 @@ const ThongKeTai = () => {
 
                 <div style={{ margin: '0 auto', height: '1500px', float: 'none', padding: '50px 0px 0px 0px' }}>
                     <TaiCaNhan />
-                    {/* <TaiDonVi /> */}
+                    <TaiDonVi />
                 </div>
 
             </div>

@@ -54,6 +54,7 @@ import DieuChuyenCanBo from '../QuanLyDonVi/DieuChuyenCanBo';
 
 import TabThanhNhanTaiSan from '../QuanLyQuanNhan/HoSoCanBo/TabThanNhanTaiSan';
 import ThongKeBaoCao from '../ChiHuyDieuHanh/ThongKeNhanLuc/ThongKeBaoCao';
+import ThongKeNhanLuc from '../ChiHuyDieuHanh/ThongKeNhanLuc/ThongKeNhanLuc';
 import ThongKeTai from '../ChiHuyDieuHanh/ThongKeTai/ThongKeTai';
 import HocVi from '../QuanLyDanhMuc/ToChucNhanSu/HocVi';
 import BaoCaoNhanhBienCheTong from '../BaoCaoThongKe/BaoCaoNhanhBienCheTong'
@@ -207,10 +208,11 @@ const AdminPage = () => {
       key: 'donvis',
       icon: <AppstoreOutlined />,
       children: [
+        getItem('Hồ sơ đơn vị', 'hsdv', <AppstoreAddOutlined />),
         getItem('Danh mục đơn vị', 'donvi', <AppstoreAddOutlined />),
         getItem('Hồ sơ cán bộ', 'hscb', <AppstoreAddOutlined />),
         //   getItem('Chi tiết hồ sơ cán bộ', 'cthscb', <LockOutlined />),
-        getItem('Quản lý nhu cầu/biên chế', 'quanlynhucaubc', <AppstoreAddOutlined />),
+        // getItem('Quản lý nhu cầu/biên chế', 'quanlynhucaubc', <AppstoreAddOutlined />),
         getItem('Điểu chuyển cán bộ', 'dieuchuyen', <AppstoreAddOutlined />),
       ],
     },
@@ -469,7 +471,7 @@ const AdminPage = () => {
       // chỉ huy điều hành
       case 'thongkenhanluc':
         return (
-          <ThongKeBaoCao />
+          <ThongKeNhanLuc />
           // <TKCapBac />
         )
 
