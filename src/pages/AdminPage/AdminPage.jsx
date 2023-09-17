@@ -38,8 +38,8 @@ import CapNhatHSCB from '../QuanLyQuanNhan/HoSoCanBo/CapNhatHSCB';
 
 import TabNghienCuu from '../QuanLyQuanNhan/CongTacGiangDay/TabNghienCuu';
 import TabDaoTao from '../QuanLyQuanNhan/CongTacGiangDay/TabDaoTao';
-import QTKhenThuong from '../QuanLyQuanNhan/HoSoCanBo/QTKhenThuong';
-import QTKyLuat from '../QuanLyQuanNhan/HoSoCanBo/QTKyLuat';
+import QuaTrinhKhenThuong from '../QuanLyQuanNhan/HoSoCanBo/QuaTrinhKhenThuong';
+import QuaTrinhKyLuat from '../QuanLyQuanNhan/HoSoCanBo/QuaTrinhKyLuat';
 import ThongTinCaNhan from '../QuanLyQuanNhan/CongTacGiangDay/ThongTinCaNhan';
 
 import PhanQuyenNSD from '../Quyen_ChucNang/PhanQuyenNSD';
@@ -182,8 +182,8 @@ const AdminPage = () => {
           children: [
             getItem('Cập nhật hồ sơ cán bộ', 'hosocanbo', <AppstoreAddOutlined />),
 
-            getItem('Quá trình khen thưởng', 'khenthuong', <AppstoreAddOutlined />),
-            getItem('Quá trình kỷ luật', 'kyluat', <AppstoreAddOutlined />),
+            getItem('Quá trình khen thưởng', 'quatrinhkhenthuong', <AppstoreAddOutlined />),
+            getItem('Quá trình kỷ luật', 'quatrinhkyluat', <AppstoreAddOutlined />),
             getItem('Thân nhân và Tài sản', 'thannhantaisan', <AppstoreAddOutlined />),
           ]
         },
@@ -407,13 +407,13 @@ const AdminPage = () => {
         )
 
 
-      case 'khenthuong':
+      case 'quatrinhkhenthuong':
         return (
-          <QTKhenThuong />
+          <QuaTrinhKhenThuong />
         )
-      case 'kyluat':
+      case 'quatrinhkyluat':
         return (
-          <QTKyLuat />
+          <QuaTrinhKyLuat />
         )
       case 'thannhantaisan':
         return (
@@ -487,21 +487,21 @@ const AdminPage = () => {
           <BaoCaoNhanhBienCheTong />
         )
       case 'baocaocapbac':
-          return (
-  
-            <BaoCaoNhanhQuanHamTong />
-          )
+        return (
+
+          <BaoCaoNhanhQuanHamTong />
+        )
       case 'baocaocdkh':
-          return (
-    
-            <BaoCaoNhanhCDKHTong />
-          )
+        return (
+
+          <BaoCaoNhanhCDKHTong />
+        )
       case 'baocaotuoi':
-          return (
-      
-            <BaoCaoNhanhDoTuoiTong />
-          )          
-            
+        return (
+
+          <BaoCaoNhanhDoTuoiTong />
+        )
+
       default:
         return <></>
     }
