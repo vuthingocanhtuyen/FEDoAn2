@@ -1,5 +1,6 @@
 import { Button, Form, Select, Space } from 'antd'
 import { Checkbox } from 'antd';
+import { Row, Col } from 'antd';
 import { PlusOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 import React, { useRef } from 'react'
 import { WrapperHeader, WrapperUploadFile } from './style'
@@ -8,6 +9,7 @@ import { useState } from 'react'
 import InputComponent from '../../components/InputComponent/InputComponent'
 import { getBase64, renderOptions } from '../../utils'
 import * as PriorityService from '../../services/PriorityService'
+import * as AdminGroupPriorityService from '../../services/AdminGroupPriorirtyService'
 import * as PriorityByUserService from '../../services/PriorityByUserService'
 import { useMutationHooks } from '../../hooks/useMutationHook'
 import Loading from '../../components/LoadingComponent/Loading'
@@ -18,7 +20,7 @@ import DrawerComponent from '../../components/DrawerComponent/DrawerComponent'
 import { useSelector } from 'react-redux'
 import ModalComponent from '../../components/ModalComponent/ModalComponent'
 const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
-    console.log(selectedRowId)
+    
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [rowSelected, setRowSelected] = useState('')
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
@@ -36,44 +38,94 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
         groupcode: '',
         syscomponentcode: '',
         unitcode: '',
-        addn: '',
-        edit: '',
-        dele: '',
+        addn: true,
+        edit: true,
+        dele: true,
+    })
+    const inittial2 = () => ({
+        objectcode: '',
+        thetype: '',
+        prioritycode: '',
+        forman: '',
+        func: '',
+        inherit: '',
+        thecode: '',
+        lock: '',
+        whois: '',
+        thecode: '',
+        extensioncode: '',
+        tablename: '',
+        syscomponentcode: '',
+        unitcode: '',
+        addn: true,
+        edit: true,
+        dele: true,
     })
     
-    
     const [statePriority, setStatePriority] = useState(inittial())
-    const [statePriorityDetails, setStatePriorityDetails] = useState(inittial())
-
+    const [statePriorityDetails, setStatePrioritiDetails] = useState(inittial())
+    const [stateAdminGroupPriority, setStateAdminGroupPriority] = useState(inittial2())
     const [form] = Form.useForm();
 
-    const mutation = useMutationHooks(
+    // const mutation = useMutationHooks(
+    //     (data) => {
+    //         const { code,
+    //             description,
+    //             showauth,
+    //             name,
+    //             lock,
+    //             whois,
+    //             groupcode,
+    //             syscomponentcode,
+    //             unitcode,
+    //             addn,
+    //             edit,
+    //             dele, } = data
+    //         const res = PriorityService.createPriority({
+    //             code,
+    //             description,
+    //             showauth,
+    //             name,
+    //             lock,
+    //             whois,
+    //             groupcode,
+    //             syscomponentcode,
+    //             unitcode,
+    //             addn,
+    //             edit,
+    //             dele,
+    //         })
+    //         console.log(res);
+    //         return res;
+    //     }
+    // )
+    const mutation2 = useMutationHooks(
         (data) => {
-            const { code,
-                description,
-                showauth,
-                name,
-                lock,
-                whois,
-                groupcode,
+            const { objectcode,
+                thetype,
+                prioritycode,
+                forman,
+                func,
+                inherit,
+                thecode,
                 syscomponentcode,
                 unitcode,
                 addn,
                 edit,
                 dele, } = data
-            const res = PriorityService.createPriority({
-                code,
-                description,
-                showauth,
-                name,
-                lock,
-                whois,
-                groupcode,
+            const res = AdminGroupPriorityService.createAdminGroupPriority({
+                objectcode,
+                thetype,
+                prioritycode,
+                forman,
+                func,
+                inherit,
+                thecode,
                 syscomponentcode,
                 unitcode,
                 addn,
                 edit,
-                dele,
+                dele, 
             })
             return res
         }
@@ -93,12 +145,14 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
 
     const mutationDeleted = useMutationHooks(
         (data) => {
-            const { id,
+            const { objectcode,
+                prioritycode,
                 token,
             } = data
-            const res = PriorityService.deletePriority(
-                id,
-                token)
+            const res = AdminGroupPriorityService.deleteAdminGroupPriorityById(
+                objectcode,
+                prioritycode,
+                token,)
             return res
         },
     )
@@ -122,7 +176,7 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
     const fetchGetDetailsPriority = async (rowSelected) => {
         const res = await PriorityService.getDetailsPriority(rowSelected)
         if (res?.data) {
-            setStatePriorityDetails({
+            setStatePrioritiDetails({
                 code: res?.data?.code,
                 description: res?.data?.description,
                 showauth: res?.data?.showauth,
@@ -167,16 +221,19 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
         })
     }
 
-    const fetchAllTypePriority = async () => {
-        const res = await PriorityService.getAllType()
-        return res
-    }
 
-    const { data, isLoading, isSuccess, isError } = mutation
+    const { data, isLoading, isSuccess, isError } = mutation2
     const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
     const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDelected, isError: isErrorDeleted } = mutationDeleted
     const { data: dataDeletedMany, isLoading: isLoadingDeletedMany, isSuccess: isSuccessDelectedMany, isError: isErrorDeletedMany } = mutationDeletedMany
-
+    const fetchAllPriority = async () => {
+        const res = await await PriorityService.getAllType()
+        return res
+      }
+    const fetchAllPriority2 = async () => {
+        const res = await PriorityService.getAllPriority()
+        return res
+      }
 
     const queryPriority = useQuery(
         ['prioritys', selectedRowId], // Thay đổi queryKey để phản ánh selectedRowId
@@ -186,6 +243,8 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
         }
     );
     // const typePriority = useQuery({ queryKey: ['type-priority'], queryFn: fetchAllTypePriority })
+    const allPriority = useQuery({ queryKey: ['all-donvi'], queryFn: fetchAllPriority })
+    const allPriority2 = useQuery({ queryKey: ['all-donvi2'], queryFn: fetchAllPriority2 })
     const { isLoading: isLoadingPrioritys, data: prioritys } = queryPriority
     const renderAction = () => {
         return (
@@ -305,6 +364,7 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
         },
     ];
     const dataTable = prioritys?.data?.length && prioritys?.data?.map((priority) => {
+       
         return { ...priority, key: priority._id }
     })
 
@@ -336,7 +396,7 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
 
     const handleCloseDrawer = () => {
         setIsOpenDrawer(false);
-        setStatePriorityDetails({
+        setStatePrioritiDetails({
             code: '',
             description: '',
             showauth: '',
@@ -346,9 +406,9 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
             groupcode: '',
             syscomponentcode: '',
             unitcode: '',
-            addn: '',
-            edit: '',
-            dele: '',
+            addn: true,
+            edit: true,
+            dele: true,
         })
         form.resetFields()
     };
@@ -368,7 +428,8 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
 
 
     const handleDeletePriority = () => {
-        mutationDeleted.mutate({ id: rowSelected, token: user?.access_token }, {
+        console.log(rowSelected);
+        mutationDeleted.mutate({ objectcode: selectedRowId, prioritycode: rowSelected, token: user?.access_token }, {
             onSettled: () => {
                 queryPriority.refetch()
             }
@@ -377,55 +438,61 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
 
     const handleCancel = () => {
         setIsModalOpen(false);
-        setStatePriority({
-            code: '',
-            description: '',
-            showauth: '',
-            name: '',
+        setStateAdminGroupPriority({
+            objectcode: '',
+            thetype: '',
+            prioritycode: '',
+            forman: '',
+            func: '',
+            inherit: '',
+            thecode: '',
             lock: '',
             whois: '',
-            groupcode: '',
+            thecode: '',
+            extensioncode: '',
+            tablename: '',
             syscomponentcode: '',
             unitcode: '',
-            addn: '',
-            edit: '',
-            dele: '',
+            addn: true,
+            edit: true,
+            dele: true,
         })
         form.resetFields()
     };
 
     const onFinish = () => {
         const params = {
-            code: statePriority.code,
-            description: statePriority.description,
-            showauth: statePriority.showauth,
-            name: statePriority.name,
-            lock: statePriority.lock,
-            whois: statePriority.whois,
-            groupcode: statePriority.groupcode,
-            syscomponentcode: statePriority.syscomponentcode,
-            unitcode: statePriority.unitcode,
-            addn: statePriority.addn,
-            edit: statePriority.edit,
-            dele: statePriority.dele,
+            objectcode: selectedRowId,
+            thetype: stateAdminGroupPriority.thetype,
+            prioritycode: stateAdminGroupPriority.prioritycode,
+            forman: stateAdminGroupPriority.forman,
+            func: stateAdminGroupPriority.func,
+            inherit: stateAdminGroupPriority.inherit,
+            lock: stateAdminGroupPriority.lock,
+            whois: stateAdminGroupPriority.whois,
+            thecode: stateAdminGroupPriority.thecode,
+            addn: stateAdminGroupPriority.addn,
+            edit: stateAdminGroupPriority.edit,
+            dele: stateAdminGroupPriority.dele,
         }
-        mutation.mutate(params, {
+        mutation2.mutate(params, {
             onSettled: () => {
                 queryPriority.refetch()
             }
         })
     }
 
-    const handleOnchange = (e) => {
-        setStatePriority({
-            ...statePriority,
-            [e.target.name]: e.target.value
+    
+    const handleOnchange2 = (name, checked) => {
+        setStateAdminGroupPriority({
+            ...stateAdminGroupPriority,
+            [name]: checked,
         });
-        console.log(statePriority);
+        console.log(stateAdminGroupPriority);
     }
-
+    
     const handleOnchangeDetails = (e) => {
-        setStatePriorityDetails({
+        setStatePrioritiDetails({
             ...statePriorityDetails,
             [e.target.name]: e.target.value
         })
@@ -441,12 +508,19 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
         })
     }
 
-    const handleChangeSelect = (value) => {
-        setStatePriority({
-            ...statePriority,
-            type: value
-        })
-    }
+    
+    const handleChangeSelect4 = (value) => {
+        
+        try{
+        const selectedPriority = allPriority2?.data?.data.find(Priority => Priority.code === value);
+          setStateAdminGroupPriority({
+            ...stateAdminGroupPriority,
+            prioritycode: selectedPriority._id
+          })
+        console.log(stateAdminGroupPriority);
+        }
+        catch{}
+      }
 
     return (
         
@@ -460,8 +534,9 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
                     return {
                         onClick: event => {
                             setRowSelected(record._id);
-                            
+                            // console.log(rowSelected);
                           }
+                          
                         
                     };
                 }} />
@@ -477,21 +552,55 @@ const ChucNangNhom = ({selectedRowId,handleselectedrow}) => {
                         autoComplete="on"
                         form={form}
                     >
-                        <Form.Item
+                        {/* <Form.Item
                             label="Mã"
                             name="code"
                             rules={[{ required: true, message: 'Please input your code!' }]}
                         >
                             <InputComponent value={statePriority['code']} onChange={handleOnchange} name="code" />
-                        </Form.Item>
-                        <Form.Item
+                        </Form.Item> */}
+                        {/* <Form.Item
                             label="Tên"
                             name="name"
                             rules={[{ required: true, message: 'Please input your name!' }]}
                         >
                             <InputComponent value={statePriority['name']} onChange={handleOnchange} name="name" />
+                        </Form.Item> */}
+                        <Form.Item
+                        label="Nhóm"
+                        name="DonVi"
+                        rules={[{ required: true, message: 'Please input your DonVi!' }]}
+                        >
+                        <Select
+                        name="Priority"
+                        // defaultValue="lucy"
+                        // style={{ width: 120 }}
+                        // value={stateQuanNhan.DonVi}
+                        onChange={handleChangeSelect4}
+                        options={renderOptions(allPriority?.data?.data)}
+                        />
+                        </Form.Item> 
+                        <Form.Item label="Actions">
+                        <Row gutter={16}>
+                            <Col span={8}>
+                            <Form.Item name="addn" valuePropName="checked" noStyle>
+                                <Checkbox onChange={(e) => handleOnchange2('addn', e.target.checked)}>Addn</Checkbox>
+                            </Form.Item>
+                        </Col>
+                        <Col span={8}>
+                         <Form.Item name="edit" valuePropName="checked" noStyle>
+                        <Checkbox onChange={(e) => handleOnchange2('edit', e.target.checked)}>Edit</Checkbox>
                         </Form.Item>
-                        
+                        </Col>
+                        <Col span={8}>
+                        <Form.Item name="dele" valuePropName="checked" noStyle>
+                            <Checkbox onChange={(e) => handleOnchange2('dele', e.target.checked)}>Dele</Checkbox>
+                        </Form.Item>
+                        </Col>
+                         </Row>
+                            </Form.Item>
+
+
                         <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
                             <Button type="primary" htmlType="submit">
                                 Submit

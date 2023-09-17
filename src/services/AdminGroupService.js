@@ -9,7 +9,13 @@ export const createAdminGroup = async (data) => {
   );
   return res.data;
 };
-
+export const createStaffAdminGroup = async (data) => {
+  const res = await axios.post(
+    `${process.env.REACT_APP_API_URL}/staffadmingroup/create`,
+    data
+  );
+  return res.data;
+};
 export const updateAdminGroup = async (id, data, access_token) => {
   const res = await axiosJWT.put(
     `${process.env.REACT_APP_API_URL}/admingroup/update/${id}`,

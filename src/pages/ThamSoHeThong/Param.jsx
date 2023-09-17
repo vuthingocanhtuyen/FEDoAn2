@@ -2,7 +2,7 @@ import { Button, Form, Space } from 'antd'
 import React from 'react'
 import { WrapperHeader, WrapperUploadFile } from './style'
 import TableComponent from '../../components/TableComponent/TableComponent'
-
+import { useLocation, useNavigate } from 'react-router-dom'
 import InputComponent from '../../components/InputComponent/InputComponent'
 import DrawerComponent from '../../components/DrawerComponent/DrawerComponent'
 import Loading from '../../components/LoadingComponent/Loading'
@@ -24,7 +24,7 @@ const Param = () => {
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
     const [isModalOpenDelete, setIsModalOpenDelete] = useState(false)
     const [isLoadingAdd, setIsLoadingAdd] = useState(false)
-
+    const navigate = useNavigate()
     const user = useSelector((state) => state?.user)
     const searchInput = useRef(null);
 
@@ -165,6 +165,21 @@ const Param = () => {
         clearFilters();
         // setSearchText('');
     };
+    function mapUserRole(isAdmin) {
+        switch (isAdmin) {
+          case 'user':
+            return 'Người dùng';
+          case 'staff':
+            return 'Nhân viên';
+          case 'supervisor':
+            return 'Giám sát viên';
+          case 'admin':
+            return 'Cán bộ quản lý';
+          default:
+            return isAdmin;
+        }
+      }
+      
 
     const getColumnSearchProps = (dataIndex) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -241,31 +256,32 @@ const Param = () => {
 
     const columns = [
         {
-            title: 'Name',
+            title: 'Họ tên',
             dataIndex: 'name',
             sorter: (a, b) => a.name.length - b.name.length,
             ...getColumnSearchProps('name')
         },
         {
-            title: 'Email',
+            title: 'Địa chỉ Email',
             dataIndex: 'email',
             sorter: (a, b) => a.email.length - b.email.length,
             ...getColumnSearchProps('email')
         },
-        {
-            title: 'Address',
-            dataIndex: 'address',
-            sorter: (a, b) => a.address.length - b.address.length,
-            ...getColumnSearchProps('address')
-        },
+        // {
+        //     title: 'Address',
+        //     dataIndex: 'address',
+        //     sorter: (a, b) => a.address.length - b.address.length,
+        //     ...getColumnSearchProps('address')
+        // },
         {
             title: 'Admin',
             dataIndex: 'isAdmin',
             sorter: (a, b) => a.isAdmin.length - b.isAdmin.length,
-            ...getColumnSearchProps('isAdmin')
+            ...getColumnSearchProps('isAdmin'),
+            render: (isAdmin) => mapUserRole(isAdmin)
         },
         {
-            title: 'Phone',
+            title: 'Số điện thoại',
             dataIndex: 'phone',
             sorter: (a, b) => a.phone - b.phone,
             ...getColumnSearchProps('phone')
@@ -353,10 +369,15 @@ const Param = () => {
             }
         })
     }
-
+    const handleNavigateSignUp = () => {
+        navigate('/sign-up')
+      }
     return (
         <div>
             <WrapperHeader>Quản lý tài khoản NSD</WrapperHeader>
+            <div style={{ marginTop: '10px' }}>
+                <Button onClick={handleNavigateSignUp}>Thêm mới tài khoản NSD</Button>
+            </div> 
             <div style={{ marginTop: '20px' }}>
                 <TableComponent handleDelteMany={handleDelteManyUsers} columns={columns}  data={dataTable} onRow={(record, rowIndex) => {
                     return {
@@ -434,9 +455,9 @@ const Param = () => {
                     </Form>
                 </Loading>
             </DrawerComponent>
-            <ModalComponent title="Xóa tham số" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteUser}>
+            <ModalComponent title="Xóa tài khoản" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteUser}>
                 <Loading isLoading={isLoadingDeleted}>
-                    <div>Bạn có chắc xóa tham số này không?</div>
+                    <div>Bạn có chắc xóa tài khoản này không?</div>
                 </Loading>
             </ModalComponent>
         </div>
