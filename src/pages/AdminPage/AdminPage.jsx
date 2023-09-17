@@ -51,7 +51,7 @@ import ChiTietQuanNhan from '../QuanLyDonVi/ChiTietQuanNhan/ChiTietQuanNhan';
 import QuanLyNhuCauBC from '../QuanLyDonVi/QuanLyNhuCauBC';
 import DieuChuyenCanBo from '../QuanLyDonVi/DieuChuyenCanBo';
 import HoSoDonVi from '../QuanLyDonVi/HoSoDonVi';
-
+import DieuChuyenCanBoId from '../QuanLyDonVi/DieuChuyenCanBoId';
 import TabThanhNhanTaiSan from '../QuanLyQuanNhan/HoSoCanBo/TabThanNhanTaiSan';
 import ThongKeBaoCao from '../ChiHuyDieuHanh/ThongKeNhanLuc/ThongKeBaoCao';
 import ThongKeNhanLuc from '../ChiHuyDieuHanh/ThongKeNhanLuc/ThongKeNhanLuc';
@@ -405,7 +405,10 @@ const AdminPage = () => {
         return (
           <ChiTietQuanNhan />
         )
-
+      case '/dieuchuyencanbo/:id':
+        return (
+          <DieuChuyenCanBoId />
+        )    
 
       case 'quatrinhkhenthuong':
         return (
