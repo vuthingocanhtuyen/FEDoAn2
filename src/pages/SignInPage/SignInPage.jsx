@@ -78,7 +78,7 @@ const SignInPage = () => {
       <div style={{ width: '800px', height: '445px', borderRadius: '6px', background: '#fff', display: 'flex' }}>
         <WrapperContainerLeft>
           <h1 style={{ textAlign: 'center' }}>HỆ THỐNG QUẢN LÝ NHÂN SỰ BỘ QUỐC PHÒNG</h1>
-          <p>Đăng nhập vào tạo tài khoản</p>
+          <p>Đăng nhập tài khoản</p>
           <InputForm style={{ marginBottom: '10px' }} placeholder="abc@gmail.com" value={email} onChange={handleOnchangeEmail} />
           <div style={{ position: 'relative' }}>
             <span

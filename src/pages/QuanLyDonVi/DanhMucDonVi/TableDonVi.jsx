@@ -297,35 +297,35 @@ const TableDonVi = ({handleTreeNodeClick,treeNodeClickedId } ) => {
 
     const columns = [
         {
-            title: 'code',
+            title: 'Mã đơn vị',
             dataIndex: 'code',
             sorter: (a, b) => a.code.length - b.code.length,
             ...getColumnSearchProps('code')
         },
+        // {
+        //     title: 'codeview',
+        //     dataIndex: 'codeview',
+        //     sorter: (a, b) => a.codeview.length - b.codeview.length,
+        //     ...getColumnSearchProps('codeview')
+        // },
         {
-            title: 'codeview',
-            dataIndex: 'codeview',
-            sorter: (a, b) => a.codeview.length - b.codeview.length,
-            ...getColumnSearchProps('codeview')
-        },
-        {
-            title: 'name',
+            title: 'Tên đơn vị',
             dataIndex: 'name',
             // sorter: (a, b) => a.name.length - b.name.length,
             ...getColumnSearchProps('name')
         },
         {
-            title: 'phone',
+            title: 'Liên hệ',
             dataIndex: 'phone',
             // sorter: (a, b) => a.phone.length - b.phone.length,
             ...getColumnSearchProps('phone')
         },
-        {
-            title: 'email',
-            dataIndex: 'email',
-            // sorter: (a, b) => a.email.length - b.email.length,
-            ...getColumnSearchProps('email')
-        },
+        // {
+        //     title: 'Email',
+        //     dataIndex: 'email',
+        //     // sorter: (a, b) => a.email.length - b.email.length,
+        //     ...getColumnSearchProps('email')
+        // },
         {
             title: 'Action',
             dataIndex: 'action',

@@ -113,7 +113,7 @@ const DoiMatKhau = () => {
                                 width: 'fit-content',
                                 borderRadius: '4px',
                                 padding: '2px 6px 6px',
-                                marginLeft: '50px', 
+                                marginLeft: '30px', 
                             }}
                             textbutton={'Cập nhật'}
                             styleTextButton={{ color: 'rgb(26, 148, 255)', fontSize: '15px', fontWeight: '700' }}

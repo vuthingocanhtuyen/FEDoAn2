@@ -30,6 +30,7 @@ const SauDaiHoc = () => {
     const user = useSelector((state) => state?.user)
     const searchInput = useRef(null);
     const quannhanId = user.QuanNhanId;
+    const quyen = user.isAdmin;
     const inittial = () => ({
         LoaiBang: '',
         LinhVuc: '',
@@ -221,12 +222,20 @@ const SauDaiHoc = () => {
     console.log("dauhoc:", saudaihocDetails.data)
     const { isLoading: isLoadingSauDaiHoc, data: saudaihocs } = querySauDaiHoc
     const renderAction = () => {
+        let additionalActions = null;
+        if (quyen === "admin") {
+            additionalActions = (
+                <>
+                    <CheckOutlined style={{ color: 'green', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenPheDuyet(true)} />
+                    <WarningOutlined style={{ color: 'blue', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenNhapLai(true)} />
+                </>
+            );
+        }
         return (
             <div>
                 <DeleteOutlined style={{ color: 'red', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
                 <EditOutlined style={{ color: 'orange', fontSize: '30px', cursor: 'pointer' }} onClick={handleDetailsSauDaiHoc} />
-                <CheckOutlined style={{ color: 'green', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenPheDuyet(true)} />
-                <WarningOutlined style={{ color: 'blue', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenNhapLai(true)} />
+                {additionalActions}
             </div>
         )
     }

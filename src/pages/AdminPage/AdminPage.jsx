@@ -50,7 +50,7 @@ import HoSoCanBo from '../QuanLyDonVi/HoSoCanBo';
 import ChiTietQuanNhan from '../QuanLyDonVi/ChiTietQuanNhan/ChiTietQuanNhan';
 import QuanLyNhuCauBC from '../QuanLyDonVi/QuanLyNhuCauBC';
 import DieuChuyenCanBo from '../QuanLyDonVi/DieuChuyenCanBo';
-
+import HoSoDonVi from '../QuanLyDonVi/HoSoDonVi';
 
 import TabThanhNhanTaiSan from '../QuanLyQuanNhan/HoSoCanBo/TabThanNhanTaiSan';
 import ThongKeBaoCao from '../ChiHuyDieuHanh/ThongKeNhanLuc/ThongKeBaoCao';
@@ -174,11 +174,11 @@ const AdminPage = () => {
       label: 'Danh mục cá nhân',
       key: 'quanlyquannhan',
       icon: <AppstoreOutlined />,
-      children: [
-        {
-          label: 'Hồ sơ Cán bộ',
-          key: 'hosocanbo',
-          icon: <SettingOutlined />,
+      // children: [
+      //   {
+      //     label: 'Hồ sơ Cán bộ',
+      //     key: 'hosocanbo',
+      //     icon: <SettingOutlined />,
           children: [
             getItem('Cập nhật hồ sơ cán bộ', 'hosocanbo', <AppstoreAddOutlined />),
 
@@ -187,22 +187,22 @@ const AdminPage = () => {
             getItem('Thân nhân và Tài sản', 'thannhantaisan', <AppstoreAddOutlined />),
           ]
         },
-        {
-          label: 'Công tác giảng dạy',
-          key: 'congtacgiangday',
-          icon: <SettingOutlined />,
-          children: [
-            getItem('Thông tin cá nhân', 'thongtincanhan', <AppstoreAddOutlined />),
-            getItem('Chi tiết tải', 'chitiettai', <AppstoreAddOutlined />),
-            getItem('Tải đào tạo', 'taidaotao', <AppstoreAddOutlined />),
-            getItem('Tải nghiên cứu', 'tainghiencuu', <AppstoreAddOutlined />),
+        // {
+        //   label: 'Công tác giảng dạy',
+        //   key: 'congtacgiangday',
+        //   icon: <SettingOutlined />,
+        //   children: [
+        //     getItem('Thông tin cá nhân', 'thongtincanhan', <AppstoreAddOutlined />),
+        //     getItem('Chi tiết tải', 'chitiettai', <AppstoreAddOutlined />),
+        //     getItem('Tải đào tạo', 'taidaotao', <AppstoreAddOutlined />),
+        //     getItem('Tải nghiên cứu', 'tainghiencuu', <AppstoreAddOutlined />),
 
 
-          ]
-        },
+        //   ]
+        // },
         // 
-      ],
-    },
+    //   ],
+    // },
     {
       label: 'Quản lý Đơn vị',
       key: 'donvis',
@@ -448,7 +448,10 @@ const AdminPage = () => {
         return (
           <DMDonVi />
         )
-
+        case 'hsdv':
+          return (
+            <HoSoDonVi />
+          )
       case 'hscb':
         return (
           <HoSoCanBo />

@@ -30,6 +30,7 @@ const DaiHoc = () => {
     const user = useSelector((state) => state?.user)
     const searchInput = useRef(null);
     const quannhanId = user.QuanNhanId;
+    const quyen = user.isAdmin;
     const inittial = () => ({
         He: '',
         Nganh: '',
@@ -208,16 +209,23 @@ const DaiHoc = () => {
 
     const { isLoading: isLoadingDaiHoc, data: daihocs } = queryDaiHoc
     const renderAction = () => {
+        let additionalActions = null;
+        if (quyen === "admin") {
+            additionalActions = (
+                <>
+                    <CheckOutlined style={{ color: 'green', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenPheDuyet(true)} />
+                    <WarningOutlined style={{ color: 'blue', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenNhapLai(true)} />
+                </>
+            );
+        }
         return (
             <div>
                 <DeleteOutlined style={{ color: 'red', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
                 <EditOutlined style={{ color: 'orange', fontSize: '30px', cursor: 'pointer' }} onClick={handleDetailsDaiHoc} />
-                <CheckOutlined style={{ color: 'green', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenPheDuyet(true)} />
-                <WarningOutlined style={{ color: 'blue', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenNhapLai(true)} />
+                {additionalActions}
             </div>
         )
     }
-
     const onChange = () => { }
 
     const fetchGetDetailsDaiHoc = async (rowSelected) => {
