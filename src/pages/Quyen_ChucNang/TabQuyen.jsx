@@ -25,9 +25,9 @@ function TabQuyen() {
             <TabPane tab="Chức năng nhóm" key="3">
                 <ChucNangNhom handleselectedrow={handleselectedrow} selectedRowId={selectedRowId}/>
             </TabPane>
-            <TabPane tab="Phạm vi dữ liệu của chức năng" key="4">
+            {/* <TabPane tab="Phạm vi dữ liệu của chức năng" key="4">
                 <PhamViDuLieu />
-            </TabPane>
+            </TabPane> */}
 
         </Tabs>
     );
