@@ -1,4 +1,5 @@
-import { Button, Space } from 'antd'
+
+import { Button,Form, Space } from 'antd'
 import {  SearchOutlined } from '@ant-design/icons'
 import React, { useRef } from 'react'
 import { WrapperHeader } from './style'
@@ -7,30 +8,38 @@ import TableComponent from '../../components/TableComponent/TableComponent'
 import { useState } from 'react'
 import InputComponent from '../../components/InputComponent/InputComponent'
 import * as QuanNhanService from '../../services/QuanNhanService'
+import * as DonViService from '../../services/DonViService'
 import * as PriorityByUserService from '../../services/PriorityByUserService'
 import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import SearchBar from './Components/SearchBar';
+import FreeDonVi from '../../pages/QuanLyDonVi/DanhMucDonVi/FreeDonVi'
+import { WrapperContentProfile, WrapperInput, WrapperLabel, WrapperContentProfileFree, WrapperContentProfileText } from './Components/style'
 const DieuChuyenCanBo = () => {
   const [currentUserDonVi, setCurrentUserDonVi] = useState(null);
+  const [searchTermHoTen, setSearchTermHoTen] = useState('');
+  const [searchTermQuanNhanId, setSearchTermQuanNhanId] = useState('');
   const user = useSelector((state) => state?.user)
   const navigate = useNavigate()
   const searchInput = useRef(null);
+  const [treeNodeClickedId, setTreeNodeClickedId] = useState(null);
+    const handleTreeNodeClick = (item) => {
+        setTreeNodeClickedId(item);
+        getDonViCode(item);
+    }
   useEffect(() => {
     const fetchGetChucVuDonVi = async () => {
 
       try {
         // Gọi API để lấy thông tin đơn vị hiện tại của người dùng
         const response = await PriorityByUserService.getChucVuDonViFromUser(user.QuanNhanId, user.access_token);
-        console.log(response.data);
-
         if (response.data && response.data.length > 0) {
           const firstData = response.data[0];
           console.log(response.data[0]);
           const donViValue = firstData.DonVi[0];
           setCurrentUserDonVi(donViValue);
-         
         }
 
       } catch (error) {
@@ -44,18 +53,32 @@ const DieuChuyenCanBo = () => {
     const res = await QuanNhanService.getQuanNhanFromDonVi(currentUserDonVi)
     return res
   }
+  const getDonViCode = async (item) => {
+    console.log(item);
+    if(item)
+    {
+      try{
+        const res = await DonViService.getDetailsDonVi(item);
+        console.log(res.data.code);
+        setCurrentUserDonVi(res.data.code);
+        return res
+      }
+    catch{}
+    }
+  }
   const handleDetailsHoSoCanBo = (ids) => {
     navigate(`/dieuchuyencanbo/${ids}`)
   }
- 
- 
+  const handleSearchHoTen = (searchText) => {
+    setSearchTermHoTen(searchText);
+  };
 
+  const handleSearchQuanNhanId = (searchText) => {
+    setSearchTermQuanNhanId(searchText);
+  };
 
   const queryQuanNhan = useQuery({ queryKey: ['quannhans'], queryFn: getQuanNhanFromDonVi })
   const { isLoading: isLoadingQuanNhans, data: quannhans } = queryQuanNhan
-
-
-
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     // setSearchText(selectedKeys[0]);
@@ -182,49 +205,69 @@ const DieuChuyenCanBo = () => {
   const dataTable = quannhans?.data?.length && quannhans?.data?.map((quannhan) => {
     return { ...quannhan, key: quannhan._id }
   })
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
+  const filteredData = quannhans?.data?.filter(item => {
+    
+    const matchesHoTen = item.HoTen.toLowerCase().includes(searchTermHoTen.toLowerCase());
+    const matchesQuanNhanId = item.QuanNhanId.includes(searchTermQuanNhanId.toLowerCase());
+    return matchesHoTen  && matchesQuanNhanId;
+  });
   useEffect(() => {
     if (currentUserDonVi) {
       queryQuanNhan.refetch();
     }
   }, [currentUserDonVi, queryQuanNhan]);
- 
- 
- 
   
-
-
-
-
-
-
-
   return (
     <div>
-      <WrapperHeader>Quản lý quân nhân</WrapperHeader>
+      <WrapperHeader>Điều chuyển cán bộ</WrapperHeader>
+              <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ccc' }}>
+                <div style={{ margin: '0 auto', float: 'left', padding: '5px' }}>
+                <FreeDonVi handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId}/>
+                </div>
+                <div style={{ margin: '0 auto', height: '115px', float: 'left' }}>
+
+                    <WrapperContentProfile>
+                        <Form.Item
+                            label="Mã quân nhân: "
+                            name="QuanNhanId"
+                        >
+                            <SearchBar onSearch={handleSearchQuanNhanId} />
+                        </Form.Item>
+                    </WrapperContentProfile>
+                </div>
+                <div style={{ margin: '0 auto', height: '115px', float: 'left'}}>
+                    <WrapperContentProfile>
+                        <Form.Item
+                            label="Họ tên: "
+                            name="HoTen"
+                        >
+                            <SearchBar onSearch={handleSearchHoTen} />
+                        </Form.Item>
+                    </WrapperContentProfile>
+                </div>
+                
+                {/* <Button type="primary" htmlType="submit" style={{ marginTop: '40px', marginLeft: '10px' }} >
+                    Lấy dữ liệu
+                </Button> */}
+                </div>
+                
+                <div style={{ clear: 'both' }}></div>
+                <br />
+                {/* <div style={{ marginBottom: '8px' }}>
+                    <SearchBar onSearch={handleSearchHoTen} />
+                </div>
+                <div style={{ marginBottom: '8px' }}>
+                    <SearchBar onSearch={handleSearchQuanNhanId} />
+                </div> */}
+      
      
       <div style={{ marginTop: '20px' }}>
-        <TableComponent  columns={columns} isLoading={isLoadingQuanNhans} data={dataTable} onRow={(record, rowIndex) => {
+        <TableComponent  columns={columns} isLoading={isLoadingQuanNhans} data={filteredData} onRow={(record, rowIndex) => {
           return {
 
             onClick: event => { 
               handleDetailsHoSoCanBo(record._id);
             },
-
           };
         }} />
       </div>
