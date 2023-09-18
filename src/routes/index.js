@@ -10,6 +10,7 @@ import ProductDetailsPage from "../pages/ProductDetailsPage/ProductDetailsPage";
 import ProductsPage from "../pages/ProductsPage/ProductsPage";
 import ProfilePage from "../pages/Profile/ProfilePage";
 import ChiTietQuanNhan from "../pages/QuanLyDonVi/ChiTietQuanNhan/ChiTietQuanNhan";
+import DieuChuyenCanBoId from "../pages/QuanLyDonVi/DieuChuyenCanBoId";
 import SignInPage from "../pages/SignInPage/SignInPage";
 import SignUpPage from "../pages/SignUpPage/SignUpPage";
 import TypeProductPage from "../pages/TypeProductPage/TypeProductPage";
@@ -31,8 +32,8 @@ export const routes = [
         isShowHeader: true
     },
     {
-        path: '/details-order/:id',
-        page: DetailsOrderPage,
+        path: '/dieuchuyencanbo/:id',
+        page: DieuChuyenCanBoId,
         isShowHeader: true
     },
     {
