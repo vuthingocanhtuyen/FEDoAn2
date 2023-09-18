@@ -4,6 +4,7 @@ import 'antd/dist/antd.min.css';
 import LyLich from '../QuanLyDonVi/ChiTietQuanNhan/LyLich';
 
 import { useNavigate, useParams } from 'react-router-dom'
+import QuaTrinhDieuChuyen from './DanhMucDonVi/QuaTrinhDieuChuyen';
 
 const { TabPane } = Tabs;
 
@@ -14,11 +15,16 @@ function DieuChuyenCanBoId() {
         <>
 
             <Tabs defaultActiveKey="1">
-            <TabPane tab="Lý lịch" key="1">
+                <TabPane >
 
-            <LyLich idQuanNhan={id} />
 
-            </TabPane>
+
+                </TabPane>
+                <TabPane tab="Điều chuyển cán bộ" key="1">
+
+                    <QuaTrinhDieuChuyen idQuanNhan={id} />
+
+                </TabPane>
 
             </Tabs>
         </>

@@ -20,6 +20,10 @@ function ChiTietQuanNhan() {
         <>
 
             <Tabs defaultActiveKey="1">
+                <TabPane >
+
+
+                </TabPane>
                 <TabPane tab="Lý lịch" key="1">
 
                     <LyLich idQuanNhan={id} />
