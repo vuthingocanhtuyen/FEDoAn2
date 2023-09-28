@@ -24,6 +24,9 @@ import DrawerComponent from '../../components/DrawerComponent/DrawerComponent'
 import { useSelector } from 'react-redux'
 import ModalComponent from '../../components/ModalComponent/ModalComponent'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
+import SearchBar from './Components/SearchBar';
+import FreeDonVi from '../../pages/QuanLyDonVi/DanhMucDonVi/FreeDonVi'
+import { WrapperContentProfile, WrapperInput, WrapperLabel, WrapperContentProfileFree, WrapperContentProfileText } from './Components/style'
 import { useNavigate } from 'react-router-dom'
 const HoSoCanBo = () => {
   const [currentUserDonVi, setCurrentUserDonVi] = useState(null);
@@ -34,9 +37,16 @@ const HoSoCanBo = () => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false)
   const user = useSelector((state) => state?.user)
+  const [searchTermHoTen, setSearchTermHoTen] = useState('');
+  const [searchTermQuanNhanId, setSearchTermQuanNhanId] = useState('');
   const [prevDonViCode, setPrevDonViCode] = useState(null);
   const navigate = useNavigate()
   const searchInput = useRef(null);
+  const [treeNodeClickedId, setTreeNodeClickedId] = useState(null);
+  const handleTreeNodeClick = (item) => {
+        setTreeNodeClickedId(item);
+        getDonViCode(item);
+    }
   useEffect(() => {
     const fetchGetChucVuDonVi = async () => {
 
@@ -60,6 +70,26 @@ const HoSoCanBo = () => {
 
     fetchGetChucVuDonVi();
   }, [user.QuanNhanId, user.access_token]);
+  const getDonViCode = async (item) => {
+    console.log(item);
+    if(item)
+    {
+      try{
+        const res = await DonViService.getDetailsDonVi(item);
+        console.log(res.data.code);
+        setCurrentUserDonVi(res.data.code);
+        return res
+      }
+    catch{}
+    }
+  }
+  const handleSearchHoTen = (searchText) => {
+    setSearchTermHoTen(searchText);
+  };
+
+  const handleSearchQuanNhanId = (searchText) => {
+    setSearchTermQuanNhanId(searchText);
+  };
   const inittial = () => ({
     QuanNhanId: '',
     HoTen: '',
@@ -381,6 +411,12 @@ const HoSoCanBo = () => {
   const dataTable = quannhans?.data?.length && quannhans?.data?.map((quannhan) => {
     return { ...quannhan, key: quannhan._id }
   })
+  const filteredData = quannhans?.data?.filter(item => {
+    
+    const matchesHoTen = item.HoTen.toLowerCase().includes(searchTermHoTen.toLowerCase());
+    const matchesQuanNhanId = item.QuanNhanId.includes(searchTermQuanNhanId.toLowerCase());
+    return matchesHoTen  && matchesQuanNhanId;
+  });
 
   useEffect(() => {
     if (isSuccess && data?.status === 'OK') {
@@ -628,8 +664,41 @@ const handleChangeSelect3 = (value) => {
       <div style={{ marginTop: '10px' }}>
         <Button style={{ height: '50px', width: '50px', borderRadius: '6px', borderStyle: 'dashed' }} onClick={() => setIsModalOpen(true)}><PlusOutlined style={{ fontSize: '20px' }} /></Button>
       </div>
+      <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ccc' ,marginTop: '15px'}}>
+                <div style={{ margin: '0 auto', float: 'left', padding: '5px' }}>
+                <FreeDonVi handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId}/>
+                </div>
+                <div style={{ margin: '0 auto', height: '115px', float: 'left' }}>
+
+                    <WrapperContentProfile>
+                        <Form.Item
+                            label="Mã quân nhân: "
+                            name="QuanNhanId"
+                        >
+                            <SearchBar onSearch={handleSearchQuanNhanId} />
+                        </Form.Item>
+                    </WrapperContentProfile>
+                </div>
+                <div style={{ margin: '0 auto', height: '115px', float: 'left'}}>
+                    <WrapperContentProfile>
+                        <Form.Item
+                            label="Họ tên: "
+                            name="HoTen"
+                        >
+                            <SearchBar onSearch={handleSearchHoTen} />
+                        </Form.Item>
+                    </WrapperContentProfile>
+                </div>
+                
+                {/* <Button type="primary" htmlType="submit" style={{ marginTop: '40px', marginLeft: '10px' }} >
+                    Lấy dữ liệu
+                </Button> */}
+                </div>
+                
+                <div style={{ clear: 'both' }}></div>
+                <br />
       <div style={{ marginTop: '20px' }}>
-        <TableComponent handleDelteMany={handleDelteManyQuanNhans} columns={columns} isLoading={isLoadingQuanNhans} data={dataTable} onRow={(record, rowIndex) => {
+        <TableComponent handleDelteMany={handleDelteManyQuanNhans} columns={columns} isLoading={isLoadingQuanNhans} data={filteredData} onRow={(record, rowIndex) => {
           return {
 
             onClick: event => {

@@ -93,10 +93,23 @@ const AdminPage = () => {
     fetchGetPriority();
   }, [user.id]);
   console.log('combinedData:', combinedData);
-  const managementChildren = [
-    getItem('Đổi mật khẩu', 'changepassword', <LockOutlined />),
-    getItem('Quản lý tài khoản', 'systemparams', <AppstoreAddOutlined />),
-  ];
+  // const managementChildren = [
+  //   getItem('Đổi mật khẩu', 'changepassword', <LockOutlined />),
+  //   getItem('Quản lý tài khoản', 'systemparams', <AppstoreAddOutlined />),
+  // ];
+  const managementChildren1 = [];
+  if (combinedData.includes("EVERYONE")) {
+    managementChildren1.push(
+      getItem('Đổi mật khẩu', 'changepassword', <LockOutlined />),
+    );
+  }
+  if (combinedData.includes("ADMINDIRE")) {
+    managementChildren1.push(
+      getItem('Quản lý tài khoản', 'systemparams', <AppstoreAddOutlined />)
+    );
+  }
+  
+
   const managementChildren2 = [];
   if (combinedData.includes("EVERYONE")) {
     managementChildren2.push(
@@ -121,7 +134,7 @@ const AdminPage = () => {
           label: 'Hệ thống',
           key: 'id',
           icon: <SettingOutlined />,
-          children: managementChildren
+          children: managementChildren1
         },
         {
           label: 'Quản lý NSD và Quyền',

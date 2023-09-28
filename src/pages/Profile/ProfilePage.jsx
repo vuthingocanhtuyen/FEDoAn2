@@ -84,7 +84,7 @@ const ProfilePage = () => {
             <Loading isLoading={isLoading}>
             <WrapperContentProfile style={{  width: '500px',display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <WrapperInput>
-                        <WrapperLabel htmlFor="name">Name</WrapperLabel>
+                        <WrapperLabel htmlFor="name">Họ và tên</WrapperLabel>
                         <InputForm style={{ width: '300px' }} id="name" value={name} onChange={handleOnchangeName} />
                         
                     </WrapperInput>
@@ -94,12 +94,12 @@ const ProfilePage = () => {
                         
                     </WrapperInput>
                     <WrapperInput>
-                        <WrapperLabel htmlFor="phone">Phone</WrapperLabel>
+                        <WrapperLabel htmlFor="phone">SĐT</WrapperLabel>
                         <InputForm style={{ width: '300px' }} id="phone" value={phone} onChange={handleOnchangePhone} />
                         
                     </WrapperInput>
                     <WrapperInput>
-                        <WrapperLabel htmlFor="avatar">Avatar</WrapperLabel>
+                        <WrapperLabel htmlFor="avatar">Ảnh</WrapperLabel>
                         <WrapperUploadFile onChange={handleOnchangeAvatar} maxCount={1}>
                             <Button style={{ width: '300px' }} icon={<UploadOutlined />}>Select File</Button>
                         </WrapperUploadFile>
@@ -115,7 +115,7 @@ const ProfilePage = () => {
                        
                     </WrapperInput>
                     <WrapperInput>
-                        <WrapperLabel htmlFor="address">Address</WrapperLabel>
+                        <WrapperLabel htmlFor="address">Địa chỉ</WrapperLabel>
                         <InputForm style={{ width: '300px' }} id="address" value={address} onChange={handleOnchangeAddress} />
                         
                     </WrapperInput>

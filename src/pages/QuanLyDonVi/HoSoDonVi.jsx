@@ -145,7 +145,7 @@ const LyLich = () => {
             <Loading isLoading={isLoading}>
             <WrapperContentProfile style={{  width: '900px',display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
-                    <WrapperInput>
+                    <WrapperInput style={{marginTop: '10px'}}>
                         <WrapperLabel htmlFor="name">Đơn vị</WrapperLabel>
                         <InputForm style={{ width: '500px' }} id="name" value={name} onChange={handleOnchangeName} readOnly />
                         

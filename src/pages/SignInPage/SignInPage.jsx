@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
 import InputForm from '../../components/InputForm/InputForm'
-import { WrapperContainerLeft, WrapperTextLight } from './style'
+import { WrapperContainerLeft,WrapperContainerRight, WrapperTextLight } from './style'
+import imageLogo from '../../assets/images/logobqp.png'
+import { Image } from 'antd'
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons'
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -79,7 +81,7 @@ const SignInPage = () => {
         <WrapperContainerLeft>
           <h1 style={{ textAlign: 'center' }}>HỆ THỐNG QUẢN LÝ NHÂN SỰ BỘ QUỐC PHÒNG</h1>
           <p>Đăng nhập tài khoản</p>
-          <InputForm style={{ marginBottom: '10px' }} placeholder="abc@gmail.com" value={email} onChange={handleOnchangeEmail} />
+          <InputForm style={{ marginBottom: '10px' }} placeholder="info@gmail.com" value={email} onChange={handleOnchangeEmail} />
           <div style={{ position: 'relative' }}>
             <span
               onClick={() => setIsShowPassword(!isShowPassword)}
@@ -123,12 +125,14 @@ const SignInPage = () => {
             ></ButtonComponent>
           </Loading>
           <p><WrapperTextLight>Quên mật khẩu?</WrapperTextLight></p>
-          <p>Chưa có tài khoản? <WrapperTextLight onClick={handleNavigateSignUp}> Tạo tài khoản</WrapperTextLight></p>
+          {/* <p>Chưa có tài khoản? <WrapperTextLight onClick={handleNavigateSignUp}> Tạo tài khoản</WrapperTextLight></p> */}
         </WrapperContainerLeft>
-        {/* <WrapperContainerRight>
+        <WrapperContainerRight>
           <Image src={imageLogo} preview={false} alt="iamge-logo" height="203px" width="203px" />
-          <h4>Mua sắm tại LTTD</h4>
-        </WrapperContainerRight> */}
+          <h3 style={{color: 'red', fontWeight: 'bold'}}>BỘ QUỐC PHÒNG</h3>
+
+
+        </WrapperContainerRight>
       </div>
     </div >
   )

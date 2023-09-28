@@ -25,7 +25,7 @@ const DieuChuyenCanBo = () => {
   const navigate = useNavigate()
   const searchInput = useRef(null);
   const [treeNodeClickedId, setTreeNodeClickedId] = useState(null);
-    const handleTreeNodeClick = (item) => {
+  const handleTreeNodeClick = (item) => {
         setTreeNodeClickedId(item);
         getDonViCode(item);
     }
@@ -253,12 +253,7 @@ const DieuChuyenCanBo = () => {
                 
                 <div style={{ clear: 'both' }}></div>
                 <br />
-                {/* <div style={{ marginBottom: '8px' }}>
-                    <SearchBar onSearch={handleSearchHoTen} />
-                </div>
-                <div style={{ marginBottom: '8px' }}>
-                    <SearchBar onSearch={handleSearchQuanNhanId} />
-                </div> */}
+               
       
      
       <div style={{ marginTop: '20px' }}>
