@@ -1,15 +1,15 @@
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Form, Table, Button, Space } from 'antd';
+import { Form, Select, Button, Space } from 'antd';
 import { useSelector } from 'react-redux';
 import * as message from '../../../components/Message/Message'
-import { getBase64 } from '../../../utils'
+import { getBase64, renderOptions } from '../../../utils'
 import Loading from '../../../components/LoadingComponent/Loading'
 import InputComponent from '../../../components/InputComponent/InputComponent'
 import { useMutationHooks } from '../../../hooks/useMutationHook'
-import * as QuaTrinhDieuChuyenService from '../../../services/QuaTrinhDieuChuyenService';
-import * as QuanNhanService from '../../../services/QuanNhanService';
-import { WrapperHeader } from '../style'
+import * as TaiSanService from '../../../services/TaiSanService';
+import * as LoaiTaiSanService from '../../../services/LoaiTaiSanService';
+import { WrapperHeader } from './style'
 import { useQuery } from '@tanstack/react-query'
 import { DeleteOutlined, EditOutlined, SearchOutlined, CheckOutlined, WarningOutlined } from '@ant-design/icons'
 
@@ -17,8 +17,8 @@ import ModalComponent from '../../../components/ModalComponent/ModalComponent'
 import DrawerComponent from '../../../components/DrawerComponent/DrawerComponent'
 import TableComponent from '../../../components/TableComponent/TableComponent';
 import moment from 'moment';
-const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
-    
+const TaiSan = ({ }) => {
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [rowSelected, setRowSelected] = useState('')
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
@@ -29,40 +29,37 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
 
     const user = useSelector((state) => state?.user)
     const searchInput = useRef(null);
-    
+    const quannhanId = user.QuanNhanId;
     const inittial = () => ({
-        SoQuyetDinh: '',
-        NgayQuyetDinh: '',
-        DonViHienTai: '',
-        NgayDenNhanChuc: '',
-        DonViDen: '',
-        ChucVuDen: '',
-        DonViQuyetDinh: '',
-        ChucVuHienTai: '',
+        TenTaiSan: '',
+        LoaiTaiSan: '',
+        GiaTri: '',
+        DienTich: '',
+        HoatDongKinhTe: '',
         TrangThai: '',
         GhiChu: '',
+
+
+
     })
-    const [stateQuaTrinhDieuChuyen, setStateQuaTrinhDieuChuyen] = useState(inittial())
-    const [stateQuaTrinhDieuChuyenDetails, setStateQuaTrinhDieuChuyenDetails] = useState(inittial())
+    const [stateTaiSan, setStateTaiSan] = useState(inittial())
+    const [stateTaiSanDetails, setStateTaiSanDetails] = useState(inittial())
 
 
     const [form] = Form.useForm();
-    const fetchGetDetailsQuanNhan = async () => {
-        if (idQuanNhan) {
-            const res = await QuanNhanService.getDetailsQuanNhan(idQuanNhan)
-            console.log("qn:", res.data)
-            return res.data
-        }
-    }
 
-    const {data: quannhanDetails } = useQuery(['hosoquannhan', idQuanNhan], fetchGetDetailsQuanNhan, { enabled: !!idQuanNhan })
-    const quannhanId =quannhanDetails?.QuanNhanId;
     const mutation = useMutationHooks(
         (data) => {
-            const { QuanNhanId = quannhanId,
-                SoQuyetDinh, NgayQuyetDinh, DonViQuyetDinh, ChucVuHienTai, DonViHienTai, DonViDen, ChucVuDen, NgayDenNhanChuc, TrangThai = 0, edituser, edittime, GhiChu } = data
-            const res = QuaTrinhDieuChuyenService.createQuaTrinhDieuChuyen({
-                QuanNhanId, SoQuyetDinh, NgayQuyetDinh, DonViQuyetDinh, ChucVuHienTai, DonViHienTai, DonViDen, ChucVuDen, NgayDenNhanChuc, TrangThai, edituser, edittime, GhiChu
+            const { QuanNhanId = quannhanId
+                , TenTaiSan,
+                GiaTri, LoaiTaiSan, DienTich, HoatDongKinhTe,
+                TrangThai = 0,
+                GhiChu } = data
+            const res = TaiSanService.createTaiSan({
+                QuanNhanId, TenTaiSan,
+                GiaTri, LoaiTaiSan, DienTich, HoatDongKinhTe,
+                TrangThai,
+                GhiChu
             })
             console.log("data create qtct:", res.data)
             return res
@@ -76,7 +73,7 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
             const { id,
                 token,
                 ...rests } = data
-            const res = QuaTrinhDieuChuyenService.updateQuaTrinhDieuChuyen(
+            const res = TaiSanService.updateTaiSan(
                 id,
                 token,
                 { ...rests })
@@ -89,7 +86,7 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
             console.log("data update:", data);
             const { id, token, ...rests } = data;
             const updatedData = { ...rests, TrangThai: 1 }; // Update the TrangThai attribute to 1
-            const res = QuaTrinhDieuChuyenService.updateQuaTrinhDieuChuyen(id, token, updatedData);
+            const res = TaiSanService.updateTaiSan(id, token, updatedData);
             return res;
 
         },
@@ -109,7 +106,7 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
             console.log("data update:", data);
             const { id, token, ...rests } = data;
             const updatedData = { ...rests, TrangThai: 2 }; // Update the TrangThai attribute to 1
-            const res = QuaTrinhDieuChuyenService.updateQuaTrinhDieuChuyen(id, token, updatedData);
+            const res = TaiSanService.updateTaiSan(id, token, updatedData);
             return res;
 
         },
@@ -120,7 +117,7 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
             const { id,
                 token,
             } = data
-            const res = QuaTrinhDieuChuyenService.deleteQuaTrinhDieuChuyen(
+            const res = TaiSanService.deleteTaiSan(
                 id,
                 token)
             return res
@@ -131,7 +128,7 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
         (data) => {
             const { token, ...ids
             } = data
-            const res = QuaTrinhDieuChuyenService.deleteManyQuaTrinhDieuChuyen(
+            const res = TaiSanService.deleteManyTaiSan(
                 ids,
                 token)
             return res
@@ -139,67 +136,65 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
     )
 
 
-    const getAllQuaTrinhDieuChuyens = async () => {
-        const res = await QuaTrinhDieuChuyenService.getAllQuaTrinhDieuChuyen()
+    const getAllTaiSans = async () => {
+        const res = await TaiSanService.getAllTaiSan()
         return res
     }
 
     // show
 
 
-    const fetchGetQuaTrinhDieuChuyen = async (context) => {
+    const fetchGetTaiSan = async (context) => {
         const quannhanId = context?.queryKey && context?.queryKey[1]
         console.log("idquannhancongtacfe:", quannhanId)
         if (quannhanId) {
 
-            const res = await QuaTrinhDieuChuyenService.getQuaTrinhDieuChuyenByQuanNhanId(quannhanId)
+            const res = await TaiSanService.getTaiSanByQuanNhanId(quannhanId)
             console.log("qtct res: ", res)
             if (res?.data) {
-                setStateQuaTrinhDieuChuyenDetails({
-                    SoQuyetDinh: res?.data.SoQuyetDinh,
-                    NgayQuyetDinh: res?.data.NgayQuyetDinh,
-                    DonViHienTai: res?.data.DonViHienTai,
-                    NgayDenNhanChuc: res?.data.NgayDenNhanChuc,
-                    DonViDen: res?.data.DonViDen,
-                    DonViQuyetDinh: res?.data.DonViQuyetDinh,
+                setStateTaiSanDetails({
+                    TenTaiSan: res?.data.TenTaiSan,
+                    GiaTri: res?.data.GiaTri,
+                    LoaiTaiSan: res?.data.LoaiTaiSan,
+
+                    DienTich: res?.data.DienTich,
+                    HoatDongKinhTe: res?.data.HoatDongKinhTe,
+
                     TrangThai: res?.data.TrangThai,
                     GhiChu: res?.data.GhiChu,
-                    ChucVuHienTai: res?.data.ChucVuHienTai,
-                    ChucVuDen: res?.data.ChucVuDen,
-
                 })
             }
             // setIsLoadingUpdate(false)
             // console.log("qn:", res.data)
-            // console.log("chi tiết qtct:", setStateQuaTrinhDieuChuyenDetails)
+            // console.log("chi tiết qtct:", setStateTaiSanDetails)
             return res.data
         }
         setIsLoadingUpdate(false)
     }
     useEffect(() => {
         if (!isModalOpen) {
-            form.setFieldsValue(stateQuaTrinhDieuChuyenDetails)
+            form.setFieldsValue(stateTaiSanDetails)
         } else {
             form.setFieldsValue(inittial())
         }
-    }, [form, stateQuaTrinhDieuChuyenDetails, isModalOpen])
+    }, [form, stateTaiSanDetails, isModalOpen])
 
     useEffect(() => {
         if (rowSelected && isOpenDrawer) {
             setIsLoadingUpdate(true)
-            fetchGetDetailsQuaTrinhDieuChuyen(rowSelected)
+            fetchGetDetailsTaiSan(rowSelected)
         }
     }, [rowSelected, isOpenDrawer])
 
-    const handleDetailsQuaTrinhDieuChuyen = () => {
+    const handleDetailsTaiSan = () => {
         setIsOpenDrawer(true)
     }
 
 
-    const handleDelteManyQuaTrinhDieuChuyens = (ids) => {
+    const handleDelteManyTaiSans = (ids) => {
         mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
             onSettled: () => {
-                qtcongtacDetails.refetch()
+                quatrinhtaisanDetails.refetch()
             }
         })
     }
@@ -213,15 +208,15 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
     const { data: dataUpdatedNhapLai, isLoading: isLoadingUpdatedNhapLai, isSuccess: isSuccessUpdatedNhapLai, isError: isErrorUpdatedNhapLai } = mutationUpdateNhapLai
 
 
-    const queryQuaTrinhDieuChuyen = useQuery({ queryKey: ['quatrinhdieuchuyens'], queryFn: getAllQuaTrinhDieuChuyens })
-    const qtcongtacDetails = useQuery(['hosoquannhanqtdieuchuyen', quannhanId], fetchGetQuaTrinhDieuChuyen, { enabled: !!quannhanId })
-    console.log("qt điều chuyển:", qtcongtacDetails.data, queryQuaTrinhDieuChuyen.data)
-    const { isLoading: isLoadingQuaTrinhDieuChuyen, data: quatrinhdieuchuyens } = queryQuaTrinhDieuChuyen
+    const queryTaiSan = useQuery({ queryKey: ['taisans'], queryFn: getAllTaiSans })
+    const quatrinhtaisanDetails = useQuery(['hosoquannhantaisan', quannhanId], fetchGetTaiSan, { enabled: !!quannhanId })
+    console.log("qt tài sản:", quatrinhtaisanDetails.data, queryTaiSan.data)
+    const { isLoading: isLoadingTaiSan, data: quatrinhtaisans } = queryTaiSan
     const renderAction = () => {
         return (
             <div>
                 <DeleteOutlined style={{ color: 'red', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenDelete(true)} />
-                <EditOutlined style={{ color: 'orange', fontSize: '30px', cursor: 'pointer' }} onClick={handleDetailsQuaTrinhDieuChuyen} />
+                <EditOutlined style={{ color: 'orange', fontSize: '30px', cursor: 'pointer' }} onClick={handleDetailsTaiSan} />
                 <CheckOutlined style={{ color: 'green', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenPheDuyet(true)} />
                 <WarningOutlined style={{ color: 'blue', fontSize: '30px', cursor: 'pointer' }} onClick={() => setIsModalOpenNhapLai(true)} />
             </div>
@@ -230,20 +225,18 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
 
     const onChange = () => { }
 
-    const fetchGetDetailsQuaTrinhDieuChuyen = async (rowSelected) => {
-        const res = await QuaTrinhDieuChuyenService.getDetailsQuaTrinhDieuChuyen(rowSelected)
+    const fetchGetDetailsTaiSan = async (rowSelected) => {
+        const res = await TaiSanService.getDetailsTaiSan(rowSelected)
         if (res?.data) {
-            setStateQuaTrinhDieuChuyenDetails({
-                SoQuyetDinh: res?.data.SoQuyetDinh,
-                NgayQuyetDinh: res?.data.NgayQuyetDinh,
-                DonViHienTai: res?.data.DonViHienTai,
-                NgayDenNhanChuc: res?.data.NgayDenNhanChuc,
-                DonViDen: res?.data.DonViDen,
-                DonViQuyetDinh: res?.data.DonViQuyetDinh,
+            setStateTaiSanDetails({
+                TenTaiSan: res?.data.TenTaiSan,
+                GiaTri: res?.data.GiaTri,
+                LoaiTaiSan: res?.data.LoaiTaiSan,
+
+                DienTich: res?.data.DienTich,
+                HoatDongKinhTe: res?.data.HoatDongKinhTe,
                 TrangThai: res?.data.TrangThai,
                 GhiChu: res?.data.GhiChu,
-                ChucVuHienTai: res?.data.ChucVuHienTai,
-                ChucVuDen: res?.data.ChucVuDen,
             })
         }
         setIsLoadingUpdate(false)
@@ -253,7 +246,7 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
 
     useEffect(() => {
         if (rowSelected) {
-            fetchGetDetailsQuaTrinhDieuChuyen(rowSelected)
+            fetchGetDetailsTaiSan(rowSelected)
         }
         setIsLoadingUpdate(false)
     }, [rowSelected])
@@ -261,11 +254,11 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
 
     useEffect(() => {
         if (!isModalOpen) {
-            form.setFieldsValue(stateQuaTrinhDieuChuyenDetails)
+            form.setFieldsValue(stateTaiSanDetails)
         } else {
             form.setFieldsValue(inittial())
         }
-    }, [form, stateQuaTrinhDieuChuyenDetails, isModalOpen])
+    }, [form, stateTaiSanDetails, isModalOpen])
 
 
 
@@ -343,8 +336,8 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
 
     //Show dữ liệu
 
-    //const { data: qtcongtacDetails } = useQuery(['hosoquannhan', quannhanId], fetchGetQuaTrinhDieuChuyen, { enabled: !!quannhanId })
-    //console.log("qtrinhcongtac:", qtcongtacDetails)
+    //const { data: quatrinhtaisanDetails } = useQuery(['hosoquannhan', quannhanId], fetchGetTaiSan, { enabled: !!quannhanId })
+    //console.log("qtrinhcongtac:", quatrinhtaisanDetails)
     console.log("idquannhancongtac:", quannhanId)
 
 
@@ -357,46 +350,32 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
 
         },
         {
-            title: 'Số quyết định',
-            dataIndex: 'SoQuyetDinh',
-            key: 'SoQuyetDinh',
-        },
-        {
-            title: 'Ngày quyết định',
-            dataIndex: 'NgayQuyetDinh',
-            key: 'NgayQuyetDinh',
-        },
-        {
-            title: 'Cấp quyết định',
-            dataIndex: 'DonViQuyetDinh',
-            key: 'DonViQuyetDinh',
-        },
-        {
-            title: 'Đơn vị hiện tại',
-            dataIndex: 'DonViHienTai',
-            key: 'DonViHienTai',
-        },
-        {
-            title: 'Chức vụ hiện tại',
-            dataIndex: 'ChucVuHienTai',
-            key: 'ChucVuHienTai',
+            title: 'Tên tài sản',
+            dataIndex: 'TenTaiSan',
+            key: 'TenTaiSan',
         },
 
         {
-            title: 'Đơn vị đến',
-            dataIndex: 'DonViDen',
-            key: 'DonViDen',
-        },
-        {
-            title: 'Chức vụ đến',
-            dataIndex: 'ChucVuDen',
-            key: 'ChucVuDen',
+            title: 'Loại tài sản',
+            dataIndex: 'LoaiTaiSan',
+            key: 'LoaiTaiSan',
         },
 
         {
-            title: 'Ngày nhận chức',
-            dataIndex: 'NgayDenNhanChuc',
-            key: 'NgayDenNhanChuc',
+            title: 'Diện tích',
+            dataIndex: 'DienTich',
+            key: 'DienTich',
+        },
+
+        {
+            title: 'Giá trị',
+            dataIndex: 'GiaTri',
+            key: 'GiaTri',
+        },
+        {
+            title: 'Hoạt động kinh tế',
+            dataIndex: 'HoatDongKinhTe',
+            key: 'HoatDongKinhTe',
         },
 
         {
@@ -458,16 +437,13 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
 
     const handleCloseDrawer = () => {
         setIsOpenDrawer(false);
-        setStateQuaTrinhDieuChuyenDetails({
-            SoQuyetDinh: '',
-            NgayQuyetDinh: '',
-            DonViHienTai: '',
-            NgayDenNhanChuc: '',
-            DonViDen: '',
-            ChucVuDen: '',
-            DonViQuyetDinh: '',
+        setStateTaiSanDetails({
+            TenTaiSan: '',
+            GiaTri: '',
+            LoaiTaiSan: '',
 
-            ChucVuHienTai: '',
+            DienTich: '',
+            HoatDongKinhTe: '',
             TrangThai: '',
             GhiChu: '',
         })
@@ -488,26 +464,23 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
     }
 
 
-    const handleDeleteQuaTrinhDieuChuyen = () => {
+    const handleDeleteTaiSan = () => {
         mutationDeleted.mutate({ id: rowSelected, token: user?.access_token }, {
             onSettled: () => {
-                qtcongtacDetails.refetch()
+                quatrinhtaisanDetails.refetch()
             }
         })
     }
 
     const handleCancel = () => {
         setIsModalOpen(false);
-        setStateQuaTrinhDieuChuyen({
-            SoQuyetDinh: '',
-            NgayQuyetDinh: '',
-            DonViHienTai: '',
-            NgayDenNhanChuc: '',
-            DonViDen: '',
-            ChucVuDen: '',
-            DonViQuyetDinh: '',
+        setStateTaiSan({
+            TenTaiSan: '',
+            GiaTri: '',
+            LoaiTaiSan: '',
 
-            ChucVuHienTai: '',
+            DienTich: '',
+            HoatDongKinhTe: '',
             TrangThai: '',
             GhiChu: '',
         })
@@ -517,20 +490,19 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
 
     const onFinish = () => {
         const params = {
-            SoQuyetDinh: stateQuaTrinhDieuChuyen.SoQuyetDinh,
-            NgayQuyetDinh: stateQuaTrinhDieuChuyen.NgayQuyetDinh,
-            DonViHienTai: stateQuaTrinhDieuChuyen.DonViHienTai,
-            NgayDenNhanChuc: stateQuaTrinhDieuChuyen.NgayDenNhanChuc,
-            DonViDen: stateQuaTrinhDieuChuyen.DonViDen,
-            DonViQuyetDinh: stateQuaTrinhDieuChuyen.DonViQuyetDinh,
-            ChucVuHienTai: stateQuaTrinhDieuChuyen.ChucVuHienTai,
-            ChucVuDen: stateQuaTrinhDieuChuyen.ChucVuDen,
-            GhiChu: stateQuaTrinhDieuChuyen.GhiChu,
+            TenTaiSan: stateTaiSan.TenTaiSan,
+            GiaTri: stateTaiSan.GiaTri,
+            LoaiTaiSan: stateTaiSan.LoaiTaiSan,
+
+            DienTich: stateTaiSan.DienTich,
+            HoatDongKinhTe: stateTaiSan.HoatDongKinhTe,
+            //   TrangThai: stateTaiSan.TrangThai,
+            GhiChu: stateTaiSan.GhiChu,
         }
-        console.log("Finsh", stateQuaTrinhDieuChuyen)
+        console.log("Finsh", stateTaiSan)
         mutation.mutate(params, {
             onSettled: () => {
-                qtcongtacDetails.refetch()
+                quatrinhtaisanDetails.refetch()
             }
         })
     }
@@ -539,8 +511,8 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
 
     const handleOnchange = (e) => {
         console.log("e: ", e.target.name, e.target.value)
-        setStateQuaTrinhDieuChuyen({
-            ...stateQuaTrinhDieuChuyen,
+        setStateTaiSan({
+            ...stateTaiSan,
             [e.target.name]: e.target.value
         })
     }
@@ -548,32 +520,32 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
 
     const handleOnchangeDetails = (e) => {
         console.log('check', e.target.name, e.target.value)
-        setStateQuaTrinhDieuChuyenDetails({
-            ...stateQuaTrinhDieuChuyenDetails,
+        setStateTaiSanDetails({
+            ...stateTaiSanDetails,
             [e.target.name]: e.target.value
         })
     }
 
 
-    const onUpdateQuaTrinhDieuChuyen = () => {
-        mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateQuaTrinhDieuChuyenDetails }, {
+    const onUpdateTaiSan = () => {
+        mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateTaiSanDetails }, {
             onSettled: () => {
-                qtcongtacDetails.refetch()
+                quatrinhtaisanDetails.refetch()
             }
         })
     }
     const onUpdateNgoaiNguTrangThai = () => {
-        mutationUpdateTrangThai.mutate({ id: rowSelected, token: user?.access_token, ...stateQuaTrinhDieuChuyenDetails }, {
+        mutationUpdateTrangThai.mutate({ id: rowSelected, token: user?.access_token, ...stateTaiSanDetails }, {
             onSettled: () => {
-                qtcongtacDetails.refetch()
+                quatrinhtaisanDetails.refetch()
             }
         })
     }
 
     const onUpdateNgoaiNguNhapLai = () => {
-        mutationUpdateNhapLai.mutate({ id: rowSelected, token: user?.access_token, ...stateQuaTrinhDieuChuyenDetails }, {
+        mutationUpdateNhapLai.mutate({ id: rowSelected, token: user?.access_token, ...stateTaiSanDetails }, {
             onSettled: () => {
-                qtcongtacDetails.refetch()
+                quatrinhtaisanDetails.refetch()
             }
         })
     }
@@ -594,13 +566,12 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
         // Sử dụng Moment.js để chuyển đổi đối tượng Date thành chuỗi theo định dạng mong muốn
         return moment(date).format('DD/MM/YYYY');
     }
-    const dataTable = qtcongtacDetails?.data?.length && qtcongtacDetails?.data?.map((qtcongtacDetails) => {
+    const dataTable = quatrinhtaisanDetails?.data?.length && quatrinhtaisanDetails?.data?.map((quatrinhtaisanDetails) => {
         return {
-            ...qtcongtacDetails,
-            key: qtcongtacDetails._id,
-            TrangThai: getTrangThaiText(qtcongtacDetails.TrangThai),
-            NgayQuyetDinh: convertDateToString(qtcongtacDetails.NgayQuyetDinh),
-            NgayDenNhanChuc: convertDateToString(qtcongtacDetails.NgayDenNhanChuc)
+            ...quatrinhtaisanDetails,
+            key: quatrinhtaisanDetails._id,
+            TrangThai: getTrangThaiText(quatrinhtaisanDetails.TrangThai),
+            GiaTri: convertDateToString(quatrinhtaisanDetails.GiaTri)
 
         }
     })
@@ -613,18 +584,39 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
         }
     }, [isSuccess])
 
+    const fetchAllLoaiTaiSan = async () => {
+        const res = await LoaiTaiSanService.getAllType()
+        return res
+    }
+
+    const allTaiSan = useQuery({ queryKey: ['all-taisan'], queryFn: fetchAllLoaiTaiSan })
+    const handleChangeSelect1 = (value) => {
+        setStateTaiSan({
+            ...stateTaiSan,
+            LoaiTaiSan: value
+        })
+        // console.log(stateQuanNhan)
+    }
+
+    const handleChangeSelectDetails = (value) => {
+        setStateTaiSanDetails({
+            ...stateTaiSanDetails,
+            LoaiTaiSan: value
+        })
+        // console.log(stateQuanNhan)
+    }
     return (
         <div>
             <div>
-                <WrapperHeader>Quá trình điều chuyển</WrapperHeader>
+                <WrapperHeader>Kê khai tài sản</WrapperHeader>
                 <div style={{ marginTop: '10px' }}>
                     <Button onClick={() => setIsModalOpen(true)}>Thêm tham số</Button>
                 </div>
                 {isLoading ? ( // Hiển thị thông báo đang tải
                     <div>Loading...</div>
                 ) : (
-                    // <Table dataSource={qtcongtacDetails} columns={columns} />
-                    <TableComponent columns={columns} isLoading={isLoadingQuaTrinhDieuChuyen} data={dataTable} onRow={(record, rowSelected) => {
+                    // <Table dataSource={quatrinhtaisanDetails} columns={columns} />
+                    <TableComponent columns={columns} isLoading={isLoadingTaiSan} data={dataTable} onRow={(record, rowSelected) => {
                         return {
                             onClick: event => {
                                 setRowSelected(record._id);
@@ -637,7 +629,7 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
                 )}
 
             </div>
-            <ModalComponent forceRender title="Thêm mới quá trình điều chuyển" open={isModalOpen} onCancel={handleCancel} footer={null}>
+            <ModalComponent forceRender title="Thêm mới tài sản" open={isModalOpen} onCancel={handleCancel} footer={null}>
                 <Loading isLoading={isLoading}>
 
                     <Form
@@ -650,111 +642,80 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
                     >
 
                         <Form.Item
-                            label="Mã quyết định"
-                            name="SoQuyetDinh"
+                            label="Tên tài sản"
+                            name="TenTaiSan"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
                             <InputComponent
                                 style={{ width: '100%' }}
 
-                                value={stateQuaTrinhDieuChuyen['SoQuyetDinh']}
+                                value={stateTaiSan['TenTaiSan']}
                                 onChange={handleOnchange}
-                                name="SoQuyetDinh"
+                                name="TenTaiSan"
                             />
                         </Form.Item>
 
+
                         <Form.Item
-                            label="Ngày quyết định"
-                            name="NgayQuyetDinh"
+                            label="Loại tài sản"
+                            name="LoaiTaiSan"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                            <InputComponent
-                                style={{ width: '100%' }}
+                            {/* <InputComponent
+                style={{ width: '100%' }}
 
-                                value={stateQuaTrinhDieuChuyen['NgayQuyetDinh']}
-                                onChange={handleOnchange}
-                                name="NgayQuyetDinh"
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            label="Cấp quyết định"
-                            name="DonViQuyetDinh"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
-                        >
-                            <InputComponent
-                                style={{ width: '100%' }}
+                value={stateTaiSan['LoaiTaiSan']}
+                onChange={handleOnchange}
+                name="LoaiTaiSan"
+              /> */}
+                            <Select
+                                name="LoaiTaiSan"
+                                //value={stateTaiHuongDan['HinhThucHuongDan']}
 
-                                value={stateQuaTrinhDieuChuyen.DonViQuyetDinh}
-                                onChange={handleOnchange}
-                                name="DonViQuyetDinh"
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            label="Đơn vị hiện tại"
-                            name="DonViHienTai"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
-                        >
-                            <InputComponent
-                                style={{ width: '100%' }}
-
-                                value={stateQuaTrinhDieuChuyen['DonViHienTai']}
-                                onChange={handleOnchange}
-                                name="DonViHienTai"
+                                onChange={handleChangeSelect1}
+                                options={renderOptions(allTaiSan?.data?.data)}
                             />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Chức vụ hiện tại"
-                            name="ChucVuHienTai"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
-                        >
-                            <InputComponent
-                                style={{ width: '100%' }}
-
-                                value={stateQuaTrinhDieuChuyen['ChucVuHienTai']}
-                                onChange={handleOnchange}
-                                name="ChucVuHienTai"
-                            />
-                        </Form.Item>
 
                         <Form.Item
-                            label="Đơn vị đến"
-                            name="DonViDen"
+                            label="Diện tích"
+                            name="DienTich"
                         //   rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
                             <InputComponent
                                 style={{ width: '100%' }}
 
-                                value={stateQuaTrinhDieuChuyen['DonViDen']}
+                                value={stateTaiSan['DienTich']}
                                 onChange={handleOnchange}
-                                name="DonViDen"
+                                name="DienTich"
                             />
                         </Form.Item>
 
                         <Form.Item
-                            label="Chức vụ đến"
-                            name="ChucVuDen"
+                            label="Giá trị"
+                            name="GiaTri"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
                             <InputComponent
                                 style={{ width: '100%' }}
 
-                                value={stateQuaTrinhDieuChuyen.ChucVuDen}
+                                value={stateTaiSan['GiaTri']}
                                 onChange={handleOnchange}
-                                name="ChucVuDen"
+                                name="GiaTri"
                             />
                         </Form.Item>
                         <Form.Item
-                            label="Ngày đến nhận chức"
-                            name="NgayDenNhanChuc"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
+                            label="Hoạt động kinh tế"
+                            name="HoatDongKinhTe"
+                        //  rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
                             <InputComponent
                                 style={{ width: '100%' }}
 
-                                value={stateQuaTrinhDieuChuyen.NgayDenNhanChuc}
+                                value={stateTaiSan['HoatDongKinhTe']}
                                 onChange={handleOnchange}
-                                name="NgayDenNhanChuc"
+                                name="HoatDongKinhTe"
                             />
                         </Form.Item>
 
@@ -768,128 +729,68 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
             </ModalComponent>
 
 
-            <DrawerComponent title='Chi tiết quá trình điều chuyển' isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="70%">
+            <DrawerComponent title='Chi tiết  tài sản' isOpen={isOpenDrawer} onClose={() => setIsOpenDrawer(false)} width="70%">
 
                 <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
                     <Form
                         name="basic"
                         labelCol={{ span: 5 }}
                         wrapperCol={{ span: 22 }}
-                        onFinish={onUpdateQuaTrinhDieuChuyen}
+                        onFinish={onUpdateTaiSan}
                         autoComplete="on"
                         form={form}
                     >
-
-
                         <Form.Item
-                            label="Mã quyết định"
-                            name="SoQuyetDinh"
+                            label="Tên tài sản"
+                            name="TenTaiSan"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                            <InputComponent
-                                style={{ width: '100%' }}
-
-                                value={stateQuaTrinhDieuChuyenDetails['SoQuyetDinh']}
-                                onChange={handleOnchangeDetails}
-                                name="SoQuyetDinh"
-                            />
+                            <InputComponent value={stateTaiSanDetails['TenTaiSan']} onChange={handleOnchangeDetails} name="TenTaiSan" />
                         </Form.Item>
 
+
                         <Form.Item
-                            label="Ngày quyết định"
-                            name="NgayQuyetDinh"
+                            label="Loại tài sản"
+                            name="LoaiTaiSan"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                            <InputComponent
-                                style={{ width: '100%' }}
-
-                                value={stateQuaTrinhDieuChuyenDetails['NgayQuyetDinh']}
-                                onChange={handleOnchangeDetails}
-                                name="NgayQuyetDinh"
+                            {/* <InputComponent value={stateTaiSanDetails['LoaiTaiSan']} onChange={handleOnchangeDetails} name="LoaiTaiSan" />
+            */}
+                            <Select
+                                name="LoaiTaiSan"
+                                onChange={handleChangeSelectDetails}
+                                options={renderOptions(allTaiSan?.data?.data)}
                             />
+
                         </Form.Item>
+
                         <Form.Item
-                            label="Cấp quyết định"
-                            name="DonViQuyetDinh"
+                            label="Diện tích"
+                            name="DienTich"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                            <InputComponent
-                                style={{ width: '100%' }}
-
-                                value={stateQuaTrinhDieuChuyenDetails.DonViQuyetDinh}
-                                onChange={handleOnchangeDetails}
-                                name="DonViQuyetDinh"
-                            />
+                            <InputComponent value={stateTaiSanDetails['DienTich']} onChange={handleOnchangeDetails} name="DienTich" />
                         </Form.Item>
+
+
+
+
                         <Form.Item
-                            label="Đơn vị hiện tại"
-                            name="DonViHienTai"
+                            label="Giá trị"
+                            name="GiaTri"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                            <InputComponent
-                                style={{ width: '100%' }}
-
-                                value={stateQuaTrinhDieuChuyenDetails['DonViHienTai']}
-                                onChange={handleOnchangeDetails}
-                                name="DonViHienTai"
-                            />
+                            <InputComponent value={stateTaiSanDetails['GiaTri']} onChange={handleOnchangeDetails} name="GiaTri" />
                         </Form.Item>
+
 
                         <Form.Item
-                            label="Chức vụ hiện tại"
-                            name="ChucVuHienTai"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
+                            label="Hoạt động kinh tế"
+                            name="HoatDongKinhTe"
+                        //  rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                            <InputComponent
-                                style={{ width: '100%' }}
-
-                                value={stateQuaTrinhDieuChuyenDetails['ChucVuHienTai']}
-                                onChange={handleOnchangeDetails}
-                                name="ChucVuHienTai"
-                            />
+                            <InputComponent value={stateTaiSanDetails['HoatDongKinhTe']} onChange={handleOnchangeDetails} name="HoatDongKinhTe" />
                         </Form.Item>
-
-                        <Form.Item
-                            label="Đơn vị đến"
-                            name="DonViDen"
-                        //   rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
-                        >
-                            <InputComponent
-                                style={{ width: '100%' }}
-
-                                value={stateQuaTrinhDieuChuyenDetails['DonViDen']}
-                                onChange={handleOnchangeDetails}
-                                name="DonViDen"
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Chức vụ đến"
-                            name="ChucVuDen"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
-                        >
-                            <InputComponent
-                                style={{ width: '100%' }}
-
-                                value={stateQuaTrinhDieuChuyenDetails.ChucVuDen}
-                                onChange={handleOnchangeDetails}
-                                name="ChucVuDen"
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            label="Ngày đến nhận chức"
-                            name="NgayDenNhanChuc"
-                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
-                        >
-                            <InputComponent
-                                style={{ width: '100%' }}
-
-                                value={stateQuaTrinhDieuChuyenDetails.NgayDenNhanChuc}
-                                onChange={handleOnchangeDetails}
-                                name="NgayDenNhanChuc"
-                            />
-                        </Form.Item>
-
                         <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
                             <Button type="primary" htmlType="submit">
                                 Cập nhật
@@ -899,20 +800,20 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
                 </Loading>
             </DrawerComponent>
 
-            <ModalComponent title="Xóa quá trình điều chuyển" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteQuaTrinhDieuChuyen}>
+            <ModalComponent title="Xóa  tài sản" open={isModalOpenDelete} onCancel={handleCancelDelete} onOk={handleDeleteTaiSan}>
                 <Loading isLoading={isLoadingDeleted}>
-                    <div>Bạn có chắc xóa quá trình điều chuyển này không?</div>
+                    <div>Bạn có chắc xóa  tài sản này không?</div>
                 </Loading>
             </ModalComponent>
-            <ModalComponent title="Phê quyệt quá trình điều chuyển" open={isModalOpenPheDuyet} onCancel={handleCancelPheDuyet} onOk={onUpdateNgoaiNguTrangThai}>
+            <ModalComponent title="Phê quyệt  tài sản" open={isModalOpenPheDuyet} onCancel={handleCancelPheDuyet} onOk={onUpdateNgoaiNguTrangThai}>
                 <Loading isLoading={isLoadingUpdatedTT}>
-                    <div>Bạn có chắc phê duyệt quá trình điều chuyển này không?</div>
+                    <div>Bạn có chắc phê duyệt  tài sản này không?</div>
                 </Loading>
             </ModalComponent>
 
-            <ModalComponent title="Yêu cầu nhập lại thông tin quá trình điều chuyển" open={isModalOpenNhapLai} onCancel={handleCancelNhapLai} onOk={onUpdateNgoaiNguNhapLai}>
+            <ModalComponent title="Yêu cầu nhập lại thông tin  tài sản" open={isModalOpenNhapLai} onCancel={handleCancelNhapLai} onOk={onUpdateNgoaiNguNhapLai}>
                 <Loading isLoading={isLoadingUpdatedTT}>
-                    <div>Bạn có chắc yêu cầu nhập lại  quá trình điều chuyển này không?</div>
+                    <div>Bạn có chắc yêu cầu nhập lại   tài sản này không?</div>
                 </Loading>
             </ModalComponent>
 
@@ -921,4 +822,4 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
     );
 };
 
-export default QuaTrinhDieuChuyen;
+export default TaiSan;

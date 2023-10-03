@@ -5,32 +5,29 @@ import * as QuanNhanService from '../../../services/QuanNhanService'
 import { useQuery } from '@tanstack/react-query'
 
 
-import QTCongTac from '../../QuanLyQuanNhan/HoSoCanBo/QTCongTac'
-import QTDang from '../../QuanLyQuanNhan/HoSoCanBo/QTDang'
-import QTQuanHam from '../../QuanLyQuanNhan/HoSoCanBo/QTQuanHam'
-import QTCDCMKT from '../../QuanLyQuanNhan/HoSoCanBo/QTCDCMKT'
-import QTHocTapKhac from '../../QuanLyQuanNhan/HoSoCanBo/QTHocTapKhac'
-import QTNgoaiNgu from '../../QuanLyQuanNhan/HoSoCanBo/QTNgoaiNgu'
-import DaiHoc from '../../QuanLyQuanNhan/HoSoCanBo/DaiHoc'
-import SauDaiHoc from '../../QuanLyQuanNhan/HoSoCanBo/SauDaiHoc'
-import TinhTrangCT from '../../QuanLyQuanNhan/HoSoCanBo/TinhTrangCT'
+import QTCongTac from '../ChiTietQuanNhan/HoSoCanBo/QTCongTac'
+import QTDang from '../ChiTietQuanNhan/HoSoCanBo/QTDang'
+import QTQuanHam from '../ChiTietQuanNhan/HoSoCanBo/QTQuanHam'
+import QTCDCMKT from '../ChiTietQuanNhan/HoSoCanBo/QTCDCMKT'
+import QTHocTapKhac from '../ChiTietQuanNhan/HoSoCanBo/QTHocTapKhac'
+import QTNgoaiNgu from '../ChiTietQuanNhan/HoSoCanBo/QTNgoaiNgu'
+import DaiHoc from '../ChiTietQuanNhan/HoSoCanBo/DaiHoc'
+import SauDaiHoc from '../ChiTietQuanNhan/HoSoCanBo/SauDaiHoc'
+import TinhTrangCT from '../ChiTietQuanNhan/HoSoCanBo/TinhTrangCT'
 
 
 const QuaTrinh = ({ idQuanNhan }) => {
-    const onChange = () => { }
+    
 
-    const fetchGetDetailsQuanNhan = async (context) => {
-        const id = context?.queryKey && context?.queryKey[1]
-        console.log("idquannhan:", id)
-        if (id) {
-            const res = await QuanNhanService.getDetailsQuanNhan(id)
+    const fetchGetDetailsQuanNhan = async () => {
+        if (idQuanNhan) {
+            const res = await QuanNhanService.getDetailsQuanNhan(idQuanNhan)
             console.log("qn:", res.data)
             return res.data
         }
     }
 
     const { isLoading, data: quannhanDetails } = useQuery(['hosoquannhan', idQuanNhan], fetchGetDetailsQuanNhan, { enabled: !!idQuanNhan })
-    console.log("chi tiet quan nhan:", quannhanDetails)
 
 
 
