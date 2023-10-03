@@ -14,7 +14,7 @@ import DieuChuyenCanBoId from "../pages/QuanLyDonVi/DieuChuyenCanBoId";
 import SignInPage from "../pages/SignInPage/SignInPage";
 import SignUpPage from "../pages/SignUpPage/SignUpPage";
 import TypeProductPage from "../pages/TypeProductPage/TypeProductPage";
-
+import QuanLyChucVuId from "../pages/QuanLyDonVi/QuanLyChucVu/QuanLyChucVuId";
 export const routes = [
     {
         path: '/hosocanbo/:id',
@@ -34,6 +34,11 @@ export const routes = [
     {
         path: '/dieuchuyencanbo/:id',
         page: DieuChuyenCanBoId,
+        isShowHeader: true
+    },
+    {
+        path: '/quanlychucvu/:id',
+        page: QuanLyChucVuId,
         isShowHeader: true
     },
     {

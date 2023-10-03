@@ -102,3 +102,37 @@ export const getAllType = async () => {
   const res = await axios.get(`${process.env.REACT_APP_API_URL}/quannhan/get-all-type`);
   return res.data;
 };
+export const update2ListsQuanNhan = async (id,index, access_token) => {
+  const res = await axiosJWT.put(
+    `${process.env.REACT_APP_API_URL}/quannhan/editdata/${id}/${index}`,
+    {
+      headers: {
+        token: `Bearer ${access_token}`,
+      },
+    }
+  );
+  return res.data;
+};
+export const updateQuanNhanLists = async (id,data,access_token) => {
+  const res = await axiosJWT.post(
+    `${process.env.REACT_APP_API_URL}/quannhan/pushdata/${id}`,
+    data,
+    {
+      headers: {
+        token: `Bearer ${access_token}`,
+      },
+    }
+  );
+  return res.data;
+};
+export const delete2ListsQuanNhan = async (id,index, access_token) => {
+  const res = await axiosJWT.delete(
+    `${process.env.REACT_APP_API_URL}/quannhan/deletedata/${id}/${index}`,
+    {
+      headers: {
+        token: `Bearer ${access_token}`,
+      },
+    }
+  );
+  return res.data;
+};
