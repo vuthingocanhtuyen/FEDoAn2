@@ -14,7 +14,7 @@ import BaoCaoNhanhCDKH from './BaoCaoNhanhCDKH'
 
 import { WrapperContentProfileFree } from '../style'
 import ChartCDKH from './ChartCDKH'
-
+import YearChartCDKH from './YearChartCDKH'
 
 
 
@@ -58,6 +58,9 @@ const BaoCaoNhanhCDKHTong = () => {
             </div>
             <div style={{ flex: 1, maxWidth: '1200px', background: '#fff', padding: '5px' }}>
             <ChartCDKH handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId}/>
+        </div>
+        <div style={{ flex: 1, maxWidth: '1200px', background: '#fff', padding: '5px' }}>
+            <YearChartCDKH handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId}/>
         </div>
             
         </div>
