@@ -45,7 +45,7 @@ const DemoChartComponent = ({ handleTreeNodeClick,treeNodeClickedId  }) => {
   
 
     
-   
+   try{
       return (
         <BarChart
           width={1200}
@@ -58,7 +58,7 @@ const DemoChartComponent = ({ handleTreeNodeClick,treeNodeClickedId  }) => {
             <Label value="Đơn Vị" offset={0} position="insideBottom" />
           </XAxis>
           <YAxis width={10}>
-            <Label value="Số Lượng" angle={-90} position="insideLeft" />
+            <Label value="Số lượng" angle={-90} position="insideLeft" />
           </YAxis>
           <Tooltip />
           <Legend />
@@ -74,7 +74,8 @@ const DemoChartComponent = ({ handleTreeNodeClick,treeNodeClickedId  }) => {
           <Label value="Biểu Đồ Số Lượng Học Vị" offset={0} position="insideTop" />
         </BarChart>
       );
-      
+    }
+    catch{}
   };
   
   export default DemoChartComponent;

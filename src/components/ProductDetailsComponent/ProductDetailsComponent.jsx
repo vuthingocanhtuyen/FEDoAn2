@@ -39,9 +39,7 @@ const ProductDetailsComponent = ({idProduct}) => {
         }
     }
 
-    useEffect(() => {
-        initFacebookSDK()
-    }, [])
+    
 
     useEffect(() => {
         const orderRedux = order?.orderItems?.find((item) => item.product === productDetails?._id) 
@@ -155,12 +153,7 @@ const ProductDetailsComponent = ({idProduct}) => {
                         <span className='address'>{user?.address}</span> -
                         <span className='change-address'>Đổi địa chỉ</span>
                     </WrapperAddressProduct>
-                    <LikeButtonComponent
-                     dataHref={ process.env.REACT_APP_IS_LOCAL 
-                                ? "https://developers.facebook.com/docs/plugins/" 
-                                : window.location.href
-                            } 
-                    />
+                    
                     <div style={{ margin: '10px 0 20px', padding: '10px 0', borderTop: '1px solid #e5e5e5', borderBottom: '1px solid #e5e5e5' }}>
                         <div style={{ marginBottom: '10px' }}>Số lượng</div>
                         <WrapperQualityProduct>
@@ -204,13 +197,7 @@ const ProductDetailsComponent = ({idProduct}) => {
                         ></ButtonComponent>
                     </div>
                 </Col>
-                <CommentComponent 
-                    dataHref={process.env.REACT_APP_IS_LOCAL 
-                        ? "https://developers.facebook.com/docs/plugins/comments#configurator"
-                        : window.location.href
-                    } 
-                    width="1270" 
-                />
+                
             </Row >
             
         </Loading>

@@ -1,10 +1,10 @@
 import { Button, Form, Space, Select } from 'antd'
 import React from 'react'
-
+import ButtonComponent from '../../../components/ButtonComponent/ButtonComponent'
 import TableComponent from '../../../components/TableComponent/TableComponent'
 import InputComponent from '../../../components/InputComponent/InputComponent'
 import { Table } from 'antd';
-
+import * as ThongKeHocViService from '../../../services/ThongKeHocViService';
 import { getBase64, renderOptions } from '../../../utils'
 import { useEffect } from 'react'
 import * as message from '../../../components/Message/Message'
@@ -22,7 +22,13 @@ const BaoCaoNhanhCDKH = ({handleTreeNodeClick,treeNodeClickedId }) => {
     const [showTotal, setShowTotal] = useState(false);
     const [isLoading, setIsLoading] = useState(false)
     const [hocViData, setHocViData] = useState([]);
-    const user = useSelector((state) => state?.user)
+    const user = useSelector((state) => state?.user);
+    const [TienSyKhoaHoc, setTienSyKhoaHoc] = useState('');
+    const [TienSy, setTienSy] = useState('');
+    const [ThacSy, setThacSy] = useState('');
+    const [KySu, setKySu] = useState('');
+    const [CuNhan, setCuNhan] = useState('');
+    const [Khac, setKhac] = useState('');
     const searchInput = useRef(null);
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
@@ -33,6 +39,13 @@ const BaoCaoNhanhCDKH = ({handleTreeNodeClick,treeNodeClickedId }) => {
         clearFilters();
         // setSearchText('');
     };
+    const currentYear = new Date().getFullYear();
+    const mutation = useMutationHooks(
+      (data) => {
+          const { donviid ,nam, access_token, ...rests } = data
+          ThongKeHocViService.updateThongKeHocVi(donviid,nam, access_token,rests)
+      }
+  )
 
     const getColumnSearchProps = (dataIndex) => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -123,7 +136,7 @@ const BaoCaoNhanhCDKH = ({handleTreeNodeClick,treeNodeClickedId }) => {
           setIsLoading(true);
           const hocViData = await DonViService.getHocVifromcode(currentUserDonVi);
           setIsLoading(false);
-          
+          try{
           const processedData = hocViData.data.map((item, index) => ({
             key: index,
             TenDonVi: item.donViCon.name,
@@ -134,8 +147,10 @@ const BaoCaoNhanhCDKH = ({handleTreeNodeClick,treeNodeClickedId }) => {
             CuNhan: item.hocViCounts[4].SoLuong,
             Khac: item.hocViCounts[5].SoLuong,
           }));
-    
+          
           setData(processedData);
+        }
+        catch{}
           
         } catch (error) {
           console.error(error);
@@ -150,7 +165,12 @@ const BaoCaoNhanhCDKH = ({handleTreeNodeClick,treeNodeClickedId }) => {
             let sumKySu = data.reduce((acc, item) => acc + item.KySu, 0);
             let sumCuNhan = data.reduce((acc, item) => acc + item.CuNhan, 0);
             let sumKhac = data.reduce((acc, item) => acc + item.Khac, 0);
-    
+            setTienSyKhoaHoc(sumTienSyKhoaHoc);
+            setTienSy(sumTienSy);
+            setThacSy(sumThacSy);
+            setKySu(sumKySu);
+            setCuNhan(sumCuNhan);
+            setKhac(sumKhac);
             const totalRow = {
                 key: 'total',
                 TenDonVi: 'Tổng',
@@ -204,9 +224,25 @@ const BaoCaoNhanhCDKH = ({handleTreeNodeClick,treeNodeClickedId }) => {
           key: 'Khac',
         },
       ];
+    const handleUpdate = () => {
+        mutation.mutate({donviid : currentUserDonVi,nam : currentYear,TienSyKhoaHoc,TienSy,ThacSy,KySu,CuNhan,Khac, access_token: user?.access_token });
+    }       
       return (
         <div>
             <TableComponent data={data} columns={columns} />
+            <ButtonComponent
+                            onClick={handleUpdate}
+                            size={40}
+                            styleButton={{
+                                height: '30px',
+                                width: 'fit-content',
+                                borderRadius: '4px',
+                                padding: '2px 6px 6px',
+                                marginLeft: '30px', 
+                            }}
+                            textbutton={'Cập nhật dữ liệu năm'}
+                            styleTextButton={{ color: 'rgb(26, 148, 255)', fontSize: '15px', fontWeight: '700' }}
+        ></ButtonComponent>
         </div>
     );
     };

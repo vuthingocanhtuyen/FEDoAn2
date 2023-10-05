@@ -44,6 +44,7 @@ const DemoChartComponent = ({ handleTreeNodeClick, treeNodeClickedId }) => {
     };
 try{
     return (
+      // <div>
         <BarChart
           width={1200}
           height={400}
@@ -67,6 +68,7 @@ try{
           <Bar dataKey="Khac" fill="#00ffff" name="Khác" />
           <Label value="Biểu Đồ Số Lượng Học Vị" offset={0} position="insideTop" />
         </BarChart>
+      
       );
       
       
