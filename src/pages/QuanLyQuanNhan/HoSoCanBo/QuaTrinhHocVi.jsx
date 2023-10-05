@@ -8,6 +8,8 @@ import Loading from '../../../components/LoadingComponent/Loading'
 import InputComponent from '../../../components/InputComponent/InputComponent'
 import { useMutationHooks } from '../../../hooks/useMutationHook'
 import * as QuaTrinhHocViService from '../../../services/QuaTrinhHocViService';
+import * as HocViService from '../../../services/HocViService';
+import * as QuanNhanService from '../../../services/QuanNhanService';
 import * as DanhMucHocViService from '../../../services/DanhMucHocViService';
 import CheckboxComponent from '../../../components/CheckBox/CheckBox'
 import { WrapperHeader } from './style'
@@ -18,7 +20,7 @@ import DrawerComponent from '../../../components/DrawerComponent/DrawerComponent
 import TableComponent from '../../../components/TableComponent/TableComponent';
 import moment from 'moment';
 const QuaTrinhHocVi = () => {
-
+    const [quannhanObjectId, setQuannhanObjectId] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [rowSelected, setRowSelected] = useState('')
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
@@ -59,7 +61,9 @@ const QuaTrinhHocVi = () => {
 
                 GhiChu
             })
-            console.log("data create qtct:", res.data)
+            
+            mutationUpdate2.mutate({ id: quannhanObjectId, token: user?.access_token , TenHocVi:HocVi})
+            
             return res
 
         }
@@ -67,7 +71,7 @@ const QuaTrinhHocVi = () => {
 
     const mutationUpdate = useMutationHooks(
         (data) => {
-            console.log("data update:", data)
+            
             const { id,
                 token,
                 ...rests } = data
@@ -75,6 +79,20 @@ const QuaTrinhHocVi = () => {
                 id,
                 token,
                 { ...rests })
+            return res
+        },
+
+    )
+    const mutationUpdate2 = useMutationHooks(
+        (data) => {
+            
+            const { id,
+                token,
+                ...rests } = data
+            const res = HocViService.updateHocVi(
+                id,
+                token,
+                rests)
             return res
         },
 
@@ -110,15 +128,28 @@ const QuaTrinhHocVi = () => {
     }
 
     // show
+    const fetchGetObjectId = async () => {
+        try {
+          
+          const resQuanNhan = await QuanNhanService.getObjectIdByQuanNhanId(user.QuanNhanId, user.access_token);
+    
+          
+          setQuannhanObjectId(resQuanNhan.data);
+          
+        } catch (error) {
+          console.log('Error while fetching quan nhan details:', error);
+          setIsLoadingUpdate(false);
+        }
+      };
 
 
     const fetchGetQuaTrinhHocVi = async (context) => {
         const quannhanId = context?.queryKey && context?.queryKey[1]
-        console.log("idquannhancongtacfe:", quannhanId)
+        
         if (quannhanId) {
 
             const res = await QuaTrinhHocViService.getQuaTrinhHocViByQuanNhanId(quannhanId)
-            console.log("qtct res: ", res)
+            
             if (res?.data) {
                 setStateQuaTrinhHocViDetails({
                     QuyetDinh: res?.data.QuyetDinh,
@@ -206,7 +237,8 @@ const QuaTrinhHocVi = () => {
 
     useEffect(() => {
         if (rowSelected) {
-            fetchGetDetailsQuaTrinhHocVi(rowSelected)
+            fetchGetDetailsQuaTrinhHocVi(rowSelected);
+            fetchGetObjectId();
         }
         setIsLoadingUpdate(false)
     }, [rowSelected])
@@ -298,7 +330,7 @@ const QuaTrinhHocVi = () => {
 
     //const { data: quatrinhhocviDetails } = useQuery(['hosoquannhan', quannhanId], fetchGetQuaTrinhHocVi, { enabled: !!quannhanId })
     //console.log("qtrinhcongtac:", quatrinhhocviDetails)
-    console.log("idquannhancongtac:", quannhanId)
+    
 
 
 
@@ -463,7 +495,7 @@ const QuaTrinhHocVi = () => {
             CaoNhat: stateQuaTrinhHocVi.CaoNhat,
             GhiChu: stateQuaTrinhHocVi.GhiChu,
         }
-        console.log("Finsh", stateQuaTrinhHocVi)
+        
         mutation.mutate(params, {
             onSettled: () => {
                 quatrinhhocviDetails.refetch()
@@ -474,7 +506,7 @@ const QuaTrinhHocVi = () => {
 
 
     const handleOnchange = (e) => {
-        console.log("e: ", e.target.name, e.target.value)
+        
         setStateQuaTrinhHocVi({
             ...stateQuaTrinhHocVi,
             [e.target.name]: e.target.value
@@ -483,7 +515,7 @@ const QuaTrinhHocVi = () => {
 
 
     const handleOnchangeDetails = (e) => {
-        console.log('check', e.target.name, e.target.value)
+        
         setStateQuaTrinhHocViDetails({
             ...stateQuaTrinhHocViDetails,
             [e.target.name]: e.target.value
@@ -548,7 +580,7 @@ const QuaTrinhHocVi = () => {
     }
     const handleChangeCheckCaoNhat = (e) => {
         const checkedValue = e.target.checked ? 1 : 0;
-        console.log("e: ", e.target.name, e.target.value)
+       
         setStateQuaTrinhHocVi({
             ...stateQuaTrinhHocVi,
             CaoNhat: checkedValue,
