@@ -64,7 +64,7 @@ import BaoCaoNhanhDoTuoiTong from '../BaoCaoThongKe/BaoCaoNhanhDoTuoi/BaoCaoNhan
 import QuanLyChucVu from '../QuanLyDonVi/QuanLyChucVu/QuanLyChucVu';
 import QuanLyChucVuId from '../QuanLyDonVi/QuanLyChucVu/QuanLyChucVuId';
 
-
+import ThongKeTaiQuanNhan from '../ChiHuyDieuHanh/ThongKeTai/ThongKeTaiQuanNhan'
 const AdminPage = () => {
   const user = useSelector((state) => state?.user)
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
@@ -74,7 +74,7 @@ const AdminPage = () => {
   const [data, setData] = useState([]);
   const fetchGetPriority = async () => {
     try {
-      
+
       const resPriority = await PriorityByUserService.getPriorityByUser(user.id, user.access_token);
       const extractedData = resPriority.map(item => item.data); // Lấy ra giá trị từ thuộc tính data của mỗi đối tượng
       const combinedData = extractedData.flat();
@@ -110,7 +110,7 @@ const AdminPage = () => {
       getItem('Quản lý tài khoản', 'systemparams', <AppstoreAddOutlined />)
     );
   }
-  
+
 
   const managementChildren2 = [];
   if (combinedData.includes("EVERYONE")) {
@@ -127,11 +127,11 @@ const AdminPage = () => {
   if (combinedData.includes("EVERYONE")) {
     managementChildrenQLDV.push(
       getItem('Hồ sơ đơn vị', 'hsdv', <AppstoreAddOutlined />),
-        getItem('Danh mục đơn vị', 'donvi', <AppstoreAddOutlined />),
-        getItem('Hồ sơ cán bộ', 'hscb', <AppstoreAddOutlined />),
-        //   getItem('Chi tiết hồ sơ cán bộ', 'cthscb', <LockOutlined />),
-        // getItem('Quản lý nhu cầu/biên chế', 'quanlynhucaubc', <AppstoreAddOutlined />),
-        getItem('Điểu chuyển cán bộ', 'dieuchuyen', <AppstoreAddOutlined />),
+      getItem('Danh mục đơn vị', 'donvi', <AppstoreAddOutlined />),
+      getItem('Hồ sơ cán bộ', 'hscb', <AppstoreAddOutlined />),
+      //   getItem('Chi tiết hồ sơ cán bộ', 'cthscb', <LockOutlined />),
+      // getItem('Quản lý nhu cầu/biên chế', 'quanlynhucaubc', <AppstoreAddOutlined />),
+      getItem('Điểu chuyển cán bộ', 'dieuchuyen', <AppstoreAddOutlined />),
     );
   }
   if (combinedData.includes("EVERYONE")) {
@@ -210,30 +210,16 @@ const AdminPage = () => {
       //     label: 'Hồ sơ Cán bộ',
       //     key: 'hosocanbo',
       //     icon: <SettingOutlined />,
-          children: [
-            getItem('Cập nhật hồ sơ cán bộ', 'hosocanbo', <AppstoreAddOutlined />),
+      children: [
+        getItem('Cập nhật hồ sơ cán bộ', 'hosocanbo', <AppstoreAddOutlined />),
 
-            getItem('Quá trình khen thưởng', 'quatrinhkhenthuong', <AppstoreAddOutlined />),
-            getItem('Quá trình kỷ luật', 'quatrinhkyluat', <AppstoreAddOutlined />),
-            getItem('Thân nhân và Tài sản', 'thannhantaisan', <AppstoreAddOutlined />),
-          ]
-        },
-        // {
-        //   label: 'Công tác giảng dạy',
-        //   key: 'congtacgiangday',
-        //   icon: <SettingOutlined />,
-        //   children: [
-        //     getItem('Thông tin cá nhân', 'thongtincanhan', <AppstoreAddOutlined />),
-        //     getItem('Chi tiết tải', 'chitiettai', <AppstoreAddOutlined />),
-        //     getItem('Tải đào tạo', 'taidaotao', <AppstoreAddOutlined />),
-        //     getItem('Tải nghiên cứu', 'tainghiencuu', <AppstoreAddOutlined />),
+        getItem('Quá trình khen thưởng', 'quatrinhkhenthuong', <AppstoreAddOutlined />),
+        getItem('Quá trình kỷ luật', 'quatrinhkyluat', <AppstoreAddOutlined />),
+        getItem('Thân nhân và Tài sản', 'thannhantaisan', <AppstoreAddOutlined />),
 
+      ]
+    },
 
-        //   ]
-        // },
-        // 
-    //   ],
-    // },
     {
       label: 'Quản lý Đơn vị',
       key: 'donvis',
@@ -242,13 +228,13 @@ const AdminPage = () => {
     },
     {
 
-      label: 'Chỉ huy/ Điều hành',
+      label: 'Quản lý tải',
       key: 'chihuydieuhanh',
       icon: <AppstoreOutlined />,
       children: [
         getItem('Thống kê nhân lực', 'thongkenhanluc', <AppstoreAddOutlined />),
-        getItem('Thông kê tải', 'thongketai', <AppstoreAddOutlined />),
-
+        getItem('Thông kê tải quân nhân', 'thongketaiquannhan', <AppstoreAddOutlined />),
+        getItem('Thông kê tải đơn vị', 'thongketai', <AppstoreAddOutlined />),
       ],
     },
     {
@@ -432,7 +418,7 @@ const AdminPage = () => {
       case '/dieuchuyencanbo/:id':
         return (
           <DieuChuyenCanBoId />
-        )    
+        )
 
       case 'quatrinhkhenthuong':
         return (
@@ -475,10 +461,10 @@ const AdminPage = () => {
         return (
           <DMDonVi />
         )
-        case 'hsdv':
-          return (
-            <HoSoDonVi />
-          )
+      case 'hsdv':
+        return (
+          <HoSoDonVi />
+        )
       case 'hscb':
         return (
           <HoSoCanBo />
@@ -497,13 +483,13 @@ const AdminPage = () => {
           <DieuChuyenCanBo />
         )
       case 'quanlychucvu':
-          return (
-            <QuanLyChucVu />
-          )  
+        return (
+          <QuanLyChucVu />
+        )
       case '/quanlychucvu/:id':
-          return (
-            <QuanLyChucVuId />
-          )  
+        return (
+          <QuanLyChucVuId />
+        )
 
       // chỉ huy điều hành
       case 'thongkenhanluc':
@@ -518,6 +504,12 @@ const AdminPage = () => {
 
           <ThongKeTai />
         )
+      case 'thongketaiquannhan':
+        return (
+          <ThongKeTaiQuanNhan />
+        )
+      // báo cáo nhanh
+
       case 'baocaobienche':
         return (
 
