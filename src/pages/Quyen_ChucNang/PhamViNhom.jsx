@@ -6,8 +6,10 @@ import TableComponent from '../../components/TableComponent/TableComponent'
 import { useState } from 'react'
 import InputComponent from '../../components/InputComponent/InputComponent'
 import { getBase64, renderOptions } from '../../utils'
-
+import * as DonViService from '../../services/DonViService'
 import * as AdminGroupService from '../../services/AdminGroupService'
+import * as ChucVuService from '../../services/ChucVuDonViService'
+
 import { useMutationHooks } from '../../hooks/useMutationHook'
 import Loading from '../../components/LoadingComponent/Loading'
 import { useEffect } from 'react'
@@ -18,8 +20,9 @@ import { useSelector } from 'react-redux'
 import ModalComponent from '../../components/ModalComponent/ModalComponent'
 import ButttonInputSearch from '../../components/ButtonInputSearch/ButttonInputSearch'
 const PhamViNhom = ({selectedRowId,handleselectedrow}) => {
-    console.log(selectedRowId)
+    
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentUserDonViCode, setCurrentUserDonViCode] = useState(null);
     const [rowSelected, setRowSelected] = useState('')
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
@@ -159,8 +162,22 @@ const PhamViNhom = ({selectedRowId,handleselectedrow}) => {
             }
         })
     }
-
-
+    const fetchAllDonVi = async () => {
+        const res = await DonViService.getDonViConByTen("HVKTQS")
+        return res
+      }
+    const fetchAllDonVi2 = async () => {
+        const res = await DonViService.getDonViConOnly("HVKTQS")
+        return res
+      }
+      const fetchAllChucVu = async () => {
+        const res = await ChucVuService.getChucVuFromDonVi(currentUserDonViCode)
+        return res
+      }
+      const fetchAllChucVu2 = async () => {
+        const res = await ChucVuService.getDataChucVuByDonVi(currentUserDonViCode)
+        return res
+      }
     const { data, isLoading, isSuccess, isError } = mutation
     const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
     const { data: dataDeleted, isLoading: isLoadingDeleted, isSuccess: isSuccessDelected, isError: isErrorDeleted } = mutationDeleted
@@ -173,8 +190,10 @@ const PhamViNhom = ({selectedRowId,handleselectedrow}) => {
             enabled: !!selectedRowId, // Kích hoạt truy vấn khi selectedRowId không null
         }
     );
-    // const queryAdminGroup = useQuery({ queryKey: ['admingroups'], queryFn: getAllAdminGroups })
-    // const typeAdminGroup = useQuery({ queryKey: ['type-admingroup'], queryFn: fetchAllTypeAdminGroup })
+    const allDonVi = useQuery({ queryKey: ['all-donvi'], queryFn: fetchAllDonVi })
+    const allDonVi2 = useQuery({ queryKey: ['all-donvi2'], queryFn: fetchAllDonVi2 })  
+    const allChucVu = useQuery({ queryKey: ['all-chucvu'], queryFn: fetchAllChucVu })
+    const allChucVu2 = useQuery({ queryKey: ['all-chucvu2'], queryFn: fetchAllChucVu2 })  
     const { isLoading: isLoadingAdminGroups, data: admingroups } = queryAdminGroup
     const renderAction = () => {
         return (
@@ -321,7 +340,26 @@ const dataTable = admingroups && admingroups.data
             message.error()
         }
     }, [isSuccessDelected])
-
+    useEffect(() => {
+        if (currentUserDonViCode) {
+          allDonVi.refetch();
+        }
+      }, [currentUserDonViCode, allDonVi]);
+      useEffect(() => {
+        if (currentUserDonViCode) {
+          allChucVu.refetch();
+        }
+      }, [currentUserDonViCode, allChucVu]);
+      useEffect(() => {
+        if (currentUserDonViCode) {
+          allDonVi2.refetch();
+        }
+      }, [currentUserDonViCode, allDonVi2]);
+      useEffect(() => {
+        if (currentUserDonViCode) {
+          allChucVu2.refetch();
+        }
+      }, [currentUserDonViCode, allChucVu2]);
     const handleCloseDrawer = () => {
         setIsOpenDrawer(false);
         setStateAdminGroupDetails({
@@ -465,13 +503,37 @@ const dataTable = admingroups && admingroups.data
             type: value
         })
     }
+    const handleChangeSelectDonVi = (value) => {
+        try{
+            const selectedDonVi = allDonVi2?.data?.data.find(DonVi => DonVi.name === value);
+            if (selectedDonVi) {
+              setCurrentUserDonViCode(selectedDonVi.code);
+            }
+        setStateAdminGroup({
+            ...stateAdminGroup,
+            departmentlist: selectedDonVi.code
+        })
+
+    }
+    catch{}
+    }
+    const handleChangeSelectChucVu = (value) => {
+        try{
+          const selectedChucVu = allChucVu2?.data?.data.find(ChucVuDonVi => ChucVuDonVi.name === value);
+          setStateAdminGroup({
+            ...stateAdminGroup,
+            leveltitlelist: selectedChucVu.chucvucode
+        })
+          }
+          catch{}
+      }
 
     return (
         
         <div>
             <WrapperHeader>Quản lý nhóm người dùng</WrapperHeader>
             <div style={{ marginTop: '10px' }}>
-                <Button onClick={() => setIsModalOpen(true)}>Thêm tham số</Button>
+                <Button onClick={() => setIsModalOpen(true)}>Thêm phạm vi</Button>
             </div>
             <div style={{ marginTop: '20px' }}>
                  <TableComponent handleDelteMany={handleDelteManyAdminGroups} columns={columns} isLoading={isLoadingAdminGroups} data={dataTable} onRow={(record, rowIndex) => {
@@ -496,7 +558,7 @@ const dataTable = admingroups && admingroups.data
                         autoComplete="on"
                         form={form}
                     >
-                        <Form.Item
+                        {/* <Form.Item
                             label="Đơn vị"
                             name="departmentlist"
                             rules={[{ required: true, message: 'Please input your department!' }]}
@@ -509,6 +571,28 @@ const dataTable = admingroups && admingroups.data
                             // rules={[{ required: true, message: 'Please input your leveltitle!' }]}
                         >
                             <InputComponent value={stateAdminGroup['leveltitlelist']} onChange={handleOnchange} name="leveltitlelist" />
+                        </Form.Item> */}
+                        <Form.Item
+                            label="Đơn vị"
+                            name="departmentlist"
+                            rules={[{ required: true, message: 'Please input your department!' }]}
+                        >
+                            <Select
+                            name="donvi"
+                            onChange={handleChangeSelectDonVi}
+                            options={renderOptions(allDonVi?.data?.data)}
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            label="Chức vụ"
+                            name="leveltitlelist"
+                            
+                        >
+                            <Select
+                            name="HoatDong"
+                            onChange={handleChangeSelectChucVu}
+                            options={renderOptions(allChucVu?.data?.data)}
+                            />
                         </Form.Item>
                         
                         <Form.Item wrapperCol={{ offset: 20, span: 16 }}>

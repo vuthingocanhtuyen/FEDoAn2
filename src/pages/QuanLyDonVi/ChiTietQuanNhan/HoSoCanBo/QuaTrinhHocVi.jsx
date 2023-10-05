@@ -8,6 +8,8 @@ import Loading from '../../../components/LoadingComponent/Loading'
 import InputComponent from '../../../components/InputComponent/InputComponent'
 import { useMutationHooks } from '../../../hooks/useMutationHook'
 import * as QuaTrinhHocViService from '../../../services/QuaTrinhHocViService';
+import * as HocViService from '../../../../services/HocViService';
+import * as QuanNhanService from '../../../../services/QuanNhanService';
 import * as DanhMucHocViService from '../../../services/DanhMucHocViService';
 import CheckboxComponent from '../../../components/CheckBox/CheckBox'
 import { WrapperHeader } from './style'
@@ -59,7 +61,8 @@ const QuaTrinhHocVi = () => {
 
                 GhiChu
             })
-            console.log("data create qtct:", res.data)
+            mutationUpdate2.mutate({ id: quannhanObjectId, token: user?.access_token , TenHocVi:HocVi});
+
             return res
 
         }
@@ -75,6 +78,20 @@ const QuaTrinhHocVi = () => {
                 id,
                 token,
                 { ...rests })
+            return res
+        },
+
+    )
+    const mutationUpdate2 = useMutationHooks(
+        (data) => {
+            
+            const { id,
+                token,
+                ...rests } = data
+            const res = HocViService.updateHocVi(
+                id,
+                token,
+                rests)
             return res
         },
 

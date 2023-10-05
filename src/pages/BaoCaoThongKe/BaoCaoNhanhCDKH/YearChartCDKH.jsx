@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label } from 'recharts';
-import * as DonViService from '../../../services/DonViService'
-import { useEffect } from 'react'
-import { useState } from 'react'
+import * as ThongKeHocViService from '../../../services/ThongKeHocViService';
+import * as DonViService from '../../../services/DonViService';
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-const DemoChartComponent = ({ handleTreeNodeClick,treeNodeClickedId  }) => {
+
+const DemoChartComponent = ({ handleTreeNodeClick, treeNodeClickedId }) => {
     const [currentUserDonVi, setCurrentUserDonVi] = useState(null);
     const [data, setData] = useState([]);
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
+
     useEffect(() => {
         fetchDonViData();
     }, [treeNodeClickedId]);
@@ -28,25 +29,22 @@ const DemoChartComponent = ({ handleTreeNodeClick,treeNodeClickedId  }) => {
           return [];
         }
       };    
-      const fetchData = async () => {
+    const fetchData = async () => {
         if (!currentUserDonVi) {
-          return [];
+            return [];
         }
         try {
-          setIsLoading(true);
-          const response = await DonViService.getHocVifromcode(currentUserDonVi);
-          setIsLoading(false);
-          setData(response.data);
+            setIsLoading(true);
+            const response = await ThongKeHocViService.getThongKeHocViByDonViId(currentUserDonVi);
+            setIsLoading(false);
+            setData(response.data);
         } catch (error) {
-          console.error("Error fetching data:", error);
+            console.error("Error fetching data:", error);
         }
-      };
-      
-  
-
-    
-   try{
-      return (
+    };
+try{
+    return (
+      // <div>
         <BarChart
           width={1200}
           height={400}
@@ -54,28 +52,29 @@ const DemoChartComponent = ({ handleTreeNodeClick,treeNodeClickedId  }) => {
           margin={{ top: 20, right: 30, left: 30, bottom: 10 }}
         >
           <CartesianGrid strokeDasharray="10 10" />
-          <XAxis dataKey="donViCon.name" interval={0} height={60}>
-            <Label value="Đơn Vị" offset={0} position="insideBottom" />
+          <XAxis dataKey="Nam" interval={0} height={60}>
+            <Label value="Năm" offset={0} position="insideBottom" />
           </XAxis>
           <YAxis width={10}>
-            <Label value="Số lượng" angle={-90} position="insideLeft" />
+            <Label value="Số Lượng" angle={-90} position="insideLeft" />
           </YAxis>
           <Tooltip />
           <Legend />
-          {data[0]?.hocViCounts.map((item, index) => (
-            <Bar
-              key={index}
-              dataKey={`hocViCounts[${index}].SoLuong`}
-              fill={COLORS[index % COLORS.length]}
-              barSize={20}
-              name={item.TenHocVi}
-            />
-          ))}
+          <Bar dataKey="TienSyKhoaHoc" fill="#8884d8" name="Tiến sỹ Khoa học" />
+          <Bar dataKey="TienSy" fill="#82ca9d" name="Tiến sỹ" />
+          <Bar dataKey="ThacSy" fill="#ffc658" name="Thạc sỹ" />
+          <Bar dataKey="KySu" fill="#ff7f00" name="Kỹ sư" />
+          <Bar dataKey="CuNhan" fill="#ff00ff" name="Cử nhân" />
+          <Bar dataKey="Khac" fill="#00ffff" name="Khác" />
           <Label value="Biểu Đồ Số Lượng Học Vị" offset={0} position="insideTop" />
         </BarChart>
+      
       );
-    }
-    catch{}
-  };
-  
-  export default DemoChartComponent;
+      
+      
+      
+        }
+        catch{}
+};
+
+export default DemoChartComponent;

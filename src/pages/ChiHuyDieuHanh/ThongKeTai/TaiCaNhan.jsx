@@ -1,261 +1,281 @@
-
-import React from 'react'
-import { useEffect } from 'react'
-import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import * as UserService from '../../../services/UserService'
-import { useMutationHooks } from '../../../hooks/useMutationHook'
-import * as message from '../../../components/Message/Message'
-import { updateUser } from '../../../redux/slides/userSlide'
-import { getBase64 } from '../../../utils'
-import { WrapperContentProfile, WrapperHeader, WrapperInput, WrapperLabel, WrapperUploadFile } from '../style'
-
-
-
-
-
-import InputForm from '../../../components/InputForm/InputForm'
-
-
-import TaiGiangDay from './TaiDaoTao/TaiGiangDay'
-import TaiHuongDan from './TaiDaoTao/TaiHuongDan'
-import TaiKhaoThi from './TaiDaoTao/TaiKhaoThi'
-import TaiHoiDong from './TaiDaoTao/TaiHoiDong'
-import TongHopTai from './TongHopTai'
-
-import BaiBaoKH from './TaiNCKH/BaiBaoKH'
-import BienSoan from './TaiNCKH/BienSoan'
-import DeTaiNCKH from './TaiNCKH/DeTaiNCKH'
-import GiaiThuongNCKH from './TaiNCKH/GiaiThuongNCKH'
-import HoatDongKhac from './TaiNCKH/HoatDongKhac'
-import HuongDanNCKH from './TaiNCKH/HuongDanNCKH'
-import SangChe from './TaiNCKH/SangChe'
+import React, { useEffect, useState, useRef } from 'react';
+import { Form, Table, Button, Space, DatePicker } from 'antd';
+import { useSelector } from 'react-redux';
+import * as TaiGiangDayService from '../../../services/TaiGiangDayService';
+import { WrapperHeader } from '../style'
+import TableComponent from '../../../components/TableComponent/TableComponent';
 
 const TaiCaNhan = () => {
-    const user = useSelector((state) => state.user)
-    const [email, setEmail] = useState('')
-    const [name, setName] = useState('')
-    const [phone, setPhone] = useState('')
-    const [address, setAddress] = useState('')
-    const [avatar, setAvatar] = useState('')
-    const mutation = useMutationHooks(
-        (data) => {
-            const { id, access_token, ...rests } = data
-            UserService.updateUser(id, rests, access_token)
-        }
-    )
+    const user = useSelector((state) => state?.user)
+    const [isLoading, setIsLoading] = useState(true);
+    const quannhanId = user.QuanNhanId;
+    const [rowSelected, setRowSelected] = useState('')
+    const [data, setData] = useState([]);
+    const [dataTable, setDataTable] = useState([]);
+    const columns = [
+        {
+            title: 'STT',
+            dataIndex: 'stt',
+            render: (text, record, index) => index + 1,
 
-    const dispatch = useDispatch()
-    const { data, isLoading, isSuccess, isError } = mutation
+        },
+        {
+            title: 'Tổng tải đào tạo',
+            children: [
+                {
+                    title: 'Tải giảng dạy',
+                    dataIndex: 'GioChuanGiangDay',
+                },
+                {
+                    title: 'Tải hướng dẫn',
+                    dataIndex: 'SoGioChuanHuongDan',
+                },
+                {
+                    title: 'Tải khảo thí',
+                    dataIndex: 'SoGioQuyDoiKhaoThi',
+                },
+                {
+                    title: 'Tải hội đồng',
+                    dataIndex: 'SoGioQuyDoiHoiDong',
+                },
+            ]
 
-    useEffect(() => {
-        setEmail(user?.email)
-        setName(user?.name)
-        setPhone(user?.phone)
-        setAddress(user?.address)
-        setAvatar(user?.avatar)
-    }, [user])
+        },
+        {
+            title: 'Định mức chuẩn',
+            dataIndex: '',
 
-    useEffect(() => {
-        if (isSuccess) {
-            message.success()
-            handleGetDetailsUser(user?.id, user?.access_token)
-        } else if (isError) {
-            message.error()
-        }
-    }, [isSuccess, isError])
 
-    const handleGetDetailsUser = async (id, token) => {
-        const res = await UserService.getDetailsUser(id, token)
-        dispatch(updateUser({ ...res?.data, access_token: token }))
-    }
+        },
+        {
+            title: 'Đối tượng miễn giảm',
+            dataIndex: '',
 
-    const handleOnchangeEmail = (value) => {
-        setEmail(value)
-    }
-    const handleOnchangeName = (value) => {
-        setName(value)
-    }
-    const handleOnchangePhone = (value) => {
-        setPhone(value)
-    }
-    const handleOnchangeAddress = (value) => {
-        setAddress(value)
-    }
 
-    const handleOnchangeAvatar = async ({ fileList }) => {
-        const file = fileList[0]
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
-        }
-        setAvatar(file.preview)
-    }
+        },
+        {
+            title: 'Tải yêu cầu',
+            dataIndex: 'TaiDaoTaoYeuCau',
 
-    const handleUpdate = () => {
-        mutation.mutate({ id: user?.id, email, name, phone, address, avatar, access_token: user?.access_token })
+        },
 
-    }
-    const [date, setDate] = useState(new Date());
-    
-    const optionDanToc = [
-        { value: 'option1', label: 'Option 1' },
-        { value: 'option2', label: 'Option 2' },
-        { value: 'option3', label: 'Option 3' },
+
+
+        {
+            title: 'Tải thực đào tạo',
+            dataIndex: 'TaiThucDaoTaoYeuCau',
+
+        },
+        {
+            title: 'Kết quả (%)',
+            dataIndex: 'KetQuaDaoTao',
+
+        },
+
+
+
+    ];
+    const columns1 = [
+        {
+            title: 'STT',
+            dataIndex: 'stt',
+            render: (text, record, index) => index + 1,
+
+        },
+
+
+        {
+            title: 'Tải đào tạo yêu cầu',
+            dataIndex: 'TaiDaoTaoYeuCau',
+
+
+        },
+        {
+            title: 'Tải NCKH yêu cầu',
+            dataIndex: 'TaiNCKHYeuCau',
+
+        },
+        {
+            title: 'Tổng tải yêu cầu',
+            dataIndex: 'TongTaiYeuCau',
+
+        },
+
+
+        {
+            title: 'Tải thực đào tạo',
+            dataIndex: 'TaiThucDaoTaoYeuCau',
+
+        },
+
+        {
+            title: 'Tải thực NCKH',
+            dataIndex: 'TaiThucNCKHYeuCau',
+
+        },
+        {
+            title: 'Tổng tải thực',
+            dataIndex: 'TongThucTai',
+
+        },
+
+
     ];
 
-    const handleChange = (value) => {
-        console.log(`selected value: ${value}`);
+    const columns2 = [
+        {
+            title: 'STT',
+            dataIndex: 'stt',
+            render: (text, record, index) => index + 1,
+
+        },
+        {
+            title: 'Tổng tải NCKH',
+            children: [
+                {
+                    title: 'Bài báo khoa học',
+                    dataIndex: 'SoGioChuanBaiBao',
+                },
+                {
+                    title: 'Biên soạn',
+                    dataIndex: 'SoGioChuanBienSoan',
+                },
+                {
+                    title: 'Sáng chế',
+                    dataIndex: 'SoGioQuyDoiSangChe',
+                },
+                {
+                    title: 'Hợp đồng',
+                    dataIndex: 'SoGioQuyDoiHopDong',
+                },
+                {
+                    title: 'Đề tài NCKH',
+                    dataIndex: 'GioChuanDeTai',
+                },
+                {
+                    title: 'Giải thưởng',
+                    dataIndex: 'SoGioQuyDoiGiaiThuong',
+                },
+                {
+                    title: 'Hoạt động NC khác',
+                    dataIndex: 'SoGioQuyDoiHoatDongKhac',
+                },
+
+            ]
+
+        },
+
+        {
+            title: 'Tải yêu cầu',
+            dataIndex: 'TaiNCKHYeuCau',
+
+        },
+
+
+
+
+
+        {
+            title: 'Tải thực nghiên cứu',
+            dataIndex: 'TaiThucNCKHYeuCau',
+
+        },
+        {
+            title: 'Kết quả (%)',
+            dataIndex: 'KetQuaNCKH',
+
+        },
+
+
+
+    ];
+    const fetchTaiData = async () => {
+        try {
+            setIsLoading(true);
+            const taiData = await TaiGiangDayService.getTongTaiFromId(quannhanId);
+            setIsLoading(false);
+            setData(taiData);
+            console.log('e: ', taiData);
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
     };
 
+
+    useEffect(() => {
+
+        setDataTable([
+            {
+                key: 1,
+                stt: 1,
+                TaiDaoTaoYeuCau: data.TaiDaoTaoYeuCau,
+                TaiThucDaoTaoYeuCau: data.TaiThucDaoTaoYeuCau,
+                GioChuanGiangDay: data.GioChuanGiangDay,
+                SoGioQuyDoiKhaoThi: data.SoGioQuyDoiKhaoThi,
+                SoGioQuyDoiHoiDong: data.SoGioQuyDoiHoiDong,
+                SoGioChuanHuongDan: data.SoGioChuanHuongDan,
+                KetQuaDaoTao: data.KetQuaDaoTao,
+
+
+                TaiNCKHYeuCau: data.TaiNCKHYeuCau,
+                TaiThucNCKHYeuCau: data.TaiThucNCKHYeuCau,
+                SoGioChuanBaiBao: data.SoGioChuanBaiBao,
+                SoGioChuanBienSoan: data.SoGioChuanBienSoan,
+                SoGioQuyDoiSangChe: data.SoGioQuyDoiSangChe,
+                SoGioQuyDoiHopDong: data.SoGioQuyDoiHopDong,
+                GioChuanDeTai: data.GioChuanDeTai,
+                SoGioChuanHuongDanNCKH: data.SoGioChuanHuongDanNCKH,
+                SoGioQuyDoiGiaiThuong: data.SoGioQuyDoiGiaiThuong,
+                SoGioQuyDoiHoatDongKhac: data.SoGioQuyDoiHoatDongKhac,
+                KetQuaNCKH: data.KetQuaNCKH,
+
+                TongTaiYeuCau: data.TongTaiYeuCau,
+                TongThucTai: data.TongThucTai,
+
+
+            }
+        ]);
+    }, [data]);
 
 
     return (
         <div>
-            <div style={{ width: '910px', margin: '0 auto' }}>
+            <div>
+
+                <WrapperHeader>Tổng hợp tải</WrapperHeader>
+                <h3>Tổng tải đào tạo</h3>
+                <TableComponent columns={columns} isLoading={isLoading} data={dataTable} />
+
+            </div>
+
+            <div>
 
 
+                <h3>Tổng tải NCKH</h3>
+                <TableComponent columns={columns2} isLoading={isLoading} data={dataTable} />
 
-                <div style={{ margin: '0 auto', float: 'left', padding: '10px 70px 10px 10px', background: '#fff', borderRadius: "8px" }}>
+            </div>
 
-                    <WrapperInput>
-                        <WrapperLabel style={{ width: '100px' }} htmlFor="email">Họ và tên </WrapperLabel>
-                        <InputForm style={{ width: '250px' }} id="email" value={email} onChange={handleOnchangeEmail} />
-
-                    </WrapperInput>
-
-                    <WrapperInput>
-                        <WrapperLabel style={{ width: '100px' }} htmlFor="name">Đơn vị</WrapperLabel>
-                        <InputForm style={{ width: '250px' }} id="name" value={name} onChange={handleOnchangeName} />
-
-                    </WrapperInput>
-
-                    <WrapperInput>
-                        <WrapperLabel style={{ width: '100px' }} htmlFor="phone">Giới tính</WrapperLabel>
-                        <InputForm style={{ width: '250px' }} id="email" value={phone} onChange={handleOnchangePhone} />
-
-                    </WrapperInput>
-                    <WrapperInput>
-                        <WrapperLabel style={{ width: '100px' }} htmlFor="address">Ngày sinh</WrapperLabel>
-                        <InputForm style={{ width: '250px' }} id="address" value={address} onChange={handleOnchangeAddress} />
-
-                    </WrapperInput>
-
-                    <WrapperInput>
-                        <WrapperLabel style={{ width: '100px' }} htmlFor="address">Quê quán</WrapperLabel>
-                        <InputForm style={{ width: '250px' }} id="address" value={address} onChange={handleOnchangeAddress} />
-
-                    </WrapperInput>
-                </div>
-
-                <div style={{ margin: '0 auto', float: 'left', padding: '10px 10px 10px 10px', background: '#fff', borderRadius: "8px" }}>
-
-                    <WrapperInput>
-                        <WrapperLabel style={{ width: '100px' }} htmlFor="address">Chức vụ</WrapperLabel>
-                        <InputForm style={{ width: '250px' }} id="address" value={address} onChange={handleOnchangeAddress} />
-
-                    </WrapperInput>
-
-                    <WrapperInput>
-                        <WrapperLabel style={{ width: '100px' }} htmlFor="address">Chức vụ Đảng</WrapperLabel>
-                        <InputForm style={{ width: '250px' }} id="address" value={address} onChange={handleOnchangeAddress} />
-
-                    </WrapperInput>
-                    <WrapperInput>
-                        <WrapperLabel style={{ width: '100px' }} htmlFor="address">Học vị</WrapperLabel>
-                        <InputForm style={{ width: '250px' }} id="address" value={address} onChange={handleOnchangeAddress} />
-
-                    </WrapperInput>
-                    <WrapperInput>
-                        <WrapperLabel style={{ width: '100px' }} htmlFor="address">Học hàm</WrapperLabel>
-                        <InputForm style={{ width: '250px' }} id="address" value={address} onChange={handleOnchangeAddress} />
-
-                    </WrapperInput>
-
-                    <WrapperInput>
-                        <WrapperLabel style={{ width: '100px' }} htmlFor="address">Chức danh</WrapperLabel>
-                        <InputForm style={{ width: '250px' }} id="address" value={address} onChange={handleOnchangeAddress} />
-
-                    </WrapperInput>
-
-                </div>
-
-                <div style={{ margin: '0 auto', background: '#fff', borderRadius: "8px", padding: '200px 10px 10px 10px', }}>
-                    <h2>KẾT QUẢ ĐÀO TẠO VÀ NCKH</h2>
-                    <TongHopTai />
-                </div>
-
-                <div style={{ margin: '0 auto', background: '#fff', borderRadius: "8px", padding: '50px 10px 10px 10px', }}>
-                    <h2>CHI TIẾT CÔNG TÁC ĐÀO TẠO VÀ NCKH</h2>
-                    <h3>TẢI ĐÀO TẠO</h3>
-                    <h4>Tải giảng dạy</h4>
-                    <TaiGiangDay />
-                </div>
-
-                <div style={{ margin: '0 auto', background: '#fff', borderRadius: "8px", padding: '50px 10px 10px 10px', }}>
-
-                    <h4>Tải hướng dẫn</h4>
-                    <TaiHuongDan />
-                </div>
-                <div style={{ margin: '0 auto', background: '#fff', borderRadius: "8px", padding: '50px 10px 10px 10px', }}>
-
-                    <h4>Tải khảo thí</h4>
-                    <TaiKhaoThi />
-                </div>
-                <div style={{ margin: '0 auto', background: '#fff', borderRadius: "8px", padding: '50px 10px 10px 10px', }}>
-
-                    <h4>Tải hội đồng</h4>
-                    <TaiHoiDong />
-                </div>
+            <div>
 
 
-
-                <div style={{ margin: '0 auto', background: '#fff', borderRadius: "8px", padding: '50px 10px 10px 10px', }}>
-
-                    <h3>TẢI NGHIÊN CỨU KHOA HỌC</h3>
-                    <h4>Bài báo khoa học</h4>
-                    <BaiBaoKH />
-                </div>
-
-                <div style={{ margin: '0 auto', background: '#fff', borderRadius: "8px", padding: '50px 10px 10px 10px', }}>
-
-                    <h4>Đề tài NCKH</h4>
-                    <DeTaiNCKH />
-                </div>
-                <div style={{ margin: '0 auto', background: '#fff', borderRadius: "8px", padding: '50px 10px 10px 10px', }}>
-
-                    <h4>Biên soạn</h4>
-                    <BienSoan />
-                </div>
-                <div style={{ margin: '0 auto', background: '#fff', borderRadius: "8px", padding: '50px 10px 10px 10px', }}>
-
-                    <h4>Hướng dẫn NCKH</h4>
-                    <HuongDanNCKH />
-                </div>
-                <div style={{ margin: '0 auto', background: '#fff', borderRadius: "8px", padding: '50px 10px 10px 10px', }}>
-
-                    <h4>Giải thưởng NCKH</h4>
-                    <GiaiThuongNCKH />
-                </div>
-                <div style={{ margin: '0 auto', background: '#fff', borderRadius: "8px", padding: '50px 10px 10px 10px', }}>
-
-                    <h4>Sáng chế</h4>
-                    <SangChe />
-                </div>
-                <div style={{ margin: '0 auto', background: '#fff', borderRadius: "8px", padding: '50px 10px 10px 10px', }}>
-
-                    <h4>Hoạt động khác</h4>
-                    <HoatDongKhac />
-                </div>
+                <h3>Tổng hợp</h3>
+                <TableComponent columns={columns1} isLoading={isLoading} data={dataTable} />
 
             </div>
 
 
+
+
+
+
+
         </div>
 
+    );
+};
 
 
 
-    )
-}
-
-export default TaiCaNhan
+export default TaiCaNhan;

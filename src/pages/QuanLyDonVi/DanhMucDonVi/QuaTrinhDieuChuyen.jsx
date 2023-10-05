@@ -1,14 +1,17 @@
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Form, Table, Button, Space } from 'antd';
+import { Form, Table, Button, Space,Select } from 'antd';
 import { useSelector } from 'react-redux';
 import * as message from '../../../components/Message/Message'
-import { getBase64 } from '../../../utils'
+import { renderOptions } from '../../../utils'
+
 import Loading from '../../../components/LoadingComponent/Loading'
 import InputComponent from '../../../components/InputComponent/InputComponent'
 import { useMutationHooks } from '../../../hooks/useMutationHook'
 import * as QuaTrinhDieuChuyenService from '../../../services/QuaTrinhDieuChuyenService';
 import * as QuanNhanService from '../../../services/QuanNhanService';
+import * as ChucVuService from '../../../services/ChucVuDonViService'
+import * as DonViService from '../../../services/DonViService'
 import { WrapperHeader } from '../style'
 import { useQuery } from '@tanstack/react-query'
 import { DeleteOutlined, EditOutlined, SearchOutlined, CheckOutlined, WarningOutlined } from '@ant-design/icons'
@@ -26,6 +29,7 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
     const [isModalOpenDelete, setIsModalOpenDelete] = useState(false)
     const [isModalOpenPheDuyet, setIsModalOpenPheDuyet] = useState(false)
     const [isModalOpenNhapLai, setIsModalOpenNhapLai] = useState(false)
+    const [currentUserDonViCode, setCurrentUserDonViCode] = useState(null);
 
     const user = useSelector((state) => state?.user)
     const searchInput = useRef(null);
@@ -57,10 +61,12 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
 
     const {data: quannhanDetails } = useQuery(['hosoquannhan', idQuanNhan], fetchGetDetailsQuanNhan, { enabled: !!idQuanNhan })
     const quannhanId =quannhanDetails?.QuanNhanId;
+    const chucvuhientai =quannhanDetails?.HoatDong[0];
+    const donvihientai =quannhanDetails?.DonVi[0];
     const mutation = useMutationHooks(
         (data) => {
             const { QuanNhanId = quannhanId,
-                SoQuyetDinh, NgayQuyetDinh, DonViQuyetDinh, ChucVuHienTai, DonViHienTai, DonViDen, ChucVuDen, NgayDenNhanChuc, TrangThai = 0, edituser, edittime, GhiChu } = data
+                SoQuyetDinh, NgayQuyetDinh, DonViQuyetDinh, ChucVuHienTai=chucvuhientai, DonViHienTai=donvihientai, DonViDen, ChucVuDen, NgayDenNhanChuc, TrangThai = 0, edituser, edittime, GhiChu } = data
             const res = QuaTrinhDieuChuyenService.createQuaTrinhDieuChuyen({
                 QuanNhanId, SoQuyetDinh, NgayQuyetDinh, DonViQuyetDinh, ChucVuHienTai, DonViHienTai, DonViDen, ChucVuDen, NgayDenNhanChuc, TrangThai, edituser, edittime, GhiChu
             })
@@ -203,6 +209,22 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
             }
         })
     }
+    const fetchAllDonVi = async () => {
+        const res = await DonViService.getDonViConByTen("HVKTQS")
+        return res
+      }
+    const fetchAllDonVi2 = async () => {
+        const res = await DonViService.getDonViConOnly("HVKTQS")
+        return res
+      }
+      const fetchAllChucVu = async () => {
+        const res = await ChucVuService.getChucVuFromDonVi(currentUserDonViCode)
+        return res
+      }
+      const fetchAllChucVu2 = async () => {
+        const res = await ChucVuService.getDataChucVuByDonVi(currentUserDonViCode)
+        return res
+      }
 
 
     const { data, isLoading, isSuccess, isError } = mutation
@@ -212,7 +234,10 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
     const { data: dataUpdatedTT, isLoading: isLoadingUpdatedTT, isSuccess: isSuccessUpdatedTT, isError: isErrorUpdatedTT } = mutationUpdateTrangThai
     const { data: dataUpdatedNhapLai, isLoading: isLoadingUpdatedNhapLai, isSuccess: isSuccessUpdatedNhapLai, isError: isErrorUpdatedNhapLai } = mutationUpdateNhapLai
 
-
+    const allDonVi = useQuery({ queryKey: ['all-donvi'], queryFn: fetchAllDonVi })
+    const allDonVi2 = useQuery({ queryKey: ['all-donvi2'], queryFn: fetchAllDonVi2 })  
+    const allChucVu = useQuery({ queryKey: ['all-chucvu'], queryFn: fetchAllChucVu })
+    const allChucVu2 = useQuery({ queryKey: ['all-chucvu2'], queryFn: fetchAllChucVu2 })  
     const queryQuaTrinhDieuChuyen = useQuery({ queryKey: ['quatrinhdieuchuyens'], queryFn: getAllQuaTrinhDieuChuyens })
     const qtcongtacDetails = useQuery(['hosoquannhanqtdieuchuyen', quannhanId], fetchGetQuaTrinhDieuChuyen, { enabled: !!quannhanId })
     console.log("qt điều chuyển:", qtcongtacDetails.data, queryQuaTrinhDieuChuyen.data)
@@ -544,6 +569,30 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
             [e.target.name]: e.target.value
         })
     }
+    const handleChangeSelectDonVi = (value) => {
+        try{
+            const selectedDonVi = allDonVi2?.data?.data.find(DonVi => DonVi.name === value);
+            if (selectedDonVi) {
+              setCurrentUserDonViCode(selectedDonVi.code);
+            }
+            setStateQuaTrinhDieuChuyen({
+                ...stateQuaTrinhDieuChuyen,
+                DonViDen: selectedDonVi.code
+        })
+
+    }
+    catch{}
+    }
+    const handleChangeSelectChucVu = (value) => {
+        try{
+          const selectedChucVu = allChucVu2?.data?.data.find(ChucVuDonVi => ChucVuDonVi.name === value);
+          setStateQuaTrinhDieuChuyen({
+            ...stateQuaTrinhDieuChuyen,
+            ChucVuDen: selectedChucVu.chucvucode
+        })
+          }
+          catch{}
+      }
 
 
     const handleOnchangeDetails = (e) => {
@@ -612,6 +661,26 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
             message.error()
         }
     }, [isSuccess])
+    useEffect(() => {
+        if (currentUserDonViCode) {
+          allDonVi.refetch();
+        }
+      }, [currentUserDonViCode, allDonVi]);
+      useEffect(() => {
+        if (currentUserDonViCode) {
+          allChucVu.refetch();
+        }
+      }, [currentUserDonViCode, allChucVu]);
+      useEffect(() => {
+        if (currentUserDonViCode) {
+          allDonVi2.refetch();
+        }
+      }, [currentUserDonViCode, allDonVi2]);
+      useEffect(() => {
+        if (currentUserDonViCode) {
+          allChucVu2.refetch();
+        }
+      }, [currentUserDonViCode, allChucVu2]);
 
     return (
         <div>
@@ -691,43 +760,37 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
                         </Form.Item>
                         <Form.Item
                             label="Đơn vị hiện tại"
-                            name="DonViHienTai"
+                            // name="DonViHienTai"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
                             <InputComponent
                                 style={{ width: '100%' }}
-
-                                value={stateQuaTrinhDieuChuyen['DonViHienTai']}
-                                onChange={handleOnchange}
-                                name="DonViHienTai"
+                                value={donvihientai}
+                                readOnly
                             />
                         </Form.Item>
 
                         <Form.Item
                             label="Chức vụ hiện tại"
-                            name="ChucVuHienTai"
+                            // name="ChucVuHienTai"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
                             <InputComponent
                                 style={{ width: '100%' }}
-
-                                value={stateQuaTrinhDieuChuyen['ChucVuHienTai']}
-                                onChange={handleOnchange}
-                                name="ChucVuHienTai"
+                                value={chucvuhientai}
+                                readOnly
                             />
                         </Form.Item>
 
                         <Form.Item
                             label="Đơn vị đến"
                             name="DonViDen"
-                        //   rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
+                            rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                            <InputComponent
-                                style={{ width: '100%' }}
-
-                                value={stateQuaTrinhDieuChuyen['DonViDen']}
-                                onChange={handleOnchange}
-                                name="DonViDen"
+                            <Select
+                            
+                            onChange={handleChangeSelectDonVi}
+                            options={renderOptions(allDonVi?.data?.data)}
                             />
                         </Form.Item>
 
@@ -736,12 +799,10 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
                             name="ChucVuDen"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                            <InputComponent
-                                style={{ width: '100%' }}
-
-                                value={stateQuaTrinhDieuChuyen.ChucVuDen}
-                                onChange={handleOnchange}
-                                name="ChucVuDen"
+                             <Select
+                            
+                            onChange={handleChangeSelectChucVu}
+                            options={renderOptions(allChucVu?.data?.data)}
                             />
                         </Form.Item>
                         <Form.Item

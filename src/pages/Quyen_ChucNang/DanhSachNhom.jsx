@@ -247,13 +247,13 @@ const DanhSachNhom = ({selectedRowId,handleselectedrow}) => {
 
     const columns = [
         {
-            title: 'code',
+            title: 'Mã',
             dataIndex: 'code',
             sorter: (a, b) => a.code.length - b.code.length,
             ...getColumnSearchProps('code')
         },
         {
-            title: 'name',
+            title: 'Tên',
             dataIndex: 'name',
             sorter: (a, b) => a.name.length - b.name.length,
             ...getColumnSearchProps('name')
