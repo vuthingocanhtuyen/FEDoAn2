@@ -91,35 +91,35 @@ const CongTacNCKH = ({ idQuanNhan }) => {
         <div>
 
 
-            <div style={{ width: '1270px', margin: '0 auto', height: '400px', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
+            <div style={{ width: '1270px', margin: '0 auto', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
                 <h3>Bài báo khoa học</h3>
                 <BaiBaoKH />
             </div>
             <br />
-            <div style={{ width: '1270px', margin: '0 auto', height: '400px', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
+            <div style={{ width: '1270px', margin: '0 auto', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
                 <h3>Đề tài NCKH</h3>
                 <DeTaiNCKH />
             </div>
             <br />
-            <div style={{ width: '1270px', margin: '0 auto', height: '400px', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
+            <div style={{ width: '1270px', margin: '0 auto', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
                 <h3>Biên soạn</h3>
                 <BienSoan />
             </div>
             <br />
 
-            <div style={{ width: '1270px', margin: '0 auto', height: '400px', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
+            <div style={{ width: '1270px', margin: '0 auto', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
                 <h3> Hướng dẫn NCKH</h3>
                 <HuongDanNCKH />
             </div><br />
-            <div style={{ width: '1270px', margin: '0 auto', height: '400px', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
+            <div style={{ width: '1270px', margin: '0 auto', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
                 <h3> Giải thưởng NCKH</h3>
                 <GiaiThuongNCKH />
             </div><br />
-            <div style={{ width: '1270px', margin: '0 auto', height: '400px', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
+            <div style={{ width: '1270px', margin: '0 auto', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
                 <h3> Sáng chế</h3>
                 <SangChe />
             </div><br />
-            <div style={{ width: '1270px', margin: '0 auto', height: '400px', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
+            <div style={{ width: '1270px', margin: '0 auto', padding: '10px', background: '#fff', borderRadius: "8px", border: "1px solid #ccc" }}>
                 <h3> Hoạt động khác</h3>
                 <HoatDongKhac />
             </div><br />

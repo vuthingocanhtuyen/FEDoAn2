@@ -14,11 +14,17 @@ import DieuChuyenCanBoId from "../pages/QuanLyDonVi/DieuChuyenCanBoId";
 import SignInPage from "../pages/SignInPage/SignInPage";
 import SignUpPage from "../pages/SignUpPage/SignUpPage";
 import TypeProductPage from "../pages/TypeProductPage/TypeProductPage";
+import TongHopTai from "../pages/ChiHuyDieuHanh/ThongKeTai/TongHopTai"
 
 export const routes = [
     {
         path: '/hosocanbo/:id',
         page: ChiTietQuanNhan,
+        isShowHeader: true
+    },
+    {
+        path: '/tonghoptai/:id',
+        page: TongHopTai,
         isShowHeader: true
     },
     {

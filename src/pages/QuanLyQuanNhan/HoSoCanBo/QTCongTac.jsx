@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Form, Table, Button, Space } from 'antd';
+import { Form, Table, Button, Space, DatePicker } from 'antd';
 import { useSelector } from 'react-redux';
 import * as message from '../../../components/Message/Message'
 import { getBase64 } from '../../../utils'
@@ -25,13 +25,13 @@ const QTCongTac = ({ }) => {
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false)
   const [isModalOpenPheDuyet, setIsModalOpenPheDuyet] = useState(false)
   const [isModalOpenNhapLai, setIsModalOpenNhapLai] = useState(false)
-
+  const [NgayQD, setNgayQD] = useState('');
   const user = useSelector((state) => state?.user)
   const searchInput = useRef(null);
   const quannhanId = user.QuanNhanId;
   const inittial = () => ({
     SoQuyetDinh: '',
-    NgayQuyetDinh: '',
+    NgayQuyetDinh: moment(),
     ChucVu: '',
     DonVi: '',
     KetThuc: '',
@@ -181,6 +181,24 @@ const QTCongTac = ({ }) => {
       fetchGetDetailsQuaTrinhCongTac(rowSelected)
     }
   }, [rowSelected, isOpenDrawer])
+  useEffect(() => {
+    setNgayQD(moment(stateQuaTrinhCongTacDetails['NgayQuyetDinh']));
+    // setNgayQD(convertDateToString(stateQuaTrinhCongTacDetails['NgayQuyetDinh']));
+  }, [form, stateQuaTrinhCongTacDetails, isOpenDrawer])
+
+  const handleOnchangeDetailNgayQD = (date) => {
+    setStateQuaTrinhCongTacDetails({
+      ...stateQuaTrinhCongTacDetails,
+      NgayQuyetDinh: date
+    })
+  }
+  const handleOnchangeNgayQD = (date) => {
+    setStateQuaTrinhCongTac({
+      ...stateQuaTrinhCongTac,
+      NgayQuyetDinh: date
+    })
+  }
+
 
   const handleDetailsQuaTrinhCongTac = () => {
     setIsOpenDrawer(true)
@@ -636,12 +654,17 @@ const QTCongTac = ({ }) => {
               name="NgayQuyetDinh"
               rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
             >
-              <InputComponent
+              {/* <InputComponent
                 style={{ width: '100%' }}
 
                 value={stateQuaTrinhCongTac['NgayQuyetDinh']}
                 onChange={handleOnchange}
                 name="NgayQuyetDinh"
+              /> */}
+              <DatePicker
+                //  value={NgayQD}
+                onChange={handleOnchangeNgayQD} name="NgayQuyetDinh"
+                format="DD/MM/YYYY"
               />
             </Form.Item>
 
@@ -735,7 +758,12 @@ const QTCongTac = ({ }) => {
               name="NgayQuyetDinh"
               rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
             >
-              <InputComponent value={stateQuaTrinhCongTacDetails['NgayQuyetDinh']} onChange={handleOnchangeDetails} name="NgayQuyetDinh" />
+              {/* <InputComponent value={stateQuaTrinhCongTacDetails['NgayQuyetDinh']} onChange={handleOnchangeDetails} name="NgayQuyetDinh" /> */}
+              <DatePicker
+                value={NgayQD}
+                onChange={handleOnchangeDetailNgayQD} name="NgayQuyetDinh"
+                format="DD/MM/YYYY"
+              />
             </Form.Item>
 
             <Form.Item
