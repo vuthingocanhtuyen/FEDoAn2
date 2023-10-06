@@ -586,7 +586,8 @@ const QTCongTac = ({ }) => {
       ...qtcongtacDetails,
       key: qtcongtacDetails._id,
       TrangThai: getTrangThaiText(qtcongtacDetails.TrangThai),
-      NgayQuyetDinh: convertDateToString(qtcongtacDetails.NgayQuyetDinh)
+      NgayQuyetDinh: convertDateToString(qtcongtacDetails.NgayQuyetDinh),
+
 
     }
   })

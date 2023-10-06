@@ -16,7 +16,7 @@ import ModalComponent from '../../../../components/ModalComponent/ModalComponent
 import DrawerComponent from '../../../../components/DrawerComponent/DrawerComponent'
 import TableComponent from '../../../../components/TableComponent/TableComponent';
 import moment from 'moment';
-const QTCongTac = ({ quannhanId}) => {
+const QTCongTac = ({ quannhanId }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rowSelected, setRowSelected] = useState('')
@@ -28,7 +28,7 @@ const QTCongTac = ({ quannhanId}) => {
 
   const user = useSelector((state) => state?.user)
   const searchInput = useRef(null);
-  
+
   const inittial = () => ({
     SoQuyetDinh: '',
     NgayQuyetDinh: '',
@@ -142,7 +142,7 @@ const QTCongTac = ({ quannhanId}) => {
 
 
   const fetchGetQuaTrinhCongTac = async (context) => {
-   
+
     if (quannhanId) {
 
       const res = await QuaTrinhCongTacService.getQuaTrinhCongTacByQuanNhanId(quannhanId)
@@ -567,7 +567,8 @@ const QTCongTac = ({ quannhanId}) => {
       ...qtcongtacDetails,
       key: qtcongtacDetails._id,
       TrangThai: getTrangThaiText(qtcongtacDetails.TrangThai),
-      NgayQuyetDinh: convertDateToString(qtcongtacDetails.NgayQuyetDinh)
+      NgayQuyetDinh: convertDateToString(qtcongtacDetails.NgayQuyetDinh),
+
 
     }
   })
