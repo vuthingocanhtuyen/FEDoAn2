@@ -31,6 +31,17 @@ export const getQuanNhanByQuanNhanId = async (id) => {
   const res = await axios.get(`${process.env.REACT_APP_API_URL}/quannhan/get-by-id/${id}`);
   return res.data;
 };
+export const getTaiFromDonVi = async (id, access_token) => {
+  const res = await axiosJWT.get(
+    `${process.env.REACT_APP_API_URL}/quannhan/get-tai/${id}`,
+    {
+      headers: {
+        token: `Bearer ${access_token}`,
+      },
+    }
+  );
+  return res.data;
+};
 
 export const deleteQuanNhan = async (id, access_token) => {
   const res = await axiosJWT.delete(
@@ -102,7 +113,7 @@ export const getAllType = async () => {
   const res = await axios.get(`${process.env.REACT_APP_API_URL}/quannhan/get-all-type`);
   return res.data;
 };
-export const update2ListsQuanNhan = async (id,index, access_token) => {
+export const update2ListsQuanNhan = async (id, index, access_token) => {
   const res = await axiosJWT.put(
     `${process.env.REACT_APP_API_URL}/quannhan/editdata/${id}/${index}`,
     {
@@ -113,7 +124,7 @@ export const update2ListsQuanNhan = async (id,index, access_token) => {
   );
   return res.data;
 };
-export const updateQuanNhanLists = async (id,data,access_token) => {
+export const updateQuanNhanLists = async (id, data, access_token) => {
   const res = await axiosJWT.post(
     `${process.env.REACT_APP_API_URL}/quannhan/pushdata/${id}`,
     data,
@@ -125,7 +136,7 @@ export const updateQuanNhanLists = async (id,data,access_token) => {
   );
   return res.data;
 };
-export const delete2ListsQuanNhan = async (id,index, access_token) => {
+export const delete2ListsQuanNhan = async (id, index, access_token) => {
   const res = await axiosJWT.delete(
     `${process.env.REACT_APP_API_URL}/quannhan/deletedata/${id}/${index}`,
     {
