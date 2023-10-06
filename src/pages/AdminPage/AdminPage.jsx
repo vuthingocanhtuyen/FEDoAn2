@@ -232,7 +232,7 @@ const AdminPage = () => {
       key: 'chihuydieuhanh',
       icon: <AppstoreOutlined />,
       children: [
-        getItem('Thống kê nhân lực', 'thongkenhanluc', <AppstoreAddOutlined />),
+        // getItem('Thống kê nhân lực', 'thongkenhanluc', <AppstoreAddOutlined />),
         getItem('Thông kê tải quân nhân', 'thongketaiquannhan', <AppstoreAddOutlined />),
         getItem('Thông kê tải đơn vị', 'thongketai', <AppstoreAddOutlined />),
       ],
