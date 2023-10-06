@@ -15,7 +15,7 @@ import SignInPage from "../pages/SignInPage/SignInPage";
 import SignUpPage from "../pages/SignUpPage/SignUpPage";
 import TypeProductPage from "../pages/TypeProductPage/TypeProductPage";
 import QuanLyChucVuId from "../pages/QuanLyDonVi/QuanLyChucVu/QuanLyChucVuId";
-import TongHopTai from "../pages/ChiHuyDieuHanh/ThongKeTai/TongHopTai"
+import TongHopTaiBoId from "../pages/ChiHuyDieuHanh/ThongKeTai/TongHopTaiBoId"
 export const routes = [
     {
         path: '/hosocanbo/:id',
@@ -24,7 +24,7 @@ export const routes = [
     },
     {
         path: '/tonghoptai/:id',
-        page: TongHopTai,
+        page: TongHopTaiBoId,
         isShowHeader: true
     },
     {
