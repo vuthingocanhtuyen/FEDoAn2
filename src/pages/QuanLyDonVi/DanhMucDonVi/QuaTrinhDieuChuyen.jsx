@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Form, Table, Button, Space,Select } from 'antd';
+import { Form, Table, Button, Space, Select } from 'antd';
 import { useSelector } from 'react-redux';
 import * as message from '../../../components/Message/Message'
 import { renderOptions } from '../../../utils'
@@ -20,8 +20,8 @@ import ModalComponent from '../../../components/ModalComponent/ModalComponent'
 import DrawerComponent from '../../../components/DrawerComponent/DrawerComponent'
 import TableComponent from '../../../components/TableComponent/TableComponent';
 import moment from 'moment';
-const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
-    
+const QuaTrinhDieuChuyen = ({ idQuanNhan }) => {
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [rowSelected, setRowSelected] = useState('')
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
@@ -33,7 +33,7 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
 
     const user = useSelector((state) => state?.user)
     const searchInput = useRef(null);
-    
+
     const inittial = () => ({
         SoQuyetDinh: '',
         NgayQuyetDinh: '',
@@ -59,14 +59,14 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
         }
     }
 
-    const {data: quannhanDetails } = useQuery(['hosoquannhan', idQuanNhan], fetchGetDetailsQuanNhan, { enabled: !!idQuanNhan })
-    const quannhanId =quannhanDetails?.QuanNhanId;
-    const chucvuhientai =quannhanDetails?.HoatDong[0];
-    const donvihientai =quannhanDetails?.DonVi[0];
+    const { data: quannhanDetails } = useQuery(['hosoquannhan', idQuanNhan], fetchGetDetailsQuanNhan, { enabled: !!idQuanNhan })
+    const quannhanId = quannhanDetails?.QuanNhanId;
+    const chucvuhientai = quannhanDetails?.HoatDong[0];
+    const donvihientai = quannhanDetails?.DonVi[0];
     const mutation = useMutationHooks(
         (data) => {
             const { QuanNhanId = quannhanId,
-                SoQuyetDinh, NgayQuyetDinh, DonViQuyetDinh, ChucVuHienTai=chucvuhientai, DonViHienTai=donvihientai, DonViDen, ChucVuDen, NgayDenNhanChuc, TrangThai = 0, edituser, edittime, GhiChu } = data
+                SoQuyetDinh, NgayQuyetDinh, DonViQuyetDinh, ChucVuHienTai = chucvuhientai, DonViHienTai = donvihientai, DonViDen, ChucVuDen, NgayDenNhanChuc, TrangThai = 0, edituser, edittime, GhiChu } = data
             const res = QuaTrinhDieuChuyenService.createQuaTrinhDieuChuyen({
                 QuanNhanId, SoQuyetDinh, NgayQuyetDinh, DonViQuyetDinh, ChucVuHienTai, DonViHienTai, DonViDen, ChucVuDen, NgayDenNhanChuc, TrangThai, edituser, edittime, GhiChu
             })
@@ -212,19 +212,19 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
     const fetchAllDonVi = async () => {
         const res = await DonViService.getDonViConByTen("HVKTQS")
         return res
-      }
+    }
     const fetchAllDonVi2 = async () => {
         const res = await DonViService.getDonViConOnly("HVKTQS")
         return res
-      }
-      const fetchAllChucVu = async () => {
+    }
+    const fetchAllChucVu = async () => {
         const res = await ChucVuService.getChucVuFromDonVi(currentUserDonViCode)
         return res
-      }
-      const fetchAllChucVu2 = async () => {
+    }
+    const fetchAllChucVu2 = async () => {
         const res = await ChucVuService.getDataChucVuByDonVi(currentUserDonViCode)
         return res
-      }
+    }
 
 
     const { data, isLoading, isSuccess, isError } = mutation
@@ -235,9 +235,9 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
     const { data: dataUpdatedNhapLai, isLoading: isLoadingUpdatedNhapLai, isSuccess: isSuccessUpdatedNhapLai, isError: isErrorUpdatedNhapLai } = mutationUpdateNhapLai
 
     const allDonVi = useQuery({ queryKey: ['all-donvi'], queryFn: fetchAllDonVi })
-    const allDonVi2 = useQuery({ queryKey: ['all-donvi2'], queryFn: fetchAllDonVi2 })  
+    const allDonVi2 = useQuery({ queryKey: ['all-donvi2'], queryFn: fetchAllDonVi2 })
     const allChucVu = useQuery({ queryKey: ['all-chucvu'], queryFn: fetchAllChucVu })
-    const allChucVu2 = useQuery({ queryKey: ['all-chucvu2'], queryFn: fetchAllChucVu2 })  
+    const allChucVu2 = useQuery({ queryKey: ['all-chucvu2'], queryFn: fetchAllChucVu2 })
     const queryQuaTrinhDieuChuyen = useQuery({ queryKey: ['quatrinhdieuchuyens'], queryFn: getAllQuaTrinhDieuChuyens })
     const qtcongtacDetails = useQuery(['hosoquannhanqtdieuchuyen', quannhanId], fetchGetQuaTrinhDieuChuyen, { enabled: !!quannhanId })
     console.log("qt điều chuyển:", qtcongtacDetails.data, queryQuaTrinhDieuChuyen.data)
@@ -570,29 +570,29 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
         })
     }
     const handleChangeSelectDonVi = (value) => {
-        try{
+        try {
             const selectedDonVi = allDonVi2?.data?.data.find(DonVi => DonVi.name === value);
             if (selectedDonVi) {
-              setCurrentUserDonViCode(selectedDonVi.code);
+                setCurrentUserDonViCode(selectedDonVi.code);
             }
             setStateQuaTrinhDieuChuyen({
                 ...stateQuaTrinhDieuChuyen,
                 DonViDen: selectedDonVi.code
-        })
+            })
 
-    }
-    catch{}
+        }
+        catch { }
     }
     const handleChangeSelectChucVu = (value) => {
-        try{
-          const selectedChucVu = allChucVu2?.data?.data.find(ChucVuDonVi => ChucVuDonVi.name === value);
-          setStateQuaTrinhDieuChuyen({
-            ...stateQuaTrinhDieuChuyen,
-            ChucVuDen: selectedChucVu.chucvucode
-        })
-          }
-          catch{}
-      }
+        try {
+            const selectedChucVu = allChucVu2?.data?.data.find(ChucVuDonVi => ChucVuDonVi.name === value);
+            setStateQuaTrinhDieuChuyen({
+                ...stateQuaTrinhDieuChuyen,
+                ChucVuDen: selectedChucVu.chucvucode
+            })
+        }
+        catch { }
+    }
 
 
     const handleOnchangeDetails = (e) => {
@@ -663,24 +663,24 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
     }, [isSuccess])
     useEffect(() => {
         if (currentUserDonViCode) {
-          allDonVi.refetch();
+            allDonVi.refetch();
         }
-      }, [currentUserDonViCode, allDonVi]);
-      useEffect(() => {
+    }, [currentUserDonViCode, allDonVi]);
+    useEffect(() => {
         if (currentUserDonViCode) {
-          allChucVu.refetch();
+            allChucVu.refetch();
         }
-      }, [currentUserDonViCode, allChucVu]);
-      useEffect(() => {
+    }, [currentUserDonViCode, allChucVu]);
+    useEffect(() => {
         if (currentUserDonViCode) {
-          allDonVi2.refetch();
+            allDonVi2.refetch();
         }
-      }, [currentUserDonViCode, allDonVi2]);
-      useEffect(() => {
+    }, [currentUserDonViCode, allDonVi2]);
+    useEffect(() => {
         if (currentUserDonViCode) {
-          allChucVu2.refetch();
+            allChucVu2.refetch();
         }
-      }, [currentUserDonViCode, allChucVu2]);
+    }, [currentUserDonViCode, allChucVu2]);
 
     return (
         <div>
@@ -788,9 +788,9 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
                             <Select
-                            
-                            onChange={handleChangeSelectDonVi}
-                            options={renderOptions(allDonVi?.data?.data)}
+
+                                onChange={handleChangeSelectDonVi}
+                                options={renderOptions(allDonVi?.data?.data)}
                             />
                         </Form.Item>
 
@@ -799,10 +799,10 @@ const QuaTrinhDieuChuyen = ({idQuanNhan }) => {
                             name="ChucVuDen"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                             <Select
-                            
-                            onChange={handleChangeSelectChucVu}
-                            options={renderOptions(allChucVu?.data?.data)}
+                            <Select
+
+                                onChange={handleChangeSelectChucVu}
+                                options={renderOptions(allChucVu?.data?.data)}
                             />
                         </Form.Item>
                         <Form.Item
