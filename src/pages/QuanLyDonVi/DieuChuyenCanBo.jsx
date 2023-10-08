@@ -1,6 +1,6 @@
 
-import { Button,Form, Space } from 'antd'
-import {  SearchOutlined } from '@ant-design/icons'
+import { Button, Form, Space } from 'antd'
+import { SearchOutlined } from '@ant-design/icons'
 import React, { useRef } from 'react'
 import { WrapperHeader } from './style'
 import 'antd/dist/antd.css';
@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import SearchBar from './Components/SearchBar';
 import FreeDonVi from '../../pages/QuanLyDonVi/DanhMucDonVi/FreeDonVi'
+import moment from 'moment';
 import { WrapperContentProfile, WrapperInput, WrapperLabel, WrapperContentProfileFree, WrapperContentProfileText } from './Components/style'
 const DieuChuyenCanBo = () => {
   const [currentUserDonVi, setCurrentUserDonVi] = useState(null);
@@ -26,9 +27,9 @@ const DieuChuyenCanBo = () => {
   const searchInput = useRef(null);
   const [treeNodeClickedId, setTreeNodeClickedId] = useState(null);
   const handleTreeNodeClick = (item) => {
-        setTreeNodeClickedId(item);
-        getDonViCode(item);
-    }
+    setTreeNodeClickedId(item);
+    getDonViCode(item);
+  }
   useEffect(() => {
     const fetchGetChucVuDonVi = async () => {
 
@@ -55,15 +56,14 @@ const DieuChuyenCanBo = () => {
   }
   const getDonViCode = async (item) => {
     console.log(item);
-    if(item)
-    {
-      try{
+    if (item) {
+      try {
         const res = await DonViService.getDetailsDonVi(item);
         console.log(res.data.code);
         setCurrentUserDonVi(res.data.code);
         return res
       }
-    catch{}
+      catch { }
     }
   }
   const handleDetailsHoSoCanBo = (ids) => {
@@ -202,71 +202,78 @@ const DieuChuyenCanBo = () => {
 
 
   ];
+
+  function convertDateToString(date) {
+    // Sử dụng Moment.js để chuyển đổi đối tượng Date thành chuỗi theo định dạng mong muốn
+    return moment(date).format('DD/MM/YYYY');
+  }
+
   const dataTable = quannhans?.data?.length && quannhans?.data?.map((quannhan) => {
-    return { ...quannhan, key: quannhan._id }
-  })
-  const filteredData = quannhans?.data?.filter(item => {
-    
+    return { ...quannhan, key: quannhan._id, NgaySinh: convertDateToString(quannhan.NgaySinh) }
+  }).filter(item => {
     const matchesHoTen = item.HoTen.toLowerCase().includes(searchTermHoTen.toLowerCase());
     const matchesQuanNhanId = item.QuanNhanId.includes(searchTermQuanNhanId.toLowerCase());
-    return matchesHoTen  && matchesQuanNhanId;
+    return matchesHoTen && matchesQuanNhanId;
   });
+
+
+
   useEffect(() => {
     if (currentUserDonVi) {
       queryQuanNhan.refetch();
     }
   }, [currentUserDonVi, queryQuanNhan]);
-  
+
   return (
     <div>
       <WrapperHeader>Điều chuyển cán bộ</WrapperHeader>
-              <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ccc' }}>
-                <div style={{ margin: '0 auto', float: 'left', padding: '5px' }}>
-                <FreeDonVi handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId}/>
-                </div>
-                <div style={{ margin: '0 auto', height: '115px', float: 'left' }}>
+      <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ccc' }}>
+        <div style={{ margin: '0 auto', float: 'left', padding: '5px' }}>
+          <FreeDonVi handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId} />
+        </div>
+        <div style={{ margin: '0 auto', height: '115px', float: 'left' }}>
 
-                    <WrapperContentProfile>
-                        <Form.Item
-                            label="Mã quân nhân: "
-                            name="QuanNhanId"
-                        >
-                            <SearchBar onSearch={handleSearchQuanNhanId} />
-                        </Form.Item>
-                    </WrapperContentProfile>
-                </div>
-                <div style={{ margin: '0 auto', height: '115px', float: 'left'}}>
-                    <WrapperContentProfile>
-                        <Form.Item
-                            label="Họ tên: "
-                            name="HoTen"
-                        >
-                            <SearchBar onSearch={handleSearchHoTen} />
-                        </Form.Item>
-                    </WrapperContentProfile>
-                </div>
-                
-                {/* <Button type="primary" htmlType="submit" style={{ marginTop: '40px', marginLeft: '10px' }} >
+          <WrapperContentProfile>
+            <Form.Item
+              label="Mã quân nhân: "
+              name="QuanNhanId"
+            >
+              <SearchBar onSearch={handleSearchQuanNhanId} />
+            </Form.Item>
+          </WrapperContentProfile>
+        </div>
+        <div style={{ margin: '0 auto', height: '115px', float: 'left' }}>
+          <WrapperContentProfile>
+            <Form.Item
+              label="Họ tên: "
+              name="HoTen"
+            >
+              <SearchBar onSearch={handleSearchHoTen} />
+            </Form.Item>
+          </WrapperContentProfile>
+        </div>
+
+        {/* <Button type="primary" htmlType="submit" style={{ marginTop: '40px', marginLeft: '10px' }} >
                     Lấy dữ liệu
                 </Button> */}
-                </div>
-                
-                <div style={{ clear: 'both' }}></div>
-                <br />
-               
-      
-     
+      </div>
+
+      <div style={{ clear: 'both' }}></div>
+      <br />
+
+
+
       <div style={{ marginTop: '20px' }}>
-        <TableComponent  columns={columns} isLoading={isLoadingQuanNhans} data={filteredData} onRow={(record, rowIndex) => {
+        <TableComponent columns={columns} isLoading={isLoadingQuanNhans} data={dataTable} onRow={(record, rowIndex) => {
           return {
 
-            onClick: event => { 
+            onClick: event => {
               handleDetailsHoSoCanBo(record._id);
             },
           };
         }} />
       </div>
-      
+
     </div>
   )
 }

@@ -26,8 +26,10 @@ import ModalComponent from '../../components/ModalComponent/ModalComponent'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
 import SearchBar from './Components/SearchBar';
 import FreeDonVi from '../../pages/QuanLyDonVi/DanhMucDonVi/FreeDonVi'
+import moment from 'moment';
 import { WrapperContentProfile, WrapperInput, WrapperLabel, WrapperContentProfileFree, WrapperContentProfileText } from './Components/style'
 import { useNavigate } from 'react-router-dom'
+
 const HoSoCanBo = () => {
   const [currentUserDonVi, setCurrentUserDonVi] = useState(null);
   const [currentUserDonViCode, setCurrentUserDonViCode] = useState(null);
@@ -44,9 +46,9 @@ const HoSoCanBo = () => {
   const searchInput = useRef(null);
   const [treeNodeClickedId, setTreeNodeClickedId] = useState(null);
   const handleTreeNodeClick = (item) => {
-        setTreeNodeClickedId(item);
-        getDonViCode(item);
-    }
+    setTreeNodeClickedId(item);
+    getDonViCode(item);
+  }
   useEffect(() => {
     const fetchGetChucVuDonVi = async () => {
 
@@ -72,15 +74,14 @@ const HoSoCanBo = () => {
   }, [user.QuanNhanId, user.access_token]);
   const getDonViCode = async (item) => {
     console.log(item);
-    if(item)
-    {
-      try{
+    if (item) {
+      try {
         const res = await DonViService.getDetailsDonVi(item);
         console.log(res.data.code);
         setCurrentUserDonVi(res.data.code);
         return res
       }
-    catch{}
+      catch { }
     }
   }
   const handleSearchHoTen = (searchText) => {
@@ -408,14 +409,22 @@ const HoSoCanBo = () => {
 
 
   ];
+  function convertDateToString(date) {
+    // Sử dụng Moment.js để chuyển đổi đối tượng Date thành chuỗi theo định dạng mong muốn
+    return moment(date).format('DD/MM/YYYY');
+  }
   const dataTable = quannhans?.data?.length && quannhans?.data?.map((quannhan) => {
-    return { ...quannhan, key: quannhan._id }
-  })
-  const filteredData = quannhans?.data?.filter(item => {
-    
+    return { ...quannhan, key: quannhan._id, NgaySinh: convertDateToString(quannhan.NgaySinh) }
+  }).filter(item => {
     const matchesHoTen = item.HoTen.toLowerCase().includes(searchTermHoTen.toLowerCase());
     const matchesQuanNhanId = item.QuanNhanId.includes(searchTermQuanNhanId.toLowerCase());
-    return matchesHoTen  && matchesQuanNhanId;
+    return matchesHoTen && matchesQuanNhanId;
+  });
+  const filteredData = quannhans?.data?.filter(item => {
+
+    const matchesHoTen = item.HoTen.toLowerCase().includes(searchTermHoTen.toLowerCase());
+    const matchesQuanNhanId = item.QuanNhanId.includes(searchTermQuanNhanId.toLowerCase());
+    return matchesHoTen && matchesQuanNhanId
   });
 
   useEffect(() => {
@@ -603,60 +612,60 @@ const HoSoCanBo = () => {
   const handleChangeSelect = (value) => {
     // console.log("bat dau");
     // console.log(allDonVi2?.data?.data);
-    try{
-    const selectedDonVi = allDonVi2?.data?.data.find(DonVi => DonVi.name === value);
-    if (selectedDonVi) {
-      setCurrentUserDonViCode(selectedDonVi.code);
-      // console.log(selectedDonVi.code);
-    }
+    try {
+      const selectedDonVi = allDonVi2?.data?.data.find(DonVi => DonVi.name === value);
+      if (selectedDonVi) {
+        setCurrentUserDonViCode(selectedDonVi.code);
+        // console.log(selectedDonVi.code);
+      }
       setStateQuanNhan({
         ...stateQuanNhan,
         DonVi: selectedDonVi.code
       })
     }
-    catch{}
+    catch { }
   }
-const handleChangeSelect2 = (value) => {
+  const handleChangeSelect2 = (value) => {
     setStateQuanNhan({
       ...stateQuanNhan,
       QuanHam: value
     })
     // console.log(stateQuanNhan)
-}
-const handleChangeSelect4 = (value) => {
-  setStateQuanNhan({
-    ...stateQuanNhan,
-    LoaiQN: value
-  })
-  // console.log(stateQuanNhan)
-}
-// const handleChangeSelect3 = (value) => {
-//   setStateQuanNhan({
-//     ...stateQuanNhan,
-//     HoatDong: value
-//   })
-//   console.log(stateQuanNhan)
-// }
-const handleChangeSelect3 = (value) => {
-  try{
-    const selectedChucVu = allChucVu2?.data?.data.find(ChucVuDonVi => ChucVuDonVi.name === value);
-    if (selectedChucVu) {
-      setCurrentUserDonViCode(selectedChucVu.chucvucode);
-      // console.log(selectedChucVu.chucvucode);
-    }
+  }
+  const handleChangeSelect4 = (value) => {
+    setStateQuanNhan({
+      ...stateQuanNhan,
+      LoaiQN: value
+    })
+    // console.log(stateQuanNhan)
+  }
+  // const handleChangeSelect3 = (value) => {
+  //   setStateQuanNhan({
+  //     ...stateQuanNhan,
+  //     HoatDong: value
+  //   })
+  //   console.log(stateQuanNhan)
+  // }
+  const handleChangeSelect3 = (value) => {
+    try {
+      const selectedChucVu = allChucVu2?.data?.data.find(ChucVuDonVi => ChucVuDonVi.name === value);
+      if (selectedChucVu) {
+        setCurrentUserDonViCode(selectedChucVu.chucvucode);
+        // console.log(selectedChucVu.chucvucode);
+      }
       setStateQuanNhan({
         ...stateQuanNhan,
         HoatDong: selectedChucVu.chucvucode
       })
     }
-    catch{}
-  
-  // setStateQuanNhan({
-  //   ...stateQuanNhan,
-  //   HoatDong: value
-  // })
-  // console.log(stateQuanNhan)
-}
+    catch { }
+
+    // setStateQuanNhan({
+    //   ...stateQuanNhan,
+    //   HoatDong: value
+    // })
+    // console.log(stateQuanNhan)
+  }
 
   return (
     <div>
@@ -664,41 +673,41 @@ const handleChangeSelect3 = (value) => {
       <div style={{ marginTop: '10px' }}>
         <Button style={{ height: '50px', width: '50px', borderRadius: '6px', borderStyle: 'dashed' }} onClick={() => setIsModalOpen(true)}><PlusOutlined style={{ fontSize: '20px' }} /></Button>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ccc' ,marginTop: '15px'}}>
-                <div style={{ margin: '0 auto', float: 'left', padding: '5px' }}>
-                <FreeDonVi handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId}/>
-                </div>
-                <div style={{ margin: '0 auto', height: '115px', float: 'left' }}>
+      <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ccc', marginTop: '15px' }}>
+        <div style={{ margin: '0 auto', float: 'left', padding: '5px' }}>
+          <FreeDonVi handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId} />
+        </div>
+        <div style={{ margin: '0 auto', height: '115px', float: 'left' }}>
 
-                    <WrapperContentProfile>
-                        <Form.Item
-                            label="Mã quân nhân: "
-                            name="QuanNhanId"
-                        >
-                            <SearchBar onSearch={handleSearchQuanNhanId} />
-                        </Form.Item>
-                    </WrapperContentProfile>
-                </div>
-                <div style={{ margin: '0 auto', height: '115px', float: 'left'}}>
-                    <WrapperContentProfile>
-                        <Form.Item
-                            label="Họ tên: "
-                            name="HoTen"
-                        >
-                            <SearchBar onSearch={handleSearchHoTen} />
-                        </Form.Item>
-                    </WrapperContentProfile>
-                </div>
-                
-                {/* <Button type="primary" htmlType="submit" style={{ marginTop: '40px', marginLeft: '10px' }} >
+          <WrapperContentProfile>
+            <Form.Item
+              label="Mã quân nhân: "
+              name="QuanNhanId"
+            >
+              <SearchBar onSearch={handleSearchQuanNhanId} />
+            </Form.Item>
+          </WrapperContentProfile>
+        </div>
+        <div style={{ margin: '0 auto', height: '115px', float: 'left' }}>
+          <WrapperContentProfile>
+            <Form.Item
+              label="Họ tên: "
+              name="HoTen"
+            >
+              <SearchBar onSearch={handleSearchHoTen} />
+            </Form.Item>
+          </WrapperContentProfile>
+        </div>
+
+        {/* <Button type="primary" htmlType="submit" style={{ marginTop: '40px', marginLeft: '10px' }} >
                     Lấy dữ liệu
                 </Button> */}
-                </div>
-                
-                <div style={{ clear: 'both' }}></div>
-                <br />
+      </div>
+
+      <div style={{ clear: 'both' }}></div>
+      <br />
       <div style={{ marginTop: '20px' }}>
-        <TableComponent handleDelteMany={handleDelteManyQuanNhans} columns={columns} isLoading={isLoadingQuanNhans} data={filteredData} onRow={(record, rowIndex) => {
+        <TableComponent handleDelteMany={handleDelteManyQuanNhans} columns={columns} isLoading={isLoadingQuanNhans} data={dataTable} onRow={(record, rowIndex) => {
           return {
 
             onClick: event => {
@@ -742,14 +751,14 @@ const handleChangeSelect3 = (value) => {
               <InputComponent value={stateQuanNhan['NgaySinh']} onChange={handleOnchange} name="NgaySinh" />
             </Form.Item> */}
             <Form.Item
-            label="Ngày sinh"
-            name="NgaySinh"
-            rules={[{ required: true, message: 'Please input your NgaySinh!' }]}
+              label="Ngày sinh"
+              name="NgaySinh"
+              rules={[{ required: true, message: 'Please input your NgaySinh!' }]}
             >
-            <DatePicker 
-             value={stateQuanNhan['NgaySinh']}
-             onChange={handleOnchange2} name="NgaySinh"
-             format="YYYY-MM-DD" 
+              <DatePicker
+                value={stateQuanNhan['NgaySinh']}
+                onChange={handleOnchange2} name="NgaySinh"
+                format="YYYY-MM-DD"
               />
             </Form.Item>
             <Form.Item
@@ -799,8 +808,8 @@ const handleChangeSelect3 = (value) => {
                 // value={stateQuanNhan.QuanHam}
                 onChange={handleChangeSelect2}
                 options={renderOptions(typeQuanHam?.data?.data)}
-                />
-            </Form.Item>    
+              />
+            </Form.Item>
             <Form.Item
               label="Loại quân nhân"
               name="LoaiQN"
@@ -813,8 +822,8 @@ const handleChangeSelect3 = (value) => {
                 // value={stateQuanNhan.LoaiQN}
                 onChange={handleChangeSelect4}
                 options={renderOptions(typeLoaiQuanNhan?.data?.data)}
-                />
-            </Form.Item>   
+              />
+            </Form.Item>
             <Form.Item
               label="Đơn vị"
               name="DonVi"
@@ -827,7 +836,7 @@ const handleChangeSelect3 = (value) => {
                 // value={stateQuanNhan.DonVi}
                 onChange={handleChangeSelect}
                 options={renderOptions(allDonVi?.data?.data)}
-                />
+              />
             </Form.Item>
             <Form.Item
               label="Chức vụ"
@@ -841,8 +850,8 @@ const handleChangeSelect3 = (value) => {
                 // value={stateQuanNhan.HoatDong}
                 onChange={handleChangeSelect3}
                 options={renderOptions(allChucVu?.data?.data)}
-                />
-            </Form.Item>         
+              />
+            </Form.Item>
             <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
               <Button type="primary" htmlType="submit">
                 Submit
