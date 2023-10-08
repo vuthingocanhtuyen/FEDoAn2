@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Form, Select, Button, Space, Checkbox, Breadcrumb } from 'antd';
+import { Form, Select, Button, Space, DatePicker, Breadcrumb } from 'antd';
 import { useSelector } from 'react-redux';
 import * as message from '../../../components/Message/Message'
 import { renderOptions } from '../../../utils'
@@ -221,7 +221,7 @@ const QuaTrinhHocVi = () => {
     }, [form, stateQuaTrinhHocViDetails, isOpenDrawer])
 
     const handleOnchangeDetailNgayBD = (date) => {
-        setStateNgayQuyetDinhetails({
+        setStateQuaTrinhHocViDetails({
             ...stateQuaTrinhHocViDetails,
             NgayQuyetDinh: date
         })
@@ -666,7 +666,7 @@ const QuaTrinhHocVi = () => {
 
                         <Form.Item
                             label="Ngày quyết định"
-                            name="NgayQuyetDinh"
+                            //   name="NgayQuyetDinh"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
                             {/* <InputComponent
@@ -761,7 +761,7 @@ const QuaTrinhHocVi = () => {
 
                         <Form.Item
                             label="Ngày quyết định"
-                            name="NgayQuyetDinh"
+                            //  name="NgayQuyetDinh"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
                             {/* <InputComponent value={stateQuaTrinhHocViDetails['NgayQuyetDinh']} onChange={handleOnchangeDetails} name="NgayQuyetDinh" /> */}
