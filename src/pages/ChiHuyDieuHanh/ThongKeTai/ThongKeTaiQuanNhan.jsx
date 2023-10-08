@@ -15,8 +15,9 @@ import { useQuery } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import moment from 'moment';
+import SearchBar from '../../QuanLyDonVi/Components/SearchBar';
 import FreeDonVi from '../../../pages/QuanLyDonVi/DanhMucDonVi/FreeDonVi'
-import { WrapperContentProfile, WrapperInput, WrapperLabel, WrapperContentProfileFree, WrapperContentProfileText } from '../style'
+import { WrapperContentProfile, WrapperInput, WrapperLabel, WrapperContentProfileFree, WrapperContentProfileText } from '../../QuanLyDonVi/Components/style'
 const ThongKeTaiQuanNhan = () => {
     const [currentUserDonVi, setCurrentUserDonVi] = useState(null);
     const [searchTermHoTen, setSearchTermHoTen] = useState('');
@@ -223,7 +224,7 @@ const ThongKeTaiQuanNhan = () => {
 
     return (
         <div>
-            <WrapperHeader>Danh sách cán bộ đươn vị</WrapperHeader>
+            <WrapperHeader>Danh sách cán bộ đơn vị</WrapperHeader>
             <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ccc' }}>
                 <div style={{ margin: '0 auto', float: 'left', padding: '5px' }}>
                     <FreeDonVi handleTreeNodeClick={handleTreeNodeClick} treeNodeClickedId={treeNodeClickedId} />
@@ -235,7 +236,7 @@ const ThongKeTaiQuanNhan = () => {
                             label="Mã quân nhân: "
                             name="QuanNhanId"
                         >
-
+                            <SearchBar onSearch={handleSearchQuanNhanId} />
                         </Form.Item>
                     </WrapperContentProfile>
                 </div>
@@ -245,7 +246,7 @@ const ThongKeTaiQuanNhan = () => {
                             label="Họ tên: "
                             name="HoTen"
                         >
-
+                            <SearchBar onSearch={handleSearchHoTen} />
                         </Form.Item>
                     </WrapperContentProfile>
                 </div>
