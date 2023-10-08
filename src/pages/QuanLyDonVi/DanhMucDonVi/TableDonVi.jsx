@@ -20,7 +20,7 @@ import DrawerComponent from '../../../components/DrawerComponent/DrawerComponent
 import { useSelector } from 'react-redux'
 import ModalComponent from '../../../components/ModalComponent/ModalComponent'
 
-const TableDonVi = ({handleTreeNodeClick,treeNodeClickedId } ) => {
+const TableDonVi = ({ handleTreeNodeClick, treeNodeClickedId }) => {
     console.log(treeNodeClickedId)
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [rowSelected, setRowSelected] = useState('')
@@ -47,11 +47,11 @@ const TableDonVi = ({handleTreeNodeClick,treeNodeClickedId } ) => {
         email: '',
         managestaff: '',
         whois: '',
-        thucluc:'',
+        thucluc: '',
         bienche: '',
     });
-    
-    
+
+
     const [stateDonVi, setStateDonVi] = useState(inittial())
     const [stateDonViDetails, setStateDonViDetails] = useState(inittial())
 
@@ -77,7 +77,7 @@ const TableDonVi = ({handleTreeNodeClick,treeNodeClickedId } ) => {
                 managestaff,
                 whois,
                 thucluc,
-                bienche,} = data
+                bienche, } = data
             const res = DonViService.createDonVi({
                 code,
                 codeview,
@@ -198,7 +198,7 @@ const TableDonVi = ({handleTreeNodeClick,treeNodeClickedId } ) => {
         })
     }
 
-    
+
 
     const { data, isLoading, isSuccess, isError } = mutation
     const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
@@ -327,7 +327,7 @@ const TableDonVi = ({handleTreeNodeClick,treeNodeClickedId } ) => {
         //     ...getColumnSearchProps('email')
         // },
         {
-            title: 'Action',
+            title: 'Chức năng',
             dataIndex: 'action',
             render: renderAction
         },
@@ -380,7 +380,7 @@ const TableDonVi = ({handleTreeNodeClick,treeNodeClickedId } ) => {
             theorder: '',
             phone: '',
             email: '',
-            managestaff:'',
+            managestaff: '',
             whois: '',
             thucluc: '',
             bienche: '',
@@ -428,7 +428,7 @@ const TableDonVi = ({handleTreeNodeClick,treeNodeClickedId } ) => {
             theorder: '',
             phone: '',
             email: '',
-            managestaff:'',
+            managestaff: '',
             whois: '',
             thucluc: '',
             bienche: '',
@@ -497,20 +497,20 @@ const TableDonVi = ({handleTreeNodeClick,treeNodeClickedId } ) => {
     }
 
     return (
-        
+
         <div>
             <WrapperHeader>Quản lý đơn vị</WrapperHeader>
             <div style={{ marginTop: '10px' }}>
                 <Button onClick={() => setIsModalOpen(true)}>Thêm tham số</Button>
             </div>
             <div style={{ marginTop: '20px' }}>
-                 <TableComponent handleDelteMany={handleDelteManyDonVis} columns={columns} isLoading={isLoadingDonVis} data={dataTable} onRow={(record, rowIndex) => {
+                <TableComponent handleDelteMany={handleDelteManyDonVis} columns={columns} isLoading={isLoadingDonVis} data={dataTable} onRow={(record, rowIndex) => {
                     return {
                         onClick: event => {
                             setRowSelected(record._id);
-                            
-                          }
-                        
+
+                        }
+
                     };
                 }} />
             </div>
@@ -548,7 +548,7 @@ const TableDonVi = ({handleTreeNodeClick,treeNodeClickedId } ) => {
                         </Form.Item>
                         <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
                             <Button type="primary" htmlType="submit">
-                                Submit
+                                Thêm
                             </Button>
                         </Form.Item>
                     </Form>
@@ -588,10 +588,10 @@ const TableDonVi = ({handleTreeNodeClick,treeNodeClickedId } ) => {
                         >
                             <InputComponent value={stateDonViDetails['name']} onChange={handleOnchangeDetails} name="name" />
                         </Form.Item>
-                        
+
                         <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
                             <Button type="primary" htmlType="submit">
-                                Apply
+                                Cập nhật
                             </Button>
                         </Form.Item>
                     </Form>
@@ -603,7 +603,7 @@ const TableDonVi = ({handleTreeNodeClick,treeNodeClickedId } ) => {
                 </Loading>
             </ModalComponent>
         </div>
-       
+
     )
 }
 
