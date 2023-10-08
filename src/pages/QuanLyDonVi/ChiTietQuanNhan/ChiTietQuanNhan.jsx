@@ -33,12 +33,12 @@ function ChiTietQuanNhan() {
                 <TabPane tab="Các quá trình" key="2">
                     <QuaTrinh idQuanNhan={id} />
                 </TabPane>
-                <TabPane tab="Công tác Đào tạo" key="3">
+                {/* <TabPane tab="Công tác Đào tạo" key="3">
                     <CTDaoTao idQuanNhan={id} />
-                </TabPane>
-                <TabPane tab="Công tác NCKH" key="4">
+                </TabPane> */}
+                {/* <TabPane tab="Công tác NCKH" key="4">
                     <CongTacNCKH idQuanNhan={id} />
-                </TabPane>
+                </TabPane> */}
                 <TabPane tab="Thân nhân" key="5">
                     <ThanNhan idQuanNhan={id} />
                 </TabPane>
