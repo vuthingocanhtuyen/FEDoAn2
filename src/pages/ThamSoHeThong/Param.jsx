@@ -274,7 +274,7 @@ const Param = () => {
         //     ...getColumnSearchProps('address')
         // },
         {
-            title: 'Admin',
+            title: 'Tài khoản',
             dataIndex: 'isAdmin',
             sorter: (a, b) => a.isAdmin.length - b.isAdmin.length,
             ...getColumnSearchProps('isAdmin'),

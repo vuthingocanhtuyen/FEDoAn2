@@ -8,7 +8,9 @@ import Loading from '../../../../components/LoadingComponent/Loading'
 import InputComponent from '../../../../components/InputComponent/InputComponent'
 import { useMutationHooks } from '../../../../hooks/useMutationHook'
 import * as QuaTrinhHocViService from '../../../../services/QuaTrinhHocViService';
+import * as HocViService from '../../../../services/HocViService';
 import * as DanhMucHocViService from '../../../../services/DanhMucHocViService';
+import * as QuanNhanService from '../../../../services/QuanNhanService';
 import CheckboxComponent from '../../../../components/CheckBox/CheckBox'
 import { WrapperHeader } from './style'
 import { useQuery } from '@tanstack/react-query'
@@ -18,7 +20,7 @@ import DrawerComponent from '../../../../components/DrawerComponent/DrawerCompon
 import TableComponent from '../../../../components/TableComponent/TableComponent';
 import moment from 'moment';
 const QuaTrinhHocVi = ({ quannhanId }) => {
-
+    const [quannhanObjectId, setQuannhanObjectId] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [rowSelected, setRowSelected] = useState('')
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
@@ -59,7 +61,7 @@ const QuaTrinhHocVi = ({ quannhanId }) => {
 
                 GhiChu
             })
-            console.log("data create qtct:", res.data)
+            mutationUpdate2.mutate({ id: quannhanObjectId, token: user?.access_token , TenHocVi:HocVi});
             return res
 
         }
@@ -75,6 +77,20 @@ const QuaTrinhHocVi = ({ quannhanId }) => {
                 id,
                 token,
                 { ...rests })
+            return res
+        },
+
+    )
+    const mutationUpdate2 = useMutationHooks(
+        (data) => {
+            
+            const { id,
+                token,
+                ...rests } = data
+            const res = HocViService.updateHocVi(
+                id,
+                token,
+                rests)
             return res
         },
 
@@ -102,7 +118,19 @@ const QuaTrinhHocVi = ({ quannhanId }) => {
             return res
         },
     )
-
+    const fetchGetObjectId = async () => {
+        try {
+          
+          const resQuanNhan = await QuanNhanService.getObjectIdByQuanNhanId(quannhanId, user.access_token);
+    
+          
+          setQuannhanObjectId(resQuanNhan.data);
+          
+        } catch (error) {
+          console.log('Error while fetching quan nhan details:', error);
+          setIsLoadingUpdate(false);
+        }
+      };
 
     const getAllQuaTrinhHocVis = async () => {
         const res = await QuaTrinhHocViService.getAllQuaTrinhHocVi()
@@ -189,6 +217,7 @@ const QuaTrinhHocVi = ({ quannhanId }) => {
     const onChange = () => { }
 
     const fetchGetDetailsQuaTrinhHocVi = async (rowSelected) => {
+        console.log("bat dau");
         const res = await QuaTrinhHocViService.getDetailsQuaTrinhHocVi(rowSelected)
         if (res?.data) {
             setStateQuaTrinhHocViDetails({
@@ -202,7 +231,13 @@ const QuaTrinhHocVi = ({ quannhanId }) => {
         setIsLoadingUpdate(false)
     }
 
-
+    useEffect(() => {
+        if (quannhanId) {
+           
+            fetchGetObjectId();
+        }
+        setIsLoadingUpdate(false)
+    }, [quannhanId])
 
     useEffect(() => {
         if (rowSelected) {
@@ -298,7 +333,7 @@ const QuaTrinhHocVi = ({ quannhanId }) => {
 
     //const { data: quatrinhhocviDetails } = useQuery(['hosoquannhan', quannhanId], fetchGetQuaTrinhHocVi, { enabled: !!quannhanId })
     //console.log("qtrinhcongtac:", quatrinhhocviDetails)
-    console.log("idquannhancongtac:", quannhanId)
+    // console.log("idquannhancongtac:", quannhanId)
 
 
 
