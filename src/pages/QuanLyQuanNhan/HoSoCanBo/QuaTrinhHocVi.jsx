@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Form, Select, Button, Space, Checkbox, Breadcrumb } from 'antd';
+import { Form, Select, Button, Space, DatePicker, Breadcrumb } from 'antd';
 import { useSelector } from 'react-redux';
 import * as message from '../../../components/Message/Message'
 import { renderOptions } from '../../../utils'
@@ -26,13 +26,13 @@ const QuaTrinhHocVi = () => {
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
     const [isModalOpenDelete, setIsModalOpenDelete] = useState(false)
-
+    const [NgayBD, setNgayBD] = useState('');
     const user = useSelector((state) => state?.user)
     const searchInput = useRef(null);
     const quannhanId = user.QuanNhanId;
     const inittial = () => ({
         QuyetDinh: '',
-        NgayQuyetDinh: '',
+        NgayQuyetDinh: moment(),
         HocVi: '',
         CaoNhat: '',
         GhiChu: '',
@@ -61,9 +61,9 @@ const QuaTrinhHocVi = () => {
 
                 GhiChu
             })
-            
-            mutationUpdate2.mutate({ id: quannhanObjectId, token: user?.access_token , TenHocVi:HocVi})
-            
+
+            mutationUpdate2.mutate({ id: quannhanObjectId, token: user?.access_token, TenHocVi: HocVi })
+
             return res
 
         }
@@ -71,7 +71,7 @@ const QuaTrinhHocVi = () => {
 
     const mutationUpdate = useMutationHooks(
         (data) => {
-            
+
             const { id,
                 token,
                 ...rests } = data
@@ -85,7 +85,7 @@ const QuaTrinhHocVi = () => {
     )
     const mutationUpdate2 = useMutationHooks(
         (data) => {
-            
+
             const { id,
                 token,
                 ...rests } = data
@@ -130,26 +130,26 @@ const QuaTrinhHocVi = () => {
     // show
     const fetchGetObjectId = async () => {
         try {
-          
-          const resQuanNhan = await QuanNhanService.getObjectIdByQuanNhanId(user.QuanNhanId, user.access_token);
-    
-          
-          setQuannhanObjectId(resQuanNhan.data);
-          
+
+            const resQuanNhan = await QuanNhanService.getObjectIdByQuanNhanId(user.QuanNhanId, user.access_token);
+
+
+            setQuannhanObjectId(resQuanNhan.data);
+
         } catch (error) {
-          console.log('Error while fetching quan nhan details:', error);
-          setIsLoadingUpdate(false);
+            console.log('Error while fetching quan nhan details:', error);
+            setIsLoadingUpdate(false);
         }
-      };
+    };
 
 
     const fetchGetQuaTrinhHocVi = async (context) => {
         const quannhanId = context?.queryKey && context?.queryKey[1]
-        
+
         if (quannhanId) {
 
             const res = await QuaTrinhHocViService.getQuaTrinhHocViByQuanNhanId(quannhanId)
-            
+
             if (res?.data) {
                 setStateQuaTrinhHocViDetails({
                     QuyetDinh: res?.data.QuyetDinh,
@@ -214,6 +214,24 @@ const QuaTrinhHocVi = () => {
         )
     }
 
+
+    useEffect(() => {
+        setNgayBD(moment(stateQuaTrinhHocViDetails['NgayQuyetDinh']));
+        // setNgayQD(convertDateToString(stateHuongDanNCKHDetails['NgayQuyetDinh']));
+    }, [form, stateQuaTrinhHocViDetails, isOpenDrawer])
+
+    const handleOnchangeDetailNgayBD = (date) => {
+        setStateQuaTrinhHocViDetails({
+            ...stateQuaTrinhHocViDetails,
+            NgayQuyetDinh: date
+        })
+    }
+    const handleOnchangeNgayBD = (date) => {
+        setStateQuaTrinhHocVi({
+            ...stateQuaTrinhHocVi,
+            NgayQuyetDinh: date
+        })
+    }
 
 
 
@@ -330,7 +348,7 @@ const QuaTrinhHocVi = () => {
 
     //const { data: quatrinhhocviDetails } = useQuery(['hosoquannhan', quannhanId], fetchGetQuaTrinhHocVi, { enabled: !!quannhanId })
     //console.log("qtrinhcongtac:", quatrinhhocviDetails)
-    
+
 
 
 
@@ -495,7 +513,7 @@ const QuaTrinhHocVi = () => {
             CaoNhat: stateQuaTrinhHocVi.CaoNhat,
             GhiChu: stateQuaTrinhHocVi.GhiChu,
         }
-        
+
         mutation.mutate(params, {
             onSettled: () => {
                 quatrinhhocviDetails.refetch()
@@ -506,7 +524,7 @@ const QuaTrinhHocVi = () => {
 
 
     const handleOnchange = (e) => {
-        
+
         setStateQuaTrinhHocVi({
             ...stateQuaTrinhHocVi,
             [e.target.name]: e.target.value
@@ -515,7 +533,7 @@ const QuaTrinhHocVi = () => {
 
 
     const handleOnchangeDetails = (e) => {
-        
+
         setStateQuaTrinhHocViDetails({
             ...stateQuaTrinhHocViDetails,
             [e.target.name]: e.target.value
@@ -580,7 +598,7 @@ const QuaTrinhHocVi = () => {
     }
     const handleChangeCheckCaoNhat = (e) => {
         const checkedValue = e.target.checked ? 1 : 0;
-       
+
         setStateQuaTrinhHocVi({
             ...stateQuaTrinhHocVi,
             CaoNhat: checkedValue,
@@ -648,15 +666,20 @@ const QuaTrinhHocVi = () => {
 
                         <Form.Item
                             label="Ngày quyết định"
-                            name="NgayQuyetDinh"
+                            //   name="NgayQuyetDinh"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                            <InputComponent
+                            {/* <InputComponent
                                 style={{ width: '100%' }}
 
                                 value={stateQuaTrinhHocVi['NgayQuyetDinh']}
                                 onChange={handleChangeCheckCaoNhat}
                                 name="NgayQuyetDinh"
+                            /> */}
+                            <DatePicker
+                                //  value={NgayQD}
+                                onChange={handleOnchangeNgayBD} name="NgayQuyetDinh"
+                                format="DD/MM/YYYY"
                             />
                         </Form.Item>
 
@@ -738,10 +761,16 @@ const QuaTrinhHocVi = () => {
 
                         <Form.Item
                             label="Ngày quyết định"
-                            name="NgayQuyetDinh"
+                            //  name="NgayQuyetDinh"
                             rules={[{ required: true, message: 'Nhập vào chỗ trống!' }]}
                         >
-                            <InputComponent value={stateQuaTrinhHocViDetails['NgayQuyetDinh']} onChange={handleOnchangeDetails} name="NgayQuyetDinh" />
+                            {/* <InputComponent value={stateQuaTrinhHocViDetails['NgayQuyetDinh']} onChange={handleOnchangeDetails} name="NgayQuyetDinh" /> */}
+                            <DatePicker
+                                value={NgayBD}
+                                onChange={handleOnchangeDetailNgayBD} name="NgayQuyetDinh"
+                                format="DD/MM/YYYY"
+                            />
+
                         </Form.Item>
 
                         <Form.Item
